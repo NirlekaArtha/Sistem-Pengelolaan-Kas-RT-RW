@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::create('jenis_iuran_wargas', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('id_warga')->constrained('wargas')->cascadeOnDelete();
             $table->foreignId('id_rt')->constrained('r_t_s')->cascadeOnDelete();
             $table->string('jenis_iuran');
             $table->decimal('jumlah', 15, 2);

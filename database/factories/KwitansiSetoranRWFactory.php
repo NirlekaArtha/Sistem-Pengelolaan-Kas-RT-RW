@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\KwitansiSetoranRW;
+use App\Models\SetoranRW;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -10,15 +11,13 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class KwitansiSetoranRWFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
     public function definition(): array
     {
         return [
-            //
+            'id_setoran'     => SetoranRW::inRandomOrder()->first()->id,
+            'nomor_kwitansi' => 'KW-SET-' . strtoupper(fake()->unique()->bothify('####??')),
+            'file_path'      => null,
+            'tanggal_cetak'  => fake()->dateTimeBetween('-3 months', 'now')->format('Y-m-d'),
         ];
     }
 }

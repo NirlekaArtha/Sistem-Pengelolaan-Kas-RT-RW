@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Petugas;
+use App\Models\RW;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -10,15 +11,14 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class PetugasFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
     public function definition(): array
     {
         return [
-            //
+            'id_rw'      => RW::inRandomOrder()->first()->id,
+            'tugas'      => fake()->randomElement(['satpam', 'kebersihan', 'sampah']),
+            'nama'       => fake()->name(),
+            'alamat'     => fake()->address(),
+            'gaji_pokok' => fake()->randomElement([1500000, 1800000, 2000000, 2200000, 2500000]),
         ];
     }
 }

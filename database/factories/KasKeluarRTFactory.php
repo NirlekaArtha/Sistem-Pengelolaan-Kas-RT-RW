@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\KasKeluarRT;
+use App\Models\RT;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -10,15 +11,14 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class KasKeluarRTFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
     public function definition(): array
     {
         return [
-            //
+            'id_rt'      => RT::inRandomOrder()->first()->id,
+            'jenis'      => fake()->randomElement(['operasional', 'kegiatan', 'lainnya']),
+            'jumlah'     => fake()->numberBetween(50000, 3000000),
+            'keterangan' => fake()->sentence(),
+            'tanggal'    => fake()->dateTimeBetween('-6 months', 'now')->format('Y-m-d'),
         ];
     }
 }

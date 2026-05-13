@@ -14,7 +14,6 @@ class Petugas extends Model
 
     protected $fillable = [
         'id_rw',
-        'id_user',
         'tugas',
         'nama',
         'alamat',

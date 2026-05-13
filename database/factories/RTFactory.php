@@ -3,6 +3,8 @@
 namespace Database\Factories;
 
 use App\Models\RT;
+use App\Models\RW;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -10,15 +12,15 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class RTFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
     public function definition(): array
     {
         return [
-            //
+            'id_rw'      => RW::inRandomOrder()->first()->id,
+            'id_user'    => User::factory()->create(['role' => 'RT'])->id,
+            'nomor_rt'   => fake()->unique()->numerify('###'),
+            'nama'       => 'RT ' . fake()->numerify('###'),
+            'alamat'     => fake()->address(),
+            'no_telepon' => '08' . fake()->numerify('##########'),
         ];
     }
 }

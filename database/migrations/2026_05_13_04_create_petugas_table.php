@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('petugas', function (Blueprint $table) {
             $table->id();
             $table->foreignId('id_rw')->constrained('r_w_s')->cascadeOnDelete();
-            $table->foreignId('id_user')->constrained('users')->cascadeOnDelete();
             $table->enum('tugas', ['satpam', 'kebersihan', 'sampah']);
             $table->string('nama');
             $table->string('alamat');

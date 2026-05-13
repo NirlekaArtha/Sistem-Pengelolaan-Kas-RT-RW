@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\IuranWarga;
 use App\Models\KwitansiIuranWarga;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -10,15 +11,13 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class KwitansiIuranWargaFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
     public function definition(): array
     {
         return [
-            //
+            'iuran_id'       => IuranWarga::inRandomOrder()->first()->id,
+            'nomor_kwitansi' => 'KW-IUR-' . strtoupper(fake()->unique()->bothify('####??')),
+            'file_path'      => null,
+            'tanggal_cetak'  => fake()->dateTimeBetween('-3 months', 'now')->format('Y-m-d'),
         ];
     }
 }

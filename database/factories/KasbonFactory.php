@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Kasbon;
+use App\Models\Petugas;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -10,15 +11,12 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class KasbonFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
     public function definition(): array
     {
         return [
-            //
+            'id_petugas' => Petugas::inRandomOrder()->first()->id,
+            'jumlah'     => fake()->randomElement([100000, 200000, 250000, 300000, 500000]),
+            'tanggal'    => fake()->dateTimeBetween('-3 months', 'now')->format('Y-m-d'),
         ];
     }
 }

@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Models\RT;
+use App\Models\RW;
 use App\Models\SetoranRW;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -10,15 +12,29 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class SetoranRWFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
     public function definition(): array
     {
         return [
-            //
+            'id_rt'           => RT::inRandomOrder()->first()->id,
+            'id_rw'           => RW::inRandomOrder()->first()->id,
+            'periode'         => fake()->dateTimeBetween('-6 months', 'now')->format('Y-m'),
+            'tanggal_setor'   => fake()->dateTimeBetween('-6 months', 'now')->format('Y-m-d'),
+            'jumlah_setor'    => fake()->numberBetween(500000, 10000000),
+            'status_validasi' => fake()->randomElement(['pending', 'valid', 'ditolak']),
         ];
+    }
+
+    public function valid(): static
+    {
+        return $this->state(fn(array $attributes) => [
+            'status_validasi' => 'valid',
+        ]);
+    }
+
+    public function pending(): static
+    {
+        return $this->state(fn(array $attributes) => [
+            'status_validasi' => 'pending',
+        ]);
     }
 }

@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\JenisIuranWarga;
+use App\Models\RT;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -10,15 +11,20 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class JenisIuranWargaFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
     public function definition(): array
     {
+        $jenis = fake()->randomElement([
+            'Iuran Kebersihan',
+            'Iuran Keamanan',
+            'Iuran Sosial',
+            'Iuran Sampah',
+            'Iuran Perbaikan Jalan',
+        ]);
+
         return [
-            //
+            'id_rt'       => RT::inRandomOrder()->first()->id,
+            'jenis_iuran' => $jenis,
+            'jumlah'      => fake()->randomElement([10000, 15000, 20000, 25000, 30000, 50000]),
         ];
     }
 }

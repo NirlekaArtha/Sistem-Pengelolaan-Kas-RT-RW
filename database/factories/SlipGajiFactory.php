@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Petugas;
 use App\Models\SlipGaji;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -10,15 +11,13 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class SlipGajiFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
     public function definition(): array
     {
         return [
-            //
+            'id_petugas' => Petugas::inRandomOrder()->first()->id,
+            'total'      => fake()->numberBetween(1000000, 3000000),
+            'tanggal'    => fake()->dateTimeBetween('-6 months', 'now')->format('Y-m-d'),
+            'file_path'  => null,
         ];
     }
 }
