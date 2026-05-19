@@ -11,25 +11,26 @@ class KasKeluarRT extends Model
     /** @use HasFactory<\Database\Factories\KasKeluarRTFactory> */
     use HasFactory;
 
-    protected $table = 'kas_keluar_r_t_s';
+    protected $table = "kas_keluar_r_t_s";
 
     protected $fillable = [
-        'id_rt',
-        'jenis',
-        'jumlah',
-        'keterangan',
-        'tanggal',
+        "id_rt",
+        "jenis",
+        "jumlah",
+        "penerima",
+        "keterangan",
+        "tanggal",
     ];
 
     protected $casts = [
-        'jumlah'  => 'decimal:2',
-        'tanggal' => 'date',
+        "jumlah" => "decimal:2",
+        "tanggal" => "date",
     ];
 
     // ─── Belongs To ──────────────────────────────────────────────────────────
 
     public function rt(): BelongsTo
     {
-        return $this->belongsTo(RT::class, 'id_rt');
+        return $this->belongsTo(RT::class, "id_rt");
     }
 }
