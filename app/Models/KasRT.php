@@ -6,31 +6,31 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class KasKeluarRT extends Model
+class KasRT extends Model
 {
-    /** @use HasFactory<\Database\Factories\KasKeluarRTFactory> */
     use HasFactory;
 
-    protected $table = "kas_keluar_r_t_s";
+    protected $table = 'kas_r_t_s';
 
     protected $fillable = [
-        "id_rt",
-        "jenis",
-        "jumlah",
-        "penerima",
-        "keterangan",
-        "tanggal",
+        'id_rt',
+        'tipe',
+        'jenis',
+        'jumlah',
+        'sumber_tujuan',
+        'keterangan',
+        'tanggal',
     ];
 
     protected $casts = [
-        "jumlah" => "decimal:2",
-        "tanggal" => "date",
+        'jumlah'  => 'decimal:2',
+        'tanggal' => 'date',
     ];
 
     // ─── Belongs To ──────────────────────────────────────────────────────────
 
     public function rt(): BelongsTo
     {
-        return $this->belongsTo(RT::class, "id_rt");
+        return $this->belongsTo(RT::class, 'id_rt');
     }
 }

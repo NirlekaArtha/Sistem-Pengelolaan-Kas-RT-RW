@@ -41,14 +41,19 @@ class RW extends Model
         return $this->hasMany(Petugas::class, 'id_rw');
     }
 
+    public function kasRWs(): HasMany
+    {
+        return $this->hasMany(KasRW::class, 'id_rw');
+    }
+
     public function kasMasukRWs(): HasMany
     {
-        return $this->hasMany(KasMasukRW::class, 'id_rw');
+        return $this->hasMany(KasRW::class, 'id_rw')->where('tipe', 'masuk');
     }
 
     public function kasKeluarRWs(): HasMany
     {
-        return $this->hasMany(KasKeluarRW::class, 'id_rw');
+        return $this->hasMany(KasRW::class, 'id_rw')->where('tipe', 'keluar');
     }
 
     public function kasBulananRWs(): HasMany

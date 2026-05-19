@@ -6,10 +6,8 @@ use App\Models\IuranWarga;
 use App\Models\JenisIuranWarga;
 use App\Models\KasBulananRT;
 use App\Models\KasBulananRW;
-use App\Models\KasKeluarRT;
-use App\Models\KasKeluarRW;
-use App\Models\KasMasukRT;
-use App\Models\KasMasukRW;
+use App\Models\KasRT;
+use App\Models\KasRW;
 use App\Models\Kasbon;
 use App\Models\KwitansiIuranWarga;
 use App\Models\KwitansiSetoranRW;
@@ -122,12 +120,12 @@ class DatabaseSeeder extends Seeder
 
         // ── 8. Kas Masuk & Keluar RT ──────────────────────────────────────────
         $rts->each(function ($rt) {
-            KasMasukRT::factory(6)->state(fn () => [
+            KasRT::factory(6)->masuk()->state(fn () => [
                 'id_rt' => $rt->id,
                 'tanggal' => fake()->dateTimeBetween('-3 months', 'now'),
             ])->create();
             
-            KasKeluarRT::factory(6)->state(fn () => [
+            KasRT::factory(6)->keluar()->state(fn () => [
                 'id_rt' => $rt->id,
                 'tanggal' => fake()->dateTimeBetween('-3 months', 'now'),
             ])->create();           
@@ -147,7 +145,8 @@ class DatabaseSeeder extends Seeder
 
                 $saldoAwal = $kasBulanSblm ? $kasBulanSblm->saldo_akhir : 0;
 
-                $totalKasMasuk = KasMasukRT::where('id_rt', $rt->id)
+                $totalKasMasuk = KasRT::where('id_rt', $rt->id)
+                    ->where('tipe', 'masuk')
                     ->whereYear('tanggal', $year)
                     ->whereMonth('tanggal', $month)
                     ->sum('jumlah');
@@ -160,7 +159,8 @@ class DatabaseSeeder extends Seeder
                     ->whereMonth('iuran_wargas.tanggal_bayar', $month)
                     ->sum('jenis_iuran_wargas.jumlah');
                     
-                $totalKasKeluar = KasKeluarRT::where('id_rt', $rt->id)
+                $totalKasKeluar = KasRT::where('id_rt', $rt->id)
+                    ->where('tipe', 'keluar')
                     ->whereYear('tanggal', $year)
                     ->whereMonth('tanggal', $month)
                     ->sum('jumlah');
@@ -203,12 +203,12 @@ class DatabaseSeeder extends Seeder
         });
 
         // ── 11. Kas Masuk & Keluar RW ─────────────────────────────────────────
-        KasMasukRW::factory(6)->state(fn () => [
+        KasRW::factory(6)->masuk()->state(fn () => [
             'id_rw' => $rw->id,
             'tanggal' => fake()->dateTimeBetween('-3 months', 'now'),
         ])->create();
 
-        KasKeluarRW::factory(6)->state(fn () => [
+        KasRW::factory(6)->keluar()->state(fn () => [
             'id_rw' => $rw->id,
             'tanggal' => fake()->dateTimeBetween('-3 months', 'now'),
         ])->create();
@@ -226,12 +226,14 @@ class DatabaseSeeder extends Seeder
 
             $saldoAwal = $kasBulanSblm ? $kasBulanSblm->saldo_akhir : 0;
 
-            $totalKasMasuk = KasMasukRW::where('id_rw', $rw->id)
+            $totalKasMasuk = KasRW::where('id_rw', $rw->id)
+                ->where('tipe', 'masuk')
                 ->whereYear('tanggal', $year)
                 ->whereMonth('tanggal', $month)
                 ->sum('jumlah');
                 
-            $totalKasKeluar = KasKeluarRW::where('id_rw', $rw->id)
+            $totalKasKeluar = KasRW::where('id_rw', $rw->id)
+                ->where('tipe', 'keluar')
                 ->whereYear('tanggal', $year)
                 ->whereMonth('tanggal', $month)
                 ->sum('jumlah');

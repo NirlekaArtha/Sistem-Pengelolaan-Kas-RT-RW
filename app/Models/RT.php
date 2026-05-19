@@ -42,14 +42,19 @@ class RT extends Model
         return $this->hasMany(Warga::class, 'id_rt');
     }
 
+    public function kasRTs(): HasMany
+    {
+        return $this->hasMany(KasRT::class, 'id_rt');
+    }
+
     public function kasMasukRTs(): HasMany
     {
-        return $this->hasMany(KasMasukRT::class, 'id_rt');
+        return $this->hasMany(KasRT::class, 'id_rt')->where('tipe', 'masuk');
     }
 
     public function kasKeluarRTs(): HasMany
     {
-        return $this->hasMany(KasKeluarRT::class, 'id_rt');
+        return $this->hasMany(KasRT::class, 'id_rt')->where('tipe', 'keluar');
     }
 
     public function kasBulananRTs(): HasMany

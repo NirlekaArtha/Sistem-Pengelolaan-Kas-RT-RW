@@ -11,12 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('kas_masuk_r_t_s', function (Blueprint $table) {
+        Schema::create('kas_r_w_s', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('id_rt')->constrained('r_t_s')->cascadeOnDelete();
-            $table->enum('jenis', ['donasi', 'sponsorship', 'hibah', 'hasil usaha', 'lainnya']);
+            $table->foreignId('id_rw')->constrained('r_w_s')->cascadeOnDelete();
+            $table->enum('tipe', ['masuk', 'keluar']);
+            $table->enum('jenis', [
+                'donasi', 'sponsorship', 'hibah', 'hasil usaha',
+                'operasional', 'kegiatan',
+                'lainnya'
+            ]);
             $table->decimal('jumlah', 15, 2);
-            $table->string('sumber');
+            $table->string('sumber_tujuan');
             $table->text('keterangan')->nullable();
             $table->date('tanggal');
             $table->timestamps();
@@ -28,6 +33,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('kas_masuk_r_t_s');
+        Schema::dropIfExists('kas_r_w_s');
     }
 };
