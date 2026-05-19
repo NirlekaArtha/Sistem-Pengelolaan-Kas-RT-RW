@@ -1,0 +1,58 @@
+<?php
+
+namespace App\Filament\Rt\Resources\IuranWargas;
+
+use App\Filament\Rt\Resources\IuranWargas\Pages\CreateIuranWarga;
+use App\Filament\Rt\Resources\IuranWargas\Pages\EditIuranWarga;
+use App\Filament\Rt\Resources\IuranWargas\Pages\ListIuranWargas;
+use App\Filament\Rt\Resources\IuranWargas\Pages\ViewIuranWarga;
+use App\Filament\Rt\Resources\IuranWargas\Schemas\IuranWargaForm;
+use App\Filament\Rt\Resources\IuranWargas\Schemas\IuranWargaInfolist;
+use App\Filament\Rt\Resources\IuranWargas\Tables\IuranWargasTable;
+use App\Models\IuranWarga;
+use BackedEnum;
+use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Table;
+
+class IuranWargaResource extends Resource
+{
+    protected static ?string $model = IuranWarga::class;
+
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+
+    protected static ?string $recordTitleAttribute = 'id_warga';
+
+    public static function form(Schema $schema): Schema
+    {
+        return IuranWargaForm::configure($schema);
+    }
+
+    public static function infolist(Schema $schema): Schema
+    {
+        return IuranWargaInfolist::configure($schema);
+    }
+
+    public static function table(Table $table): Table
+    {
+        return IuranWargasTable::configure($table);
+    }
+
+    public static function getRelations(): array
+    {
+        return [
+            //
+        ];
+    }
+
+    public static function getPages(): array
+    {
+        return [
+            'index' => ListIuranWargas::route('/'),
+            'create' => CreateIuranWarga::route('/create'),
+            'view' => ViewIuranWarga::route('/{record}'),
+            'edit' => EditIuranWarga::route('/{record}/edit'),
+        ];
+    }
+}
