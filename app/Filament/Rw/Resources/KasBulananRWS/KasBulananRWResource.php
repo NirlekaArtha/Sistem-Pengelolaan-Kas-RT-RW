@@ -22,6 +22,12 @@ class KasBulananRWResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
+    protected static ?string $navigationLabel = 'Kas Bulanan';
+
+    protected static ?string $modelLabel = 'Kas Bulanan';
+
+    protected static ?string $pluralModelLabel = 'Kas Bulanan';
+
     protected static ?string $recordTitleAttribute = 'periode';
 
     public static function form(Schema $schema): Schema
@@ -43,6 +49,19 @@ class KasBulananRWResource extends Resource
     {
         return [
             //
+        ];
+    }
+
+    public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
+    {
+        return parent::getEloquentQuery()
+            ->where('id_rw', auth()->user()?->rw?->id);
+    }
+
+    public static function getWidgets(): array
+    {
+        return [
+            Widgets\KasBulananRWOverview::class,
         ];
     }
 

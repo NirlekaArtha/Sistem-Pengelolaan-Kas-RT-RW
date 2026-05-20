@@ -2,10 +2,15 @@
 
 namespace App\Filament\Rw\Resources\KasBulananRWS\Tables;
 
+use App\Filament\Rw\Resources\KasBulananRWS\Pages\EditKasBulananRW;
+use App\Models\KasBulananRW;
+use App\Models\KasRW;
+use App\Models\SlipGaji;
+use App\Models\SetoranRW;
+use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
-use Filament\Actions\ViewAction;
+use Filament\Notifications\Notification;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -15,28 +20,29 @@ class KasBulananRWSTable
     {
         return $table
             ->columns([
-                TextColumn::make('id_rw')
-                    ->numeric()
-                    ->sortable(),
                 TextColumn::make('periode')
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
                 TextColumn::make('total_pendapatan')
-                    ->numeric()
+                    ->prefix('Rp ')
+                    ->numeric(decimalPlaces: 0, thousandsSeparator: ',', decimalSeparator: '.')
                     ->sortable(),
                 TextColumn::make('total_pengeluaran')
-                    ->numeric()
+                    ->prefix('Rp ')
+                    ->numeric(decimalPlaces: 0, thousandsSeparator: ',', decimalSeparator: '.')
                     ->sortable(),
                 TextColumn::make('total_pendapatan_bersih')
-                    ->numeric()
+                    ->prefix('Rp ')
+                    ->numeric(decimalPlaces: 0, thousandsSeparator: ',', decimalSeparator: '.')
                     ->sortable(),
                 TextColumn::make('saldo_awal')
-                    ->numeric()
+                    ->prefix('Rp ')
+                    ->numeric(decimalPlaces: 0, thousandsSeparator: ',', decimalSeparator: '.')
                     ->sortable(),
                 TextColumn::make('saldo_akhir')
-                    ->numeric()
+                    ->prefix('Rp ')
+                    ->numeric(decimalPlaces: 0, thousandsSeparator: ',', decimalSeparator: '.')
                     ->sortable(),
-                TextColumn::make('file_path')
-                    ->searchable(),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -49,14 +55,64 @@ class KasBulananRWSTable
             ->filters([
                 //
             ])
-            ->recordActions([
-                ViewAction::make(),
-                EditAction::make(),
+            ->actions([
+                Action::make('recalculate')
+                    ->label('recalculate')
+                    ->icon('heroicon-o-arrow-path')
+                    ->iconButton()
+                    ->tooltip('Kalkulasi Ulang')
+                    ->color('info')
+                    ->action(function (KasBulananRW $record) {
+                        $rwId = $record->id_rw;
+
+                        $totalPendapatanKasHarian = KasRW::where('id_rw', $rwId)
+                            ->where('tipe', 'masuk')
+                            ->where('tanggal', 'like', "{$record->periode}-%")
+                            ->sum('jumlah');
+
+                        $totalPengeluaranKasHarian = KasRW::where('id_rw', $rwId)
+                            ->where('tipe', 'keluar')
+                            ->where('tanggal', 'like', "{$record->periode}-%")
+                            ->sum('jumlah');
+
+                        $totalPengeluaranGajiPetugas = SlipGaji::whereHas('petugas', function ($q) use ($rwId) {
+                                $q->where('id_rw', $rwId);
+                            })
+                            ->where('tanggal', 'like', "{$record->periode}-%")
+                            ->sum('total');
+
+                        $totalPemasukanSetoranRT = SetoranRW::where('id_rw', $rwId)
+                            ->where('periode', $record->periode)
+                            ->where('status_validasi', 'valid')
+                            ->sum('jumlah_setor');
+
+                        $record->total_pendapatan = $totalPendapatanKasHarian + $totalPemasukanSetoranRT;
+                        $record->total_pengeluaran = $totalPengeluaranKasHarian + $totalPengeluaranGajiPetugas;
+                        $record->total_pendapatan_bersih = $record->total_pendapatan - $record->total_pengeluaran;
+                        $record->saldo_akhir = $record->saldo_awal + $record->total_pendapatan_bersih;
+                        $record->save();
+
+                        Notification::make()
+                            ->title('Kalkulasi Ulang Berhasil')
+                            ->body("Data kas bulanan periode {$record->periode} telah diperbarui.")
+                            ->success()
+                            ->send();
+                    }),
+                Action::make('export')
+                    ->label('export')
+                    ->icon('heroicon-o-arrow-down-tray')
+                    ->iconButton()
+                    ->tooltip('Export')
+                    ->url(fn (KasBulananRW $record): string => route('rw.kas-bulanan.preview', ['record' => $record])),
             ])
+            ->actionsColumnLabel('aksi')
             ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->defaultSort('periode', 'desc')
+            ->recordUrl(fn (KasBulananRW $record): string => EditKasBulananRW::getUrl(['record' => $record]));
     }
 }
+
