@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Rw\Resources\KasKeluarRWS\Schemas;
+namespace App\Filament\Rt\Resources\KasRTS\Schemas;
 
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
@@ -8,24 +8,34 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Schemas\Schema;
 
-class KasKeluarRWForm
+class KasRTForm
 {
     public static function configure(Schema $schema): Schema
     {
         return $schema
             ->components([
-                TextInput::make('id_rw')
+                TextInput::make('id_rt')
                     ->required()
                     ->numeric(),
+                Select::make('tipe')
+                    ->options(['masuk' => 'Masuk', 'keluar' => 'Keluar'])
+                    ->required(),
                 Select::make('jenis')
-                    ->options(['operasional' => 'Operasional', 'kegiatan' => 'Kegiatan', 'lainnya' => 'Lainnya'])
+                    ->options([
+            'donasi' => 'Donasi',
+            'sponsorship' => 'Sponsorship',
+            'hibah' => 'Hibah',
+            'hasil usaha' => 'Hasil usaha',
+            'operasional' => 'Operasional',
+            'kegiatan' => 'Kegiatan',
+            'lainnya' => 'Lainnya',
+        ])
                     ->required(),
                 TextInput::make('jumlah')
                     ->required()
                     ->numeric(),
-                Textarea::make('penerima')
-                    ->required()
-                    ->columnSpanFull(),
+                TextInput::make('sumber_tujuan')
+                    ->required(),
                 Textarea::make('keterangan')
                     ->default(null)
                     ->columnSpanFull(),

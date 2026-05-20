@@ -1,15 +1,15 @@
 <?php
 
-namespace App\Filament\Rw\Resources\KasMasukRWS\Pages;
+namespace App\Filament\Rw\Resources\KasRWS\Pages;
 
-use App\Filament\Rw\Resources\KasMasukRWS\KasMasukRWResource;
+use App\Filament\Rw\Resources\KasRWS\KasRWResource;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
 use Filament\Resources\Pages\EditRecord;
 
-class EditKasMasukRW extends EditRecord
+class EditKasRW extends EditRecord
 {
-    protected static string $resource = KasMasukRWResource::class;
+    protected static string $resource = KasRWResource::class;
 
     protected function getHeaderActions(): array
     {

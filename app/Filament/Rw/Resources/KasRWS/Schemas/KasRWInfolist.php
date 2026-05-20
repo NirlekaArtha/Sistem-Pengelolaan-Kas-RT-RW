@@ -1,24 +1,23 @@
 <?php
 
-namespace App\Filament\Rw\Resources\KasKeluarRWS\Schemas;
+namespace App\Filament\Rw\Resources\KasRWS\Schemas;
 
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Schema;
 
-class KasKeluarRWInfolist
+class KasRWInfolist
 {
     public static function configure(Schema $schema): Schema
     {
         return $schema
             ->components([
-                TextEntry::make('id_rw')
-                    ->numeric(),
+                TextEntry::make('tipe')
+                    ->badge(),
                 TextEntry::make('jenis')
                     ->badge(),
                 TextEntry::make('jumlah')
                     ->numeric(),
-                TextEntry::make('penerima')
-                    ->columnSpanFull(),
+                TextEntry::make('sumber_tujuan'),
                 TextEntry::make('keterangan')
                     ->placeholder('-')
                     ->columnSpanFull(),
