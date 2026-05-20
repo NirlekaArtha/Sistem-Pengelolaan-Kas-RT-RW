@@ -14,7 +14,7 @@ class RWFactory extends Factory
     public function definition(): array
     {
         return [
-            "id_user" => User::factory()->create([
+            "id_user" => fn () => User::factory()->create([
                 "role" => "RW",
                 "email" => "adminrw@gmail.com",
             ])->id,
