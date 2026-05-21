@@ -3,6 +3,7 @@
 namespace App\Filament\Rw\Resources\Kasbons\Pages;
 
 use App\Filament\Rw\Resources\Kasbons\KasbonResource;
+use App\Filament\Rw\Resources\Kasbons\Widgets\KasbonOverview;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
 
@@ -16,4 +17,12 @@ class ListKasbons extends ListRecords
             CreateAction::make(),
         ];
     }
+
+    protected function getHeaderWidgets(): array
+    {
+        return [
+            KasbonOverview::class,
+        ];
+    }
 }
+

@@ -3,6 +3,7 @@
 namespace App\Filament\Rw\Resources\Kasbons\Schemas;
 
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
 
@@ -12,9 +13,16 @@ class KasbonForm
     {
         return $schema
             ->components([
-                TextInput::make('id_petugas')
-                    ->required()
-                    ->numeric(),
+                Select::make('id_petugas')
+                    ->relationship(
+                        'petugas',
+                        'nama',
+                        fn ($query) => $query->where('id_rw', auth()->user()?->rw?->id)
+                    )
+                    ->label('Nama Petugas')
+                    ->searchable()
+                    ->preload()
+                    ->required(),
                 TextInput::make('jumlah')
                     ->required()
                     ->numeric(),
@@ -23,3 +31,4 @@ class KasbonForm
             ]);
     }
 }
+

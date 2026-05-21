@@ -9,6 +9,8 @@ use App\Filament\Rw\Resources\Kasbons\Pages\ViewKasbon;
 use App\Filament\Rw\Resources\Kasbons\Schemas\KasbonForm;
 use App\Filament\Rw\Resources\Kasbons\Schemas\KasbonInfolist;
 use App\Filament\Rw\Resources\Kasbons\Tables\KasbonsTable;
+use App\Filament\Rw\Resources\Kasbons\Widgets\KasbonOverview;
+use Illuminate\Database\Eloquent\Builder;
 use App\Models\Kasbon;
 use BackedEnum;
 use Filament\Resources\Resource;
@@ -43,6 +45,21 @@ class KasbonResource extends Resource
     {
         return [
             //
+        ];
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->whereHas('petugas', function ($query) {
+                $query->where('id_rw', auth()->user()?->rw?->id);
+            });
+    }
+
+    public static function getWidgets(): array
+    {
+        return [
+            KasbonOverview::class,
         ];
     }
 
