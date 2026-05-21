@@ -3,6 +3,7 @@
 namespace App\Filament\Rw\Resources\RTS\Pages;
 
 use App\Filament\Rw\Resources\RTS\RTResource;
+use App\Filament\Rw\Resources\RTS\Widgets\RTOverview;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
 
@@ -14,6 +15,13 @@ class ListRTS extends ListRecords
     {
         return [
             CreateAction::make(),
+        ];
+    }
+
+    protected function getHeaderWidgets(): array
+    {
+        return [
+            RTOverview::class,
         ];
     }
 }

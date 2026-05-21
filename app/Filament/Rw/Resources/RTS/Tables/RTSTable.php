@@ -2,10 +2,12 @@
 
 namespace App\Filament\Rw\Resources\RTS\Tables;
 
+use App\Filament\Rw\Resources\RTS\Pages\EditRT;
+use App\Models\RT;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
-use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -15,19 +17,23 @@ class RTSTable
     {
         return $table
             ->columns([
-                TextColumn::make('id_rw')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('id_user')
-                    ->numeric()
-                    ->sortable(),
                 TextColumn::make('nomor_rt')
-                    ->searchable(),
+                    ->label('Nomor RT')
+                    ->searchable()
+                    ->sortable(),
                 TextColumn::make('nama')
+                    ->label('Nama RT')
                     ->searchable(),
+                TextColumn::make('user.name')
+                    ->label('Nama Akun RT')
+                    ->searchable()
+                    ->default('-'),
                 TextColumn::make('alamat')
-                    ->searchable(),
+                    ->label('Alamat')
+                    ->searchable()
+                    ->limit(40),
                 TextColumn::make('no_telepon')
+                    ->label('No. Telepon')
                     ->searchable(),
                 TextColumn::make('created_at')
                     ->dateTime()
@@ -41,10 +47,16 @@ class RTSTable
             ->filters([
                 //
             ])
-            ->recordActions([
-                ViewAction::make(),
-                EditAction::make(),
+            ->actions([
+                EditAction::make()
+                    ->iconButton()
+                    ->tooltip('Edit'),
+                DeleteAction::make()
+                    ->iconButton()
+                    ->tooltip('Hapus'),
             ])
+            ->actionsColumnLabel('Aksi')
+            ->recordUrl(fn (RT $record): string => EditRT::getUrl(['record' => $record]))
             ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),

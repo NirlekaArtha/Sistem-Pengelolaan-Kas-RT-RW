@@ -5,10 +5,9 @@ namespace App\Filament\Rw\Resources\RTS;
 use App\Filament\Rw\Resources\RTS\Pages\CreateRT;
 use App\Filament\Rw\Resources\RTS\Pages\EditRT;
 use App\Filament\Rw\Resources\RTS\Pages\ListRTS;
-use App\Filament\Rw\Resources\RTS\Pages\ViewRT;
 use App\Filament\Rw\Resources\RTS\Schemas\RTForm;
-use App\Filament\Rw\Resources\RTS\Schemas\RTInfolist;
 use App\Filament\Rw\Resources\RTS\Tables\RTSTable;
+use App\Filament\Rw\Resources\RTS\Widgets\RTOverview;
 use App\Models\RT;
 use BackedEnum;
 use Filament\Resources\Resource;
@@ -24,14 +23,15 @@ class RTResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'nama';
 
+    protected static ?string $navigationLabel = 'Data RT';
+
+    protected static ?string $modelLabel = 'Data RT';
+
+    protected static ?string $pluralModelLabel = 'Data RT';
+
     public static function form(Schema $schema): Schema
     {
         return RTForm::configure($schema);
-    }
-
-    public static function infolist(Schema $schema): Schema
-    {
-        return RTInfolist::configure($schema);
     }
 
     public static function table(Table $table): Table
@@ -46,13 +46,28 @@ class RTResource extends Resource
         ];
     }
 
+    /**
+     * Scope tabel hanya ke data RT milik RW yang sedang login.
+     */
+    public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
+    {
+        return parent::getEloquentQuery()
+            ->where('id_rw', auth()->user()?->rw?->id);
+    }
+
+    public static function getWidgets(): array
+    {
+        return [
+            RTOverview::class,
+        ];
+    }
+
     public static function getPages(): array
     {
         return [
-            'index' => ListRTS::route('/'),
+            'index'  => ListRTS::route('/'),
             'create' => CreateRT::route('/create'),
-            'view' => ViewRT::route('/{record}'),
-            'edit' => EditRT::route('/{record}/edit'),
+            'edit'   => EditRT::route('/{record}/edit'),
         ];
     }
 }
