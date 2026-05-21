@@ -107,4 +107,63 @@ class KasBulananRWController extends Controller
             'Content-Disposition' => 'attachment; filename="' . $filename . '"',
         ]);
     }
+
+    private function getAnnualReportData($tahun)
+    {
+        $rw = auth()->user()?->rw;
+
+        // Security check
+        if (!$rw) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $rwId = $rw->id;
+
+        $records = KasBulananRW::where('id_rw', $rwId)
+            ->where('periode', 'like', "{$tahun}-%")
+            ->orderBy('periode', 'asc')
+            ->get();
+
+        $totalPendapatan = $records->sum('total_pendapatan');
+        $totalPengeluaran = $records->sum('total_pengeluaran');
+        $pendapatanBersih = $totalPendapatan - $totalPengeluaran;
+
+        return compact(
+            'rw',
+            'tahun',
+            'records',
+            'totalPendapatan',
+            'totalPengeluaran',
+            'pendapatanBersih'
+        );
+    }
+
+    public function previewTahunan($tahun)
+    {
+        $data = $this->getAnnualReportData($tahun);
+        return view('rw.kas-bulanan.preview-tahunan', $data);
+    }
+
+    public function downloadTahunan($tahun)
+    {
+        $data = $this->getAnnualReportData($tahun);
+
+        $html = view('rw.kas-bulanan.pdf-tahunan', $data)->render();
+
+        $options = new Options();
+        $options->set('isHtml5ParserEnabled', true);
+        $options->set('isRemoteEnabled', true);
+
+        $dompdf = new Dompdf($options);
+        $dompdf->loadHtml($html);
+        $dompdf->setPaper('A4', 'portrait');
+        $dompdf->render();
+
+        $filename = "laporan tahunan RW {$data['rw']->nomor_rw} tahun {$data['tahun']}.pdf";
+
+        return response($dompdf->output(), 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+        ]);
+    }
 }

@@ -27,6 +27,7 @@ class AuthPanelProvider extends PanelProvider
             ->id("auth")
             ->path("auth")
             ->login()
+            ->brandName("Sistem Pengelolaan Kas RT/RW")
             ->colors([
                 "primary" => Color::Amber,
             ])
