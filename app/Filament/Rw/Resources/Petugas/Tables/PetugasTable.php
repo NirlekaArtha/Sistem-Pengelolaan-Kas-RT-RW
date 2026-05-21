@@ -2,10 +2,12 @@
 
 namespace App\Filament\Rw\Resources\Petugas\Tables;
 
+use App\Filament\Rw\Resources\Petugas\Pages\EditPetugas;
+use App\Models\Petugas;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
-use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -15,17 +17,25 @@ class PetugasTable
     {
         return $table
             ->columns([
-                TextColumn::make('id_rw')
-                    ->numeric()
-                    ->sortable(),
                 TextColumn::make('tugas')
-                    ->badge(),
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'satpam' => 'success',
+                        'kebersihan' => 'info',
+                        'sampah' => 'danger',
+                    })
+                    ->icon(fn (string $state): string => match ($state) {
+                        'satpam' => 'heroicon-o-shield-check',
+                        'kebersihan' => 'heroicon-o-sparkles',
+                        'sampah' => 'heroicon-o-trash',
+                    }),
                 TextColumn::make('nama')
                     ->searchable(),
                 TextColumn::make('alamat')
                     ->searchable(),
                 TextColumn::make('gaji_pokok')
-                    ->numeric()
+                    ->prefix('Rp ')
+                    ->numeric(decimalPlaces: 0, thousandsSeparator: ',', decimalSeparator: '.')
                     ->sortable(),
                 TextColumn::make('created_at')
                     ->dateTime()
@@ -39,10 +49,16 @@ class PetugasTable
             ->filters([
                 //
             ])
-            ->recordActions([
-                ViewAction::make(),
-                EditAction::make(),
+            ->actions([
+                EditAction::make()
+                    ->iconButton()
+                    ->tooltip('Edit'),
+                DeleteAction::make()
+                    ->iconButton()
+                    ->tooltip('Hapus'),
             ])
+            ->actionsColumnLabel('Aksi')
+            ->recordUrl(fn (Petugas $record): string => EditPetugas::getUrl(['record' => $record]))
             ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),

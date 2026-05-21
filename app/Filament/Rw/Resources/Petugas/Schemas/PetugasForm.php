@@ -2,6 +2,7 @@
 
 namespace App\Filament\Rw\Resources\Petugas\Schemas;
 
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
@@ -12,9 +13,9 @@ class PetugasForm
     {
         return $schema
             ->components([
-                TextInput::make('id_rw')
-                    ->required()
-                    ->numeric(),
+                Hidden::make('id_rw')
+                    ->default(fn () => auth()->user()?->rw?->id)
+                    ->required(),
                 Select::make('tugas')
                     ->options(['satpam' => 'Satpam', 'kebersihan' => 'Kebersihan', 'sampah' => 'Sampah'])
                     ->required(),

@@ -9,6 +9,7 @@ use App\Filament\Rw\Resources\Petugas\Pages\ViewPetugas;
 use App\Filament\Rw\Resources\Petugas\Schemas\PetugasForm;
 use App\Filament\Rw\Resources\Petugas\Schemas\PetugasInfolist;
 use App\Filament\Rw\Resources\Petugas\Tables\PetugasTable;
+use App\Filament\Rw\Resources\Petugas\Widgets\PetugasOverview;
 use App\Models\Petugas;
 use BackedEnum;
 use Filament\Resources\Resource;
@@ -43,6 +44,19 @@ class PetugasResource extends Resource
     {
         return [
             //
+        ];
+    }
+
+    public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
+    {
+        return parent::getEloquentQuery()
+            ->where('id_rw', auth()->user()?->rw?->id);
+    }
+
+    public static function getWidgets(): array
+    {
+        return [
+            PetugasOverview::class,
         ];
     }
 
