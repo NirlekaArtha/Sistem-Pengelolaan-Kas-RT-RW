@@ -2,12 +2,17 @@
 
 namespace App\Filament\Rw\Resources\SlipGajis\Tables;
 
+use App\Filament\Rw\Resources\SlipGajis\Pages\EditSlipGaji;
+use App\Models\SlipGaji;
 use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Actions\ViewAction;
+use Filament\Actions\Action;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+
+// NOTE: Toolbar "Export Semua" action is registered in ListSlipGajis::getHeaderActions()
 
 class SlipGajisTable
 {
@@ -15,17 +20,19 @@ class SlipGajisTable
     {
         return $table
             ->columns([
-                TextColumn::make('id_petugas')
-                    ->numeric()
+                TextColumn::make('petugas.nama')
+                    ->label('Nama Petugas')
+                    ->searchable()
                     ->sortable(),
                 TextColumn::make('total')
-                    ->numeric()
+                    ->label('Total Gaji')
+                    ->prefix('Rp ')
+                    ->numeric(decimalPlaces: 0, thousandsSeparator: '.', decimalSeparator: ',')
                     ->sortable(),
                 TextColumn::make('tanggal')
-                    ->date()
+                    ->label('Periode')
+                    ->date('F Y')
                     ->sortable(),
-                TextColumn::make('file_path')
-                    ->searchable(),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -38,10 +45,24 @@ class SlipGajisTable
             ->filters([
                 //
             ])
-            ->recordActions([
-                ViewAction::make(),
-                EditAction::make(),
+            ->actions([
+                Action::make('previewPdf')
+                    ->label('Preview PDF')
+                    ->icon('heroicon-o-document-arrow-down')
+                    ->color('success')
+                    ->iconButton()
+                    ->tooltip('Preview & Export PDF')
+                    ->url(fn (SlipGaji $record): string => route('rw.slip-gaji.preview', ['record' => $record]))
+                    ->openUrlInNewTab(),
+                EditAction::make()
+                    ->iconButton()
+                    ->tooltip('Edit'),
+                DeleteAction::make()
+                    ->iconButton()
+                    ->tooltip('Hapus'),
             ])
+            ->actionsColumnLabel('Aksi')
+            ->recordUrl(fn (SlipGaji $record): string => EditSlipGaji::getUrl(['record' => $record]))
             ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),

@@ -4,7 +4,6 @@ namespace App\Filament\Rw\Resources\SlipGajis\Pages;
 
 use App\Filament\Rw\Resources\SlipGajis\SlipGajiResource;
 use Filament\Actions\DeleteAction;
-use Filament\Actions\ViewAction;
 use Filament\Resources\Pages\EditRecord;
 
 class EditSlipGaji extends EditRecord
@@ -14,8 +13,8 @@ class EditSlipGaji extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            ViewAction::make(),
             DeleteAction::make(),
         ];
     }
 }
+
