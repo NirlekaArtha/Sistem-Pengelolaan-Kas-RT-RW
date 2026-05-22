@@ -13,9 +13,13 @@ class EditJenisIuranWarga extends EditRecord
 
     protected function getHeaderActions(): array
     {
-        return [
-            ViewAction::make(),
-            DeleteAction::make(),
-        ];
+        return [DeleteAction::make()];
+    }
+
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+        $data["id_rt"] = auth()->user()?->rt?->id;
+
+        return $data;
     }
 }

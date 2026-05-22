@@ -3,9 +3,9 @@
 namespace App\Filament\Rt\Resources\JenisIuranWargas\Tables;
 
 use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -15,19 +15,20 @@ class JenisIuranWargasTable
     {
         return $table
             ->columns([
-                TextColumn::make('id_rt')
-                    ->numeric()
+                TextColumn::make("jenis_iuran")->searchable(),
+                TextColumn::make("jumlah")
+                    ->prefix("Rp ")
+                    ->numeric(
+                        decimalPlaces: 0,
+                        thousandsSeparator: ",",
+                        decimalSeparator: ".",
+                    )
                     ->sortable(),
-                TextColumn::make('jenis_iuran')
-                    ->searchable(),
-                TextColumn::make('jumlah')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('created_at')
+                TextColumn::make("created_at")
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('updated_at')
+                TextColumn::make("updated_at")
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -35,14 +36,13 @@ class JenisIuranWargasTable
             ->filters([
                 //
             ])
-            ->recordActions([
-                ViewAction::make(),
-                EditAction::make(),
+            ->actions([
+                EditAction::make()->iconButton()->tooltip("Edit"),
+                DeleteAction::make()->iconButton()->tooltip("Hapus"),
             ])
+            ->actionsColumnLabel("Aksi")
             ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
+                BulkActionGroup::make([DeleteBulkAction::make()]),
             ]);
     }
 }
