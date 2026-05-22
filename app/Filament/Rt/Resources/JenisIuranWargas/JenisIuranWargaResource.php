@@ -15,14 +15,25 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use UnitEnum;
 
 class JenisIuranWargaResource extends Resource
 {
     protected static ?string $model = JenisIuranWarga::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedTag;
 
-    protected static ?string $recordTitleAttribute = 'jenis_iuran';
+    protected static ?string $recordTitleAttribute = "jenis_iuran";
+
+    protected static string|UnitEnum|null $navigationGroup = "Data Master";
+
+    protected static ?int $navigationSort = 2;
+
+    protected static ?string $navigationLabel = "Kelola Jenis Iuran";
+
+    protected static ?string $modelLabel = "Jenis Iuran";
+
+    protected static ?string $pluralModelLabel = "Data Jenis Iuran";
 
     public static function form(Schema $schema): Schema
     {
@@ -42,17 +53,17 @@ class JenisIuranWargaResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
-        ];
+                //
+            ];
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => ListJenisIuranWargas::route('/'),
-            'create' => CreateJenisIuranWarga::route('/create'),
-            'view' => ViewJenisIuranWarga::route('/{record}'),
-            'edit' => EditJenisIuranWarga::route('/{record}/edit'),
+            "index" => ListJenisIuranWargas::route("/"),
+            "create" => CreateJenisIuranWarga::route("/create"),
+            "view" => ViewJenisIuranWarga::route("/{record}"),
+            "edit" => EditJenisIuranWarga::route("/{record}/edit"),
         ];
     }
 }

@@ -15,14 +15,25 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use UnitEnum;
 
 class KasBulananRTResource extends Resource
 {
     protected static ?string $model = KasBulananRT::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedChartBar;
 
-    protected static ?string $recordTitleAttribute = 'periode';
+    protected static ?string $recordTitleAttribute = "periode";
+
+    protected static string|UnitEnum|null $navigationGroup = "Laporan & Rekap";
+
+    protected static ?int $navigationSort = 1;
+
+    protected static ?string $navigationLabel = "Kas Bulanan";
+
+    protected static ?string $modelLabel = "Kas Bulanan";
+
+    protected static ?string $pluralModelLabel = "Data Laporan Kas Bulanan";
 
     public static function form(Schema $schema): Schema
     {
@@ -42,17 +53,17 @@ class KasBulananRTResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
-        ];
+                //
+            ];
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => ListKasBulananRTS::route('/'),
-            'create' => CreateKasBulananRT::route('/create'),
-            'view' => ViewKasBulananRT::route('/{record}'),
-            'edit' => EditKasBulananRT::route('/{record}/edit'),
+            "index" => ListKasBulananRTS::route("/"),
+            "create" => CreateKasBulananRT::route("/create"),
+            "view" => ViewKasBulananRT::route("/{record}"),
+            "edit" => EditKasBulananRT::route("/{record}/edit"),
         ];
     }
 }

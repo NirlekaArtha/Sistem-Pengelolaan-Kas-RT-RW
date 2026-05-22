@@ -15,14 +15,25 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use UnitEnum;
 
 class WargaResource extends Resource
 {
     protected static ?string $model = Warga::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedArrowUpTray;
 
-    protected static ?string $recordTitleAttribute = 'nama_kepala_keluarga';
+    protected static ?string $recordTitleAttribute = "nama_kepala_keluarga";
+
+    protected static string|UnitEnum|null $navigationGroup = "Data Master";
+
+    protected static ?int $navigationSort = 1;
+
+    protected static ?string $navigationLabel = "Kelola Warga";
+
+    protected static ?string $modelLabel = "Warga (per KK)";
+
+    protected static ?string $pluralModelLabel = "Data Warga (per KK)";
 
     public static function form(Schema $schema): Schema
     {
@@ -42,17 +53,17 @@ class WargaResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
-        ];
+                //
+            ];
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => ListWargas::route('/'),
-            'create' => CreateWarga::route('/create'),
-            'view' => ViewWarga::route('/{record}'),
-            'edit' => EditWarga::route('/{record}/edit'),
+            "index" => ListWargas::route("/"),
+            "create" => CreateWarga::route("/create"),
+            "view" => ViewWarga::route("/{record}"),
+            "edit" => EditWarga::route("/{record}/edit"),
         ];
     }
 }

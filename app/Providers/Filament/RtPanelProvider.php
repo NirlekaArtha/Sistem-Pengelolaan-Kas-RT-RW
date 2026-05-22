@@ -27,6 +27,7 @@ class RtPanelProvider extends PanelProvider
         return $panel
             ->id("rt")
             ->path("rt")
+            ->navigationGroups(["Data Master", "Transaksi", "Laporan & Rekap"])
             ->colors([
                 "primary" => Color::Amber,
             ])
