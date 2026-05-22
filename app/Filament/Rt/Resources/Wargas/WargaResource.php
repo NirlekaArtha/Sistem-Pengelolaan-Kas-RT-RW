@@ -5,9 +5,7 @@ namespace App\Filament\Rt\Resources\Wargas;
 use App\Filament\Rt\Resources\Wargas\Pages\CreateWarga;
 use App\Filament\Rt\Resources\Wargas\Pages\EditWarga;
 use App\Filament\Rt\Resources\Wargas\Pages\ListWargas;
-use App\Filament\Rt\Resources\Wargas\Pages\ViewWarga;
 use App\Filament\Rt\Resources\Wargas\Schemas\WargaForm;
-use App\Filament\Rt\Resources\Wargas\Schemas\WargaInfolist;
 use App\Filament\Rt\Resources\Wargas\Tables\WargasTable;
 use App\Models\Warga;
 use BackedEnum;
@@ -15,6 +13,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use UnitEnum;
 
 class WargaResource extends Resource
@@ -40,21 +39,17 @@ class WargaResource extends Resource
         return WargaForm::configure($schema);
     }
 
-    public static function infolist(Schema $schema): Schema
-    {
-        return WargaInfolist::configure($schema);
-    }
-
     public static function table(Table $table): Table
     {
         return WargasTable::configure($table);
     }
 
-    public static function getRelations(): array
+    public static function getEloquentQuery(): Builder
     {
-        return [
-                //
-            ];
+        return parent::getEloquentQuery()->where(
+            "id_rt",
+            auth()->user()?->rt?->id,
+        );
     }
 
     public static function getPages(): array
@@ -62,7 +57,6 @@ class WargaResource extends Resource
         return [
             "index" => ListWargas::route("/"),
             "create" => CreateWarga::route("/create"),
-            "view" => ViewWarga::route("/{record}"),
             "edit" => EditWarga::route("/{record}/edit"),
         ];
     }

@@ -2,10 +2,11 @@
 
 namespace App\Filament\Rt\Resources\Wargas\Tables;
 
+use App\Filament\Rw\Resources\RTS\Pages\EditRT;
 use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -15,23 +16,14 @@ class WargasTable
     {
         return $table
             ->columns([
-                TextColumn::make('id_rt')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('id_user')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('nama_kepala_keluarga')
-                    ->searchable(),
-                TextColumn::make('alamat')
-                    ->searchable(),
-                TextColumn::make('no_telepon')
-                    ->searchable(),
-                TextColumn::make('created_at')
+                TextColumn::make("nama_kepala_keluarga")->searchable(),
+                TextColumn::make("alamat")->searchable(),
+                TextColumn::make("no_telepon")->searchable(),
+                TextColumn::make("created_at")
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('updated_at')
+                TextColumn::make("updated_at")
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -39,14 +31,13 @@ class WargasTable
             ->filters([
                 //
             ])
-            ->recordActions([
-                ViewAction::make(),
-                EditAction::make(),
+            ->actions([
+                EditAction::make()->iconButton()->tooltip("Edit"),
+                DeleteAction::make()->iconButton()->tooltip("Hapus"),
             ])
+            ->actionsColumnLabel("Aksi")
             ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
+                BulkActionGroup::make([DeleteBulkAction::make()]),
             ]);
     }
 }
