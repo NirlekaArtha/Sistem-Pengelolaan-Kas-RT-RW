@@ -14,20 +14,25 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use UnitEnum;
 
 class RTResource extends Resource
 {
     protected static ?string $model = RT::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedHomeModern;
 
-    protected static ?string $recordTitleAttribute = 'nama';
+    protected static string|UnitEnum|null $navigationGroup = "Data Master";
 
-    protected static ?string $navigationLabel = 'Data RT';
+    protected static ?int $navigationSort = 1;
 
-    protected static ?string $modelLabel = 'Data RT';
+    protected static ?string $recordTitleAttribute = "nama";
 
-    protected static ?string $pluralModelLabel = 'Data RT';
+    protected static ?string $navigationLabel = "Data RT";
+
+    protected static ?string $modelLabel = "Data RT";
+
+    protected static ?string $pluralModelLabel = "Data RT";
 
     public static function form(Schema $schema): Schema
     {
@@ -42,8 +47,8 @@ class RTResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
-        ];
+                //
+            ];
     }
 
     /**
@@ -51,23 +56,23 @@ class RTResource extends Resource
      */
     public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
     {
-        return parent::getEloquentQuery()
-            ->where('id_rw', auth()->user()?->rw?->id);
+        return parent::getEloquentQuery()->where(
+            "id_rw",
+            auth()->user()?->rw?->id,
+        );
     }
 
     public static function getWidgets(): array
     {
-        return [
-            RTOverview::class,
-        ];
+        return [RTOverview::class];
     }
 
     public static function getPages(): array
     {
         return [
-            'index'  => ListRTS::route('/'),
-            'create' => CreateRT::route('/create'),
-            'edit'   => EditRT::route('/{record}/edit'),
+            "index" => ListRTS::route("/"),
+            "create" => CreateRT::route("/create"),
+            "edit" => EditRT::route("/{record}/edit"),
         ];
     }
 }

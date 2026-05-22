@@ -28,6 +28,7 @@ class RwPanelProvider extends PanelProvider
             ->default()
             ->id("rw")
             ->path("rw")
+            ->navigationGroups(["Data Master", "Transaksi", "Laporan & Rekap"])
             ->colors([
                 "primary" => Color::Amber,
             ])

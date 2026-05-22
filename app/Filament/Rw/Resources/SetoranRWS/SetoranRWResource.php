@@ -16,20 +16,25 @@ use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use UnitEnum;
 
 class SetoranRWResource extends Resource
 {
     protected static ?string $model = SetoranRW::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedArrowDownTray;
 
-    protected static ?string $recordTitleAttribute = 'periode';
+    protected static string|UnitEnum|null $navigationGroup = "Transaksi";
 
-    protected static ?string $navigationLabel = 'Setoran RW';
+    protected static ?int $navigationSort = 2;
 
-    protected static ?string $modelLabel = 'Setoran';
+    protected static ?string $recordTitleAttribute = "periode";
 
-    protected static ?string $pluralModelLabel = 'Setoran RW';
+    protected static ?string $navigationLabel = "Setoran RW";
+
+    protected static ?string $modelLabel = "Setoran";
+
+    protected static ?string $pluralModelLabel = "Setoran RW";
 
     public static function form(Schema $schema): Schema
     {
@@ -49,29 +54,29 @@ class SetoranRWResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
-        ];
+                //
+            ];
     }
 
     public static function getEloquentQuery(): Builder
     {
-        return parent::getEloquentQuery()
-            ->where('id_rw', auth()->user()?->rw?->id);
+        return parent::getEloquentQuery()->where(
+            "id_rw",
+            auth()->user()?->rw?->id,
+        );
     }
 
     public static function getWidgets(): array
     {
-        return [
-            SetoranRWOverview::class,
-        ];
+        return [SetoranRWOverview::class];
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => ListSetoranRWS::route('/'),
-            'create' => CreateSetoranRW::route('/create'),
-            'edit' => EditSetoranRW::route('/{record}/edit'),
+            "index" => ListSetoranRWS::route("/"),
+            "create" => CreateSetoranRW::route("/create"),
+            "edit" => EditSetoranRW::route("/{record}/edit"),
         ];
     }
 }

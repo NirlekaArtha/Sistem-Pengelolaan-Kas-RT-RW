@@ -15,20 +15,25 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use UnitEnum;
 
 class KasBulananRWResource extends Resource
 {
     protected static ?string $model = KasBulananRW::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedChartBar;
 
-    protected static ?string $navigationLabel = 'Kas Bulanan';
+    protected static string|UnitEnum|null $navigationGroup = "Laporan & Rekap";
 
-    protected static ?string $modelLabel = 'Kas Bulanan';
+    protected static ?int $navigationSort = 1;
 
-    protected static ?string $pluralModelLabel = 'Kas Bulanan';
+    protected static ?string $navigationLabel = "Kas Bulanan";
 
-    protected static ?string $recordTitleAttribute = 'periode';
+    protected static ?string $modelLabel = "Kas Bulanan";
+
+    protected static ?string $pluralModelLabel = "Kas Bulanan";
+
+    protected static ?string $recordTitleAttribute = "periode";
 
     public static function form(Schema $schema): Schema
     {
@@ -48,30 +53,30 @@ class KasBulananRWResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
-        ];
+                //
+            ];
     }
 
     public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
     {
-        return parent::getEloquentQuery()
-            ->where('id_rw', auth()->user()?->rw?->id);
+        return parent::getEloquentQuery()->where(
+            "id_rw",
+            auth()->user()?->rw?->id,
+        );
     }
 
     public static function getWidgets(): array
     {
-        return [
-            Widgets\KasBulananRWOverview::class,
-        ];
+        return [Widgets\KasBulananRWOverview::class];
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => ListKasBulananRWS::route('/'),
-            'create' => CreateKasBulananRW::route('/create'),
-            'view' => ViewKasBulananRW::route('/{record}'),
-            'edit' => EditKasBulananRW::route('/{record}/edit'),
+            "index" => ListKasBulananRWS::route("/"),
+            "create" => CreateKasBulananRW::route("/create"),
+            "view" => ViewKasBulananRW::route("/{record}"),
+            "edit" => EditKasBulananRW::route("/{record}/edit"),
         ];
     }
 }

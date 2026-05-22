@@ -17,14 +17,25 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use UnitEnum;
 
 class KasbonResource extends Resource
 {
     protected static ?string $model = Kasbon::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBanknotes;
 
-    protected static ?string $recordTitleAttribute = 'id_petugas';
+    protected static string|UnitEnum|null $navigationGroup = "Transaksi";
+
+    protected static ?int $navigationSort = 3;
+
+    protected static ?string $recordTitleAttribute = "id_petugas";
+
+    protected static ?string $navigationLabel = "Kasbon Petugas";
+
+    protected static ?string $modelLabel = "Data Kasbon Petuga";
+
+    protected static ?string $pluralModelLabel = "Data Kasbon Petugas";
 
     public static function form(Schema $schema): Schema
     {
@@ -44,32 +55,31 @@ class KasbonResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
-        ];
+                //
+            ];
     }
 
     public static function getEloquentQuery(): Builder
     {
-        return parent::getEloquentQuery()
-            ->whereHas('petugas', function ($query) {
-                $query->where('id_rw', auth()->user()?->rw?->id);
-            });
+        return parent::getEloquentQuery()->whereHas("petugas", function (
+            $query,
+        ) {
+            $query->where("id_rw", auth()->user()?->rw?->id);
+        });
     }
 
     public static function getWidgets(): array
     {
-        return [
-            KasbonOverview::class,
-        ];
+        return [KasbonOverview::class];
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => ListKasbons::route('/'),
-            'create' => CreateKasbon::route('/create'),
-            'view' => ViewKasbon::route('/{record}'),
-            'edit' => EditKasbon::route('/{record}/edit'),
+            "index" => ListKasbons::route("/"),
+            "create" => CreateKasbon::route("/create"),
+            "view" => ViewKasbon::route("/{record}"),
+            "edit" => EditKasbon::route("/{record}/edit"),
         ];
     }
 }
