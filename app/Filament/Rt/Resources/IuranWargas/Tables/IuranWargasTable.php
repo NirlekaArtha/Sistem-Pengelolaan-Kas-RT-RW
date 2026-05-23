@@ -3,6 +3,7 @@
 namespace App\Filament\Rt\Resources\IuranWargas\Tables;
 
 use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
@@ -15,27 +16,37 @@ class IuranWargasTable
     {
         return $table
             ->columns([
-                TextColumn::make('id_warga')
-                    ->numeric()
+                TextColumn::make("warga.nama_kepala_keluarga")
+                    ->label("Nama Warga")
                     ->sortable(),
-                TextColumn::make('id_jenis_iuran')
-                    ->numeric()
+                TextColumn::make("jenisIuran.jenis_iuran")
+                    ->label("Jenis Iuran")
                     ->sortable(),
-                TextColumn::make('id_rt')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('periode')
-                    ->searchable(),
-                TextColumn::make('tanggal_bayar')
-                    ->date()
-                    ->sortable(),
-                TextColumn::make('status')
-                    ->badge(),
-                TextColumn::make('created_at')
+                TextColumn::make("status")
+                    ->badge()
+                    ->color(
+                        fn(string $state): string => match ($state) {
+                            "belum bayar" => "warning",
+                            "dibayar" => "success",
+                            "telat" => "danger",
+                            default => "gray",
+                        },
+                    )
+                    ->icon(
+                        fn(string $state): string => match ($state) {
+                            "belum bayar" => "heroicon-m-clock",
+                            "dibayar" => "heroicon-m-check-circle",
+                            "telat" => "heroicon-m-x-circle",
+                            default => "heroicon-o-question-mark-circle",
+                        },
+                    ),
+                TextColumn::make("periode")->searchable()->sortable(),
+                TextColumn::make("tanggal_bayar")->date()->sortable(),
+                TextColumn::make("created_at")
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('updated_at')
+                TextColumn::make("updated_at")
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -43,14 +54,13 @@ class IuranWargasTable
             ->filters([
                 //
             ])
-            ->recordActions([
-                ViewAction::make(),
-                EditAction::make(),
+            ->actions([
+                EditAction::make()->iconButton()->tooltip("Edit"),
+                DeleteAction::make()->iconButton()->tooltip("Hapus"),
             ])
+            ->actionsColumnLabel("Aksi")
             ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
+                BulkActionGroup::make([DeleteBulkAction::make()]),
             ]);
     }
 }
