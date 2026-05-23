@@ -44,7 +44,7 @@ class RtPanelProvider extends PanelProvider
                 in: app_path("Filament/Rt/Widgets"),
                 for: "App\Filament\Rt\Widgets",
             )
-            ->widgets([AccountWidget::class, FilamentInfoWidget::class])
+            ->widgets([AccountWidget::class])
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,

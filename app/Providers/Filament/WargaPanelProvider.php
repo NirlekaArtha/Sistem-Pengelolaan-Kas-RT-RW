@@ -43,7 +43,7 @@ class WargaPanelProvider extends PanelProvider
                 in: app_path("Filament/Warga/Widgets"),
                 for: "App\Filament\Warga\Widgets",
             )
-            ->widgets([AccountWidget::class, FilamentInfoWidget::class])
+            ->widgets([AccountWidget::class])
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,

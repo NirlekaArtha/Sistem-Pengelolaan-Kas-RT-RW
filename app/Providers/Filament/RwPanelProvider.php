@@ -45,7 +45,7 @@ class RwPanelProvider extends PanelProvider
                 in: app_path("Filament/Rw/Widgets"),
                 for: "App\Filament\Rw\Widgets",
             )
-            ->widgets([AccountWidget::class, FilamentInfoWidget::class])
+            ->widgets([AccountWidget::class])
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,

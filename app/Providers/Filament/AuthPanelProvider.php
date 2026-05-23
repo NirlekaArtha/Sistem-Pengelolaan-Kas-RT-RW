@@ -44,7 +44,7 @@ class AuthPanelProvider extends PanelProvider
                 in: app_path("Filament/Auth/Widgets"),
                 for: "App\Filament\Auth\Widgets",
             )
-            ->widgets([AccountWidget::class, FilamentInfoWidget::class])
+            ->widgets([AccountWidget::class])
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,

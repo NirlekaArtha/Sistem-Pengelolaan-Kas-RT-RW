@@ -2,9 +2,6 @@
 
 namespace App\Filament\Warga\Resources\IuranWargas\Tables;
 
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -15,42 +12,55 @@ class IuranWargasTable
     {
         return $table
             ->columns([
-                TextColumn::make('id_warga')
-                    ->numeric()
+                TextColumn::make('jenisIuran.jenis_iuran')
+                    ->label('Jenis Iuran')
+                    ->searchable()
                     ->sortable(),
-                TextColumn::make('id_jenis_iuran')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('id_rt')
-                    ->numeric()
-                    ->sortable(),
+
                 TextColumn::make('periode')
-                    ->searchable(),
-                TextColumn::make('tanggal_bayar')
-                    ->date()
+                    ->label('Periode')
+                    ->searchable()
                     ->sortable(),
+
+                TextColumn::make('tanggal_bayar')
+                    ->label('Tanggal Bayar')
+                    ->date('d M Y')
+                    ->placeholder('-')
+                    ->sortable(),
+
                 TextColumn::make('status')
-                    ->badge(),
-                TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->label('Status')
+                    ->badge()
+                    ->color(fn ($state): string => match ($state) {
+                        'dibayar'     => 'success',
+                        'telat'       => 'danger',
+                        'belum bayar' => 'warning',
+                        default       => 'gray',
+                    })
+                    ->icon(fn ($state): string => match ($state) {
+                        'dibayar'     => 'heroicon-m-check-circle',
+                        'telat'       => 'heroicon-m-x-circle',
+                        'belum bayar' => 'heroicon-m-clock',
+                        default       => 'heroicon-m-question-mark-circle',
+                    })
+                    ->formatStateUsing(fn ($state): string => match ($state) {
+                        'dibayar'     => 'Dibayar',
+                        'telat'       => 'Telat',
+                        'belum bayar' => 'Belum Bayar',
+                        default       => (string) $state,
+                    }),
             ])
             ->filters([
                 //
             ])
             ->recordActions([
-                ViewAction::make(),
-                EditAction::make(),
+                ViewAction::make()
+                    ->icon('heroicon-m-eye')
+                    ->iconButton()
+                    ->label('Lihat'),
             ])
-            ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
-            ]);
+            ->actionsColumnLabel('Aksi')
+            ->toolbarActions([])
+            ->defaultSort('periode', 'desc');
     }
 }
