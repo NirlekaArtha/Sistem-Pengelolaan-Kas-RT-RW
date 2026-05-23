@@ -2,10 +2,14 @@
 
 namespace App\Filament\Rt\Resources\KasBulananRTS\Tables;
 
+use App\Models\IuranWarga;
+use App\Models\KasBulananRT;
+use App\Models\KasRT;
+use App\Models\SetoranRW;
+use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
-use Filament\Actions\ViewAction;
+use Filament\Notifications\Notification;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -15,33 +19,52 @@ class KasBulananRTSTable
     {
         return $table
             ->columns([
-                TextColumn::make('id_rt')
-                    ->numeric()
+                TextColumn::make("periode")->searchable(),
+                TextColumn::make("total_pendapatan")
+                    ->prefix("Rp ")
+                    ->numeric(
+                        decimalPlaces: 0,
+                        thousandsSeparator: ",",
+                        decimalSeparator: ".",
+                    )
                     ->sortable(),
-                TextColumn::make('periode')
-                    ->searchable(),
-                TextColumn::make('total_pendapatan')
-                    ->numeric()
+                TextColumn::make("total_pengeluaran")
+                    ->prefix("Rp ")
+                    ->numeric(
+                        decimalPlaces: 0,
+                        thousandsSeparator: ",",
+                        decimalSeparator: ".",
+                    )
                     ->sortable(),
-                TextColumn::make('total_pengeluaran')
-                    ->numeric()
+                TextColumn::make("saldo_awal")
+                    ->prefix("Rp ")
+                    ->numeric(
+                        decimalPlaces: 0,
+                        thousandsSeparator: ",",
+                        decimalSeparator: ".",
+                    )
                     ->sortable(),
-                TextColumn::make('saldo_awal')
-                    ->numeric()
+                TextColumn::make("saldo_akhir")
+                    ->prefix("Rp ")
+                    ->numeric(
+                        decimalPlaces: 0,
+                        thousandsSeparator: ",",
+                        decimalSeparator: ".",
+                    )
                     ->sortable(),
-                TextColumn::make('saldo_akhir')
-                    ->numeric()
+                TextColumn::make("total_pendapatan_bersih")
+                    ->prefix("Rp ")
+                    ->numeric(
+                        decimalPlaces: 0,
+                        thousandsSeparator: ",",
+                        decimalSeparator: ".",
+                    )
                     ->sortable(),
-                TextColumn::make('total_pendapatan_bersih')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('file_path')
-                    ->searchable(),
-                TextColumn::make('created_at')
+                TextColumn::make("created_at")
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('updated_at')
+                TextColumn::make("updated_at")
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -49,14 +72,88 @@ class KasBulananRTSTable
             ->filters([
                 //
             ])
-            ->recordActions([
-                ViewAction::make(),
-                EditAction::make(),
+            ->actions([
+                Action::make("recalculate")
+                    ->label("recalculate")
+                    ->icon("heroicon-o-arrow-path")
+                    ->iconButton()
+                    ->tooltip("Kalkulasi Ulang")
+                    ->color("info")
+                    ->action(function (KasBulananRT $record) {
+                        $rtId = $record->id_rt;
+
+                        $totalPendapatanKasHarian = KasRT::where("id_rt", $rtId)
+                            ->where("tipe", "masuk")
+                            ->where("tanggal", "like", "{$record->periode}-%")
+                            ->sum("jumlah");
+
+                        $totalPengeluaranKasHarian = KasRT::where(
+                            "id_rt",
+                            $rtId,
+                        )
+                            ->where("tipe", "keluar")
+                            ->where("tanggal", "like", "{$record->periode}-%")
+                            ->sum("jumlah");
+
+                        $totalPendapatanIuranWarga = IuranWarga::join(
+                            "jenis_iuran_wargas",
+                            "iuran_wargas.id_jenis_iuran",
+                            "=",
+                            "jenis_iuran_wargas.id",
+                        )
+                            ->where("jenis_iuran_wargas.id_rt", $rtId)
+                            ->where(
+                                "iuran_wargas.tanggal_bayar",
+                                "like",
+                                "{$record->periode}-%",
+                            )
+                            ->sum("jenis_iuran_wargas.jumlah");
+
+                        $totalPengeluaranSetoranRW = SetoranRW::where(
+                            "id_rt",
+                            $rtId,
+                        )
+                            ->where("periode", $record->periode)
+                            ->where("status_validasi", "valid")
+                            ->sum("jumlah_setor");
+
+                        $record->total_pendapatan =
+                            $totalPendapatanKasHarian +
+                            $totalPendapatanIuranWarga;
+                        $record->total_pengeluaran =
+                            $totalPengeluaranKasHarian +
+                            $totalPengeluaranSetoranRW;
+                        $record->total_pendapatan_bersih =
+                            $record->total_pendapatan -
+                            $record->total_pengeluaran;
+                        $record->saldo_akhir =
+                            $record->saldo_awal +
+                            $record->total_pendapatan_bersih;
+                        $record->save();
+
+                        Notification::make()
+                            ->title("Kalkulasi Ulang Berhasil")
+                            ->body(
+                                "Data kas bulanan periode {$record->periode} telah diperbarui.",
+                            )
+                            ->success()
+                            ->send();
+                    }),
+                Action::make("export")
+                    ->label("export")
+                    ->icon("heroicon-o-arrow-down-tray")
+                    ->iconButton()
+                    ->tooltip("Export Bulanan")
+                    ->url(
+                        fn(KasBulananRT $record): string => route(
+                            "rt.kas-bulanan.preview",
+                            ["record" => $record],
+                        ),
+                    ),
             ])
+            ->actionsColumnLabel("aksi")
             ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
+                BulkActionGroup::make([DeleteBulkAction::make()]),
             ]);
     }
 }

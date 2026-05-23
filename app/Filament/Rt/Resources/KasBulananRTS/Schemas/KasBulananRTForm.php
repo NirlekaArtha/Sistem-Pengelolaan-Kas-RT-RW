@@ -9,30 +9,22 @@ class KasBulananRTForm
 {
     public static function configure(Schema $schema): Schema
     {
-        return $schema
-            ->components([
-                TextInput::make('id_rt')
-                    ->required()
-                    ->numeric(),
-                TextInput::make('periode')
-                    ->required(),
-                TextInput::make('total_pendapatan')
-                    ->required()
-                    ->numeric(),
-                TextInput::make('total_pengeluaran')
-                    ->required()
-                    ->numeric(),
-                TextInput::make('saldo_awal')
-                    ->required()
-                    ->numeric(),
-                TextInput::make('saldo_akhir')
-                    ->required()
-                    ->numeric(),
-                TextInput::make('total_pendapatan_bersih')
-                    ->required()
-                    ->numeric(),
-                TextInput::make('file_path')
-                    ->default(null),
-            ]);
+        return $schema->components([
+            TextInput::make("periode")->required(),
+            TextInput::make("total_pendapatan")
+                ->prefix("Rp")
+                ->required()
+                ->numeric(),
+            TextInput::make("total_pengeluaran")
+                ->prefix("Rp")
+                ->required()
+                ->numeric(),
+            TextInput::make("saldo_awal")->prefix("Rp")->required()->numeric(),
+            TextInput::make("saldo_akhir")->prefix("Rp")->required()->numeric(),
+            TextInput::make("total_pendapatan_bersih")
+                ->prefix("Rp")
+                ->required()
+                ->numeric(),
+        ]);
     }
 }

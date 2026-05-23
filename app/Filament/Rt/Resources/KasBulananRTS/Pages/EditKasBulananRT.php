@@ -13,9 +13,18 @@ class EditKasBulananRT extends EditRecord
 
     protected function getHeaderActions(): array
     {
-        return [
-            ViewAction::make(),
-            DeleteAction::make(),
-        ];
+        return [DeleteAction::make()];
+    }
+
+    protected function mutateFormDataBeforeCreate(array $data): array
+    {
+        $data["id_rt"] = auth()->user()?->rt?->id;
+
+        return $data;
+    }
+
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl("index");
     }
 }
