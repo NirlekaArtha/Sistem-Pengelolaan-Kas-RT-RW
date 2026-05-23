@@ -5,9 +5,7 @@ namespace App\Filament\Rt\Resources\KasRTS;
 use App\Filament\Rt\Resources\KasRTS\Pages\CreateKasRT;
 use App\Filament\Rt\Resources\KasRTS\Pages\EditKasRT;
 use App\Filament\Rt\Resources\KasRTS\Pages\ListKasRTS;
-use App\Filament\Rt\Resources\KasRTS\Pages\ViewKasRT;
 use App\Filament\Rt\Resources\KasRTS\Schemas\KasRTForm;
-use App\Filament\Rt\Resources\KasRTS\Schemas\KasRTInfolist;
 use App\Filament\Rt\Resources\KasRTS\Tables\KasRTSTable;
 use App\Models\KasRT;
 use BackedEnum;
@@ -39,21 +37,9 @@ class KasRTResource extends Resource
         return KasRTForm::configure($schema);
     }
 
-    public static function infolist(Schema $schema): Schema
-    {
-        return KasRTInfolist::configure($schema);
-    }
-
     public static function table(Table $table): Table
     {
         return KasRTSTable::configure($table);
-    }
-
-    public static function getRelations(): array
-    {
-        return [
-                //
-            ];
     }
 
     public static function getPages(): array
@@ -61,7 +47,6 @@ class KasRTResource extends Resource
         return [
             "index" => ListKasRTS::route("/"),
             "create" => CreateKasRT::route("/create"),
-            "view" => ViewKasRT::route("/{record}"),
             "edit" => EditKasRT::route("/{record}/edit"),
         ];
     }
