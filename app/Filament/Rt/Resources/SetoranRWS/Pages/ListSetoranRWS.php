@@ -3,6 +3,7 @@
 namespace App\Filament\Rt\Resources\SetoranRWS\Pages;
 
 use App\Filament\Rt\Resources\SetoranRWS\SetoranRWResource;
+use App\Filament\Rt\Resources\SetoranRWS\Widgets\SetoranRWOverview;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
 
@@ -12,8 +13,11 @@ class ListSetoranRWS extends ListRecords
 
     protected function getHeaderActions(): array
     {
-        return [
-            CreateAction::make(),
-        ];
+        return [CreateAction::make()];
+    }
+
+    protected function getHeaderWidgets(): array
+    {
+        return [SetoranRWOverview::class];
     }
 }

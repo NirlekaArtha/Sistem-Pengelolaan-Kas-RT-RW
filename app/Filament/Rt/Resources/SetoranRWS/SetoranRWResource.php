@@ -5,7 +5,6 @@ namespace App\Filament\Rt\Resources\SetoranRWS;
 use App\Filament\Rt\Resources\SetoranRWS\Pages\CreateSetoranRW;
 use App\Filament\Rt\Resources\SetoranRWS\Pages\EditSetoranRW;
 use App\Filament\Rt\Resources\SetoranRWS\Pages\ListSetoranRWS;
-use App\Filament\Rt\Resources\SetoranRWS\Pages\ViewSetoranRW;
 use App\Filament\Rt\Resources\SetoranRWS\Schemas\SetoranRWForm;
 use App\Filament\Rt\Resources\SetoranRWS\Schemas\SetoranRWInfolist;
 use App\Filament\Rt\Resources\SetoranRWS\Tables\SetoranRWSTable;
@@ -15,6 +14,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use UnitEnum;
 
 class SetoranRWResource extends Resource
@@ -40,21 +40,17 @@ class SetoranRWResource extends Resource
         return SetoranRWForm::configure($schema);
     }
 
-    public static function infolist(Schema $schema): Schema
-    {
-        return SetoranRWInfolist::configure($schema);
-    }
-
     public static function table(Table $table): Table
     {
         return SetoranRWSTable::configure($table);
     }
 
-    public static function getRelations(): array
+    public static function getEloquentQuery(): Builder
     {
-        return [
-                //
-            ];
+        return parent::getEloquentQuery()->where(
+            "id_rt",
+            auth()->user()?->rt?->id,
+        );
     }
 
     public static function getPages(): array
@@ -62,7 +58,6 @@ class SetoranRWResource extends Resource
         return [
             "index" => ListSetoranRWS::route("/"),
             "create" => CreateSetoranRW::route("/create"),
-            "view" => ViewSetoranRW::route("/{record}"),
             "edit" => EditSetoranRW::route("/{record}/edit"),
         ];
     }

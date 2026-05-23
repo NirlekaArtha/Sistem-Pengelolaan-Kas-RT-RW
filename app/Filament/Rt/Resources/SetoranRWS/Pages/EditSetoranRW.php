@@ -13,9 +13,15 @@ class EditSetoranRW extends EditRecord
 
     protected function getHeaderActions(): array
     {
-        return [
-            ViewAction::make(),
-            DeleteAction::make(),
-        ];
+        return [DeleteAction::make()];
+    }
+
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+        $data["id_rt"] = auth()->user()?->rt?->id;
+        $data["id_rw"] = auth()->user()?->rt?->id_rw;
+        $data["status_validasi"] = "pending";
+
+        return $data;
     }
 }
