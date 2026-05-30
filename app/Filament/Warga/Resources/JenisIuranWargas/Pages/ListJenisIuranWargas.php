@@ -3,7 +3,7 @@
 namespace App\Filament\Warga\Resources\JenisIuranWargas\Pages;
 
 use App\Filament\Warga\Resources\JenisIuranWargas\JenisIuranWargaResource;
-use Filament\Actions\CreateAction;
+use App\Filament\Warga\Resources\JenisIuranWargas\Widgets\JenisIuranWargaOverview;
 use Filament\Resources\Pages\ListRecords;
 
 class ListJenisIuranWargas extends ListRecords
@@ -12,8 +12,13 @@ class ListJenisIuranWargas extends ListRecords
 
     protected function getHeaderActions(): array
     {
+        return [];
+    }
+
+    protected function getHeaderWidgets(): array
+    {
         return [
-            CreateAction::make(),
+            JenisIuranWargaOverview::class,
         ];
     }
 }

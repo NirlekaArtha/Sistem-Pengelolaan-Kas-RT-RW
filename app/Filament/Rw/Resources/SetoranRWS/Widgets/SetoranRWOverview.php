@@ -17,41 +17,44 @@ class SetoranRWOverview extends BaseWidget
             return [];
         }
 
-        $currentPeriode = now()->format('Y-m');
+        $currentPeriode = now()->format("Y-m");
 
         // 1. Jumlah setoran bulan ini (yang berstatus valid)
-        $totalSetoranBulanIni = SetoranRW::where('id_rw', $rw->id)
-            ->where('periode', $currentPeriode)
-            ->where('status_validasi', 'valid')
-            ->sum('jumlah_setor');
+        $totalSetoranBulanIni = SetoranRW::where("id_rw", $rw->id)
+            ->where("periode", $currentPeriode)
+            ->where("status_validasi", "valid")
+            ->sum("jumlah_setor");
 
         // 2. Jumlah RT yang menyetor (berstatus valid)
-        $totalRt = RT::where('id_rw', $rw->id)->count();
-        $rtMenyetor = SetoranRW::where('id_rw', $rw->id)
-            ->where('periode', $currentPeriode)
-            ->where('status_validasi', 'valid')
-            ->distinct('id_rt')
-            ->count('id_rt');
+        $totalRt = RT::where("id_rw", $rw->id)->count();
+        $rtMenyetor = SetoranRW::where("id_rw", $rw->id)
+            ->where("periode", $currentPeriode)
+            ->where("status_validasi", "valid")
+            ->distinct("id_rt")
+            ->count("id_rt");
 
         // 3. Banyaknya setoran bulan ini yang berstatus pending
-        $pendingSetoranBulanIni = SetoranRW::where('id_rw', $rw->id)
-            ->where('periode', $currentPeriode)
-            ->where('status_validasi', 'pending')
+        $pendingSetoranBulanIni = SetoranRW::where("id_rw", $rw->id)
+            ->where("periode", $currentPeriode)
+            ->where("status_validasi", "pending")
             ->count();
 
         return [
-            Stat::make('Jumlah Setoran Bulan Ini', 'Rp ' . number_format($totalSetoranBulanIni, 0, ',', '.'))
-                ->description('Dari RT bulan ini')
-                ->descriptionIcon('heroicon-m-banknotes')
-                ->color('success'),
-            Stat::make('Jumlah Setoran', "{$rtMenyetor} dari {$totalRt} RT")
-                ->description('Telah terverifikasi')
-                ->descriptionIcon('heroicon-m-user-group')
-                ->color('primary'),
-            Stat::make('Jumlah Setoran Pending', $pendingSetoranBulanIni)
-                ->description('Menunggu validasi')
-                ->descriptionIcon('heroicon-m-clock')
-                ->color('warning'),
+            Stat::make(
+                "Jumlah Setoran Bulan Ini",
+                "Rp " . number_format($totalSetoranBulanIni, 0, ",", "."),
+            )
+                ->description("Dari RT bulan ini")
+                ->descriptionIcon("heroicon-m-banknotes")
+                ->color("success"),
+            Stat::make("Jumlah Setoran", "{$rtMenyetor} dari {$totalRt} RT")
+                ->description("Telah terverifikasi")
+                ->descriptionIcon("heroicon-m-user-group")
+                ->color("primary"),
+            Stat::make("Jumlah Setoran Pending", $pendingSetoranBulanIni)
+                ->description("Menunggu validasi")
+                ->descriptionIcon("heroicon-m-clock")
+                ->color("warning"),
         ];
     }
 }
