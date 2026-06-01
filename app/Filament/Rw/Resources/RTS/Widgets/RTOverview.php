@@ -8,6 +8,8 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class RTOverview extends BaseWidget
 {
+    protected int|string|array $columnSpan = 'full';
+
     protected function getStats(): array
     {
         $rw = auth()->user()?->rw;

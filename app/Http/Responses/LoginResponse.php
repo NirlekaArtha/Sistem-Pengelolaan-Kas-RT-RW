@@ -2,7 +2,7 @@
 
 namespace App\Http\Responses;
 
-use Filament\Pages\Dashboard;
+use App\Filament\Pages\RWDashboard;
 use Illuminate\Http\RedirectResponse;
 use Livewire\Features\SupportRedirects\Redirector;
 use Filament\Auth\Http\Responses\LoginResponse as BaseLoginResponse;
@@ -14,7 +14,7 @@ class LoginResponse extends BaseLoginResponse
         $role = auth()->user()->role;
 
         if ($role === "RW") {
-            return redirect()->to(Dashboard::getUrl(panel: "rw"));
+            return redirect()->to(RWDashboard::getUrl(panel: "rw"));
         } elseif ($role === "RT") {
             return redirect()->to(Dashboard::getUrl(panel: "rt"));
         } else {

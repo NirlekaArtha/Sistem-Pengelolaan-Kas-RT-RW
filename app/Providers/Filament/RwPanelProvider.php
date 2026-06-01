@@ -7,12 +7,10 @@ use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
-use Filament\Pages\Dashboard;
+use App\Filament\Pages\RWDashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
-use Filament\Widgets\AccountWidget;
-use Filament\Widgets\FilamentInfoWidget;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
@@ -40,12 +38,11 @@ class RwPanelProvider extends PanelProvider
                 in: app_path("Filament/Rw/Pages"),
                 for: "App\Filament\Rw\Pages",
             )
-            ->pages([Dashboard::class])
+            ->pages([RWDashboard::class])
             ->discoverWidgets(
                 in: app_path("Filament/Rw/Widgets"),
                 for: "App\Filament\Rw\Widgets",
             )
-            ->widgets([AccountWidget::class])
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
