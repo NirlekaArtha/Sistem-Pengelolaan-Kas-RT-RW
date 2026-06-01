@@ -2,6 +2,7 @@
 
 namespace App\Filament\Rw\Widgets;
 
+use Filament\Support\RawJs;
 use App\Models\KasBulananRW;
 use Filament\Widgets\ChartWidget;
 use Illuminate\Support\Carbon;
@@ -23,12 +24,18 @@ class ChartPengeluaranBulanan extends ChartWidget
 
     protected function getFilters(): ?array
     {
-        $currentYear = (int) date("Y");
-        return [
-            (string) $currentYear => (string) $currentYear,
-            (string) ($currentYear - 1) => (string) ($currentYear - 1),
-            (string) ($currentYear - 2) => (string) ($currentYear - 2),
-        ];
+        $years = Kasbulananrw::query()
+            ->selectRaw("LEFT(periode, 4) as tahun")
+            ->distinct()
+            ->orderBy("tahun", "desc")
+            ->pluck("tahun")
+            ->toArray();
+
+        if (empty($years)) {
+            $years = [date("Y")];
+        }
+
+        return array_combine($years, $years);
     }
 
     protected function getData(): array
@@ -53,7 +60,7 @@ class ChartPengeluaranBulanan extends ChartWidget
         $processed = $records->map(function ($record) {
             return [
                 "label" => Carbon::parse($record->periode)->translatedFormat(
-                    "M",
+                    "F",
                 ),
                 "pengeluaran" => (float) $record->total_pengeluaran / 1_000_000,
             ];
@@ -75,6 +82,43 @@ class ChartPengeluaranBulanan extends ChartWidget
             ],
             "labels" => $labels,
         ];
+    }
+
+    protected function getOptions(): RawJs
+    {
+        return RawJs::make(
+            <<<'JS'
+            {
+                scales: {
+                    y: {
+                        ticks: {
+                            callback: function(value) {
+                                return Math.round(value) + ' jt';
+                            },
+                            stepSize: 10,
+                        },
+                    },
+                },
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const jutaValue = context.parsed.y;
+                                const rupiah = jutaValue * 1_000_000;
+                                const formatted = new Intl.NumberFormat('id-ID', {
+                                    style: 'currency',
+                                    currency: 'IDR',
+                                    minimumFractionDigits: 0,
+                                }).format(rupiah);
+                                return context.dataset.label + ': ' + formatted;
+                            },
+                        },
+                    },
+                },
+            }
+            JS
+            ,
+        );
     }
 
     protected function getType(): string

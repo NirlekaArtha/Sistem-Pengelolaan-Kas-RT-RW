@@ -17,7 +17,7 @@ class RWDashboard extends BaseDashboard
 
     public function getHeading(): string|null|Htmlable
     {
-        return "Selamat Datang " . auth()->user()?->name;
+        return "Selamat Datang " . auth()->user()?->rw?->nama;
     }
 
     public function getSubheading(): string|Htmlable|null

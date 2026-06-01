@@ -11,8 +11,8 @@ class StatsKeseluruhan extends StatsOverviewWidget
 {
     protected int|string|array $columnSpan = "full";
     protected int|null|array $columns = [
-        'sm' => 2,
-        'xl' => 4,
+        "sm" => 2,
+        "xl" => 4,
     ];
 
     protected function getStats(): array
@@ -37,6 +37,9 @@ class StatsKeseluruhan extends StatsOverviewWidget
                     ->description("Belum ada data")
                     ->color("gray"),
                 Stat::make("Pengeluaran", "Rp 0")
+                    ->description("Belum ada data")
+                    ->color("gray"),
+                Stat::make("Kas Bulan ini", "Rp 0")
                     ->description("Belum ada data")
                     ->color("gray"),
             ];
@@ -139,11 +142,21 @@ class StatsKeseluruhan extends StatsOverviewWidget
             ->description("Total pengeluaran bulan ini")
             ->descriptionIcon("heroicon-m-arrow-trending-down")
             ->color("danger");
-        
+
         $kasBulanIni = (float) $latest->saldo_akhir;
-        $formattedKasBulanIni = "Rp " . number_format($kasBulanIni, 0, ",", ".");
-            
-        $kasBulanIniStat = Stat::make("Kas Bulan Ini ({$monthLabel})", $formattedKasBulanIni)->description("Saldo akhir kas bulan ini")->descriptionIcon("heroicon-m-currency-dollar")->color("info");
+        $formattedKasBulanIni =
+            "Rp " . number_format($kasBulanIni, 0, ",", ".");
+
+        $kasBulanIniStat = Stat::make(
+            "Kas Bulan Ini ({$monthLabel})",
+            $formattedKasBulanIni,
+        )
+            ->description("Saldo akhir kas bulan ini")
+            ->descriptionIcon("heroicon-m-currency-dollar")
+            ->color("info")
+            ->extraAttributes([
+                "class" => "cursor-pointer",
+            ]);
 
         return [$pendapatanStat, $labaStat, $pengeluaranStat, $kasBulanIniStat];
     }

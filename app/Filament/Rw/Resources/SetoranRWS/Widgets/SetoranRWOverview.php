@@ -50,7 +50,7 @@ class SetoranRWOverview extends BaseWidget
             Stat::make("Jumlah Setoran", "{$rtMenyetor} dari {$totalRt} RT")
                 ->description("Telah terverifikasi")
                 ->descriptionIcon("heroicon-m-user-group")
-                ->color("primary"),
+                ->color("info"),
             Stat::make("Jumlah Setoran Pending", $pendingSetoranBulanIni)
                 ->description("Menunggu validasi")
                 ->descriptionIcon("heroicon-m-clock")

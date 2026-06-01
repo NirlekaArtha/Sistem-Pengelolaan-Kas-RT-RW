@@ -30,7 +30,7 @@ class RTResource extends Resource
 
     protected static ?string $navigationLabel = "Data RT";
 
-    protected static ?string $modelLabel = "Data RT";
+    protected static ?string $modelLabel = "RT";
 
     protected static ?string $pluralModelLabel = "Data RT";
 
