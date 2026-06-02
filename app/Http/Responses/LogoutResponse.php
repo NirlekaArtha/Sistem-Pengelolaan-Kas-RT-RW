@@ -10,6 +10,6 @@ class LogoutResponse extends BaseLogoutResponse
 {
     public function toResponse($request): RedirectResponse
     {
-        return redirect()->to("auth/login");
+        return redirect()->route("login");
     }
 }

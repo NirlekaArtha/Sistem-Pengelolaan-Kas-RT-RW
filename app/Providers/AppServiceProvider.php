@@ -11,13 +11,13 @@ use App\Observers\KasRwObserver;
 use App\Observers\SetoranRwObserver;
 use App\Observers\SlipGajiObserver;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Auth\Middleware\RedirectIfAuthenticated;
 
 class AppServiceProvider extends ServiceProvider
 {
     public $singletons = [
         \Filament\Auth\Http\Responses\Contracts\LoginResponse::class =>
             \App\Http\Responses\LoginResponse::class,
-        LogoutResponse::class => NewLogoutResponse::class,
         \Filament\Auth\Http\Responses\Contracts\LogoutResponse::class =>
             \App\Http\Responses\LogoutResponse::class,
     ];
@@ -43,5 +43,18 @@ class AppServiceProvider extends ServiceProvider
         SetoranRW::observe(SetoranRwObserver::class);
         SlipGaji::observe(SlipGajiObserver::class);
         Kasbon::observe(KasbonObserver::class);
+
+        RedirectIfAuthenticated::redirectUsing(function ($request) {
+            $user = auth()->user();
+            if ($user) {
+                return match ($user->role) {
+                    "RW" => "/rw",
+                    "RT" => "/rt",
+                    "Warga" => "/warga",
+                    default => "/",
+                };
+            }
+            return "/";
+        });
     }
 }
