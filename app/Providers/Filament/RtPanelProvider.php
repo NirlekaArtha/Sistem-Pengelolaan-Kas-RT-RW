@@ -8,6 +8,7 @@ use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Pages\Dashboard;
+use App\Filament\Pages\RTDashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
@@ -39,7 +40,7 @@ class RtPanelProvider extends PanelProvider
                 in: app_path("Filament/Rt/Pages"),
                 for: "App\Filament\Rt\Pages",
             )
-            ->pages([Dashboard::class])
+            ->pages([RTDashboard::class])
             ->discoverWidgets(
                 in: app_path("Filament/Rt/Widgets"),
                 for: "App\Filament\Rt\Widgets",
