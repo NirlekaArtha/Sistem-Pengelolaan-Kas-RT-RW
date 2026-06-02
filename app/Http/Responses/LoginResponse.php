@@ -6,6 +6,7 @@ use App\Filament\Pages\RWDashboard;
 use Illuminate\Http\RedirectResponse;
 use Livewire\Features\SupportRedirects\Redirector;
 use Filament\Auth\Http\Responses\LoginResponse as BaseLoginResponse;
+use Filament\Pages\Dashboard;
 
 class LoginResponse extends BaseLoginResponse
 {

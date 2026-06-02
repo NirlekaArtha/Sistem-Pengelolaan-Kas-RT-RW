@@ -4,9 +4,7 @@ namespace App\Filament\Rw\Resources\KasBulananRWS\Tables;
 
 use App\Filament\Rw\Resources\KasBulananRWS\Pages\EditKasBulananRW;
 use App\Models\KasBulananRW;
-use App\Models\KasRW;
-use App\Models\SlipGaji;
-use App\Models\SetoranRW;
+use App\Services\KasBulananRwService;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
@@ -81,51 +79,10 @@ class KasBulananRWSTable
                     ->tooltip("Kalkulasi Ulang")
                     ->color("info")
                     ->action(function (KasBulananRW $record) {
-                        $rwId = $record->id_rw;
-
-                        $totalPendapatanKasHarian = KasRW::where("id_rw", $rwId)
-                            ->where("tipe", "masuk")
-                            ->where("tanggal", "like", "{$record->periode}-%")
-                            ->sum("jumlah");
-
-                        $totalPengeluaranKasHarian = KasRW::where(
-                            "id_rw",
-                            $rwId,
-                        )
-                            ->where("tipe", "keluar")
-                            ->where("tanggal", "like", "{$record->periode}-%")
-                            ->sum("jumlah");
-
-                        $totalPengeluaranGajiPetugas = SlipGaji::whereHas(
-                            "petugas",
-                            function ($q) use ($rwId) {
-                                $q->where("id_rw", $rwId);
-                            },
-                        )
-                            ->where("tanggal", "like", "{$record->periode}-%")
-                            ->sum("total");
-
-                        $totalPemasukanSetoranRT = SetoranRW::where(
-                            "id_rw",
-                            $rwId,
-                        )
-                            ->where("periode", $record->periode)
-                            ->where("status_validasi", "valid")
-                            ->sum("jumlah_setor");
-
-                        $record->total_pendapatan =
-                            $totalPendapatanKasHarian +
-                            $totalPemasukanSetoranRT;
-                        $record->total_pengeluaran =
-                            $totalPengeluaranKasHarian +
-                            $totalPengeluaranGajiPetugas;
-                        $record->total_pendapatan_bersih =
-                            $record->total_pendapatan -
-                            $record->total_pengeluaran;
-                        $record->saldo_akhir =
-                            $record->saldo_awal +
-                            $record->total_pendapatan_bersih;
-                        $record->save();
+                        KasBulananRwService::recalculate(
+                            $record->id_rw,
+                            $record->periode,
+                        );
 
                         Notification::make()
                             ->title("Kalkulasi Ulang Berhasil")
