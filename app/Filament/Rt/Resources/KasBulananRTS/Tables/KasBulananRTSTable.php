@@ -2,10 +2,8 @@
 
 namespace App\Filament\Rt\Resources\KasBulananRTS\Tables;
 
-use App\Models\IuranWarga;
 use App\Models\KasBulananRT;
-use App\Models\KasRT;
-use App\Models\SetoranRW;
+use App\Services\KasBulananRtService;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
@@ -80,61 +78,15 @@ class KasBulananRTSTable
                     ->tooltip("Kalkulasi Ulang")
                     ->color("info")
                     ->action(function (KasBulananRT $record) {
-                        $rtId = $record->id_rt;
-
-                        $totalPendapatanKasHarian = KasRT::where("id_rt", $rtId)
-                            ->where("tipe", "masuk")
-                            ->where("tanggal", "like", "{$record->periode}-%")
-                            ->sum("jumlah");
-
-                        $totalPengeluaranKasHarian = KasRT::where(
-                            "id_rt",
-                            $rtId,
-                        )
-                            ->where("tipe", "keluar")
-                            ->where("tanggal", "like", "{$record->periode}-%")
-                            ->sum("jumlah");
-
-                        $totalPendapatanIuranWarga = IuranWarga::join(
-                            "jenis_iuran_wargas",
-                            "iuran_wargas.id_jenis_iuran",
-                            "=",
-                            "jenis_iuran_wargas.id",
-                        )
-                            ->where("jenis_iuran_wargas.id_rt", $rtId)
-                            ->where(
-                                "iuran_wargas.tanggal_bayar",
-                                "like",
-                                "{$record->periode}-%",
-                            )
-                            ->sum("jenis_iuran_wargas.jumlah");
-
-                        $totalPengeluaranSetoranRW = SetoranRW::where(
-                            "id_rt",
-                            $rtId,
-                        )
-                            ->where("periode", $record->periode)
-                            ->where("status_validasi", "valid")
-                            ->sum("jumlah_setor");
-
-                        $record->total_pendapatan =
-                            $totalPendapatanKasHarian +
-                            $totalPendapatanIuranWarga;
-                        $record->total_pengeluaran =
-                            $totalPengeluaranKasHarian +
-                            $totalPengeluaranSetoranRW;
-                        $record->total_pendapatan_bersih =
-                            $record->total_pendapatan -
-                            $record->total_pengeluaran;
-                        $record->saldo_akhir =
-                            $record->saldo_awal +
-                            $record->total_pendapatan_bersih;
-                        $record->save();
+                        KasBulananRtService::recalculateChain(
+                            $record->id_rt,
+                            $record->periode,
+                        );
 
                         Notification::make()
-                            ->title("Kalkulasi Ulang Berhasil")
+                            ->title('Kalkulasi Ulang Berhasil')
                             ->body(
-                                "Data kas bulanan periode {$record->periode} telah diperbarui.",
+                                "Data kas bulanan periode {$record->periode} dan bulan-bulan setelahnya telah diperbarui.",
                             )
                             ->success()
                             ->send();

@@ -18,6 +18,15 @@ class KasBulananRwService
      * Mirrors the manual "recalculate" action in KasBulananRWSTable.
      * Uses saveQuietly() to prevent re-triggering observer chains.
      *
+     * Formula:
+     *   Pendapatan  = kas harian masuk + setoran RT (valid)
+     *   Pengeluaran = kas harian keluar
+     *                 + slip gaji petugas (tgl 26 bulan lalu s/d tgl 25 bulan ini)
+     *                 + kasbon petugas   (rentang yang sama)
+     *
+     * saldo_awal is automatically inherited from the previous month's saldo_akhir
+     * if a previous-month record exists for the same RW.
+     *
      * @param  int    $rwId    The RW's primary key
      * @param  string $periode Period in YYYY-MM format
      */
@@ -32,6 +41,19 @@ class KasBulananRwService
             return;
         }
 
+        // ── Inherit saldo_awal from previous month's saldo_akhir ─────────────
+        $prevPeriode = \Carbon\Carbon::createFromFormat('Y-m', $periode)
+            ->subMonth()
+            ->format('Y-m');
+
+        $prevRecord = KasBulananRW::where('id_rw', $rwId)
+            ->where('periode', $prevPeriode)
+            ->first();
+
+        if ($prevRecord) {
+            $record->saldo_awal = $prevRecord->saldo_akhir;
+        }
+
         // ── Pendapatan ───────────────────────────────────────────────────────
         $totalPendapatanKasHarian = KasRW::where("id_rw", $rwId)
             ->where("tipe", "masuk")
@@ -43,21 +65,44 @@ class KasBulananRwService
             ->where("status_validasi", "valid")
             ->sum("jumlah_setor");
 
+        // ── Rentang tanggal penggajian: tgl 26 bulan lalu s/d tgl 25 bulan ini ─
+        $periodeCarbon  = Carbon::createFromFormat('Y-m', $periode);
+        $gajiStartDate  = $periodeCarbon->copy()->subMonth()->day(26)->toDateString(); // tgl 26 bulan lalu
+        $gajiEndDate    = $periodeCarbon->copy()->day(25)->toDateString();             // tgl 25 bulan ini
+
         // ── Pengeluaran ──────────────────────────────────────────────────────
         $totalPengeluaranKasHarian = KasRW::where("id_rw", $rwId)
             ->where("tipe", "keluar")
             ->where("tanggal", "like", "{$periode}-%")
             ->sum("jumlah");
 
-        $totalPengeluaranGajiPetugas = Petugas::all()
-            ->where("id_rw", $rwId)
-            ->sum("gaji_pokok");
+        // Gaji petugas: ambil dari slip_gajis yang tanggalnya dalam rentang penggajian
+        $totalPengeluaranGajiPetugas = SlipGaji::join(
+                'petugas',
+                'slip_gajis.id_petugas',
+                '=',
+                'petugas.id',
+            )
+            ->where('petugas.id_rw', $rwId)
+            ->whereBetween('slip_gajis.tanggal', [$gajiStartDate, $gajiEndDate])
+            ->sum('slip_gajis.total');
+
+        // Kasbon petugas: dalam rentang penggajian yang sama
+        $totalKasbonPetugas = Kasbon::join(
+                'petugas',
+                'kasbons.id_petugas',
+                '=',
+                'petugas.id',
+            )
+            ->where('petugas.id_rw', $rwId)
+            ->whereBetween('kasbons.tanggal', [$gajiStartDate, $gajiEndDate])
+            ->sum('kasbons.jumlah');
 
         // ── Write back ───────────────────────────────────────────────────────
         $record->total_pendapatan =
             $totalPendapatanKasHarian + $totalPemasukanSetoranRT;
         $record->total_pengeluaran =
-            $totalPengeluaranKasHarian + $totalPengeluaranGajiPetugas;
+            $totalPengeluaranKasHarian + $totalPengeluaranGajiPetugas + $totalKasbonPetugas;
         $record->total_pendapatan_bersih =
             $record->total_pendapatan - $record->total_pengeluaran;
         $record->saldo_akhir =
@@ -65,6 +110,29 @@ class KasBulananRwService
 
         // saveQuietly() prevents re-firing the KasBulananRW saved/updated events.
         $record->saveQuietly();
+    }
+
+    /**
+     * Recalculate KasBulananRW for a given period and all subsequent periods
+     * for the same RW, in chronological order.
+     *
+     * Because each month's saldo_awal is derived from the previous month's
+     * saldo_akhir, recalculating from a given month forward ensures the entire
+     * chain stays consistent.
+     *
+     * @param  int    $rwId        The RW's primary key
+     * @param  string $fromPeriode Starting period (YYYY-MM) — inclusive
+     */
+    public static function recalculateChain(int $rwId, string $fromPeriode): void
+    {
+        $records = KasBulananRW::where('id_rw', $rwId)
+            ->where('periode', '>=', $fromPeriode)
+            ->orderBy('periode', 'asc')
+            ->get();
+
+        foreach ($records as $record) {
+            static::recalculate($rwId, $record->periode);
+        }
     }
 
     /**

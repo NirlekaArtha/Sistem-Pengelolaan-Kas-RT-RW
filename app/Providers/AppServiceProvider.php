@@ -2,16 +2,25 @@
 
 namespace App\Providers;
 
+use App\Models\IuranWarga;
 use App\Models\Kasbon;
+use App\Models\KasBulananRT;
+use App\Models\KasBulananRW;
+use App\Models\KasRT;
 use App\Models\KasRW;
 use App\Models\SetoranRW;
 use App\Models\SlipGaji;
+use App\Observers\IuranWargaObserver;
 use App\Observers\KasbonObserver;
+use App\Observers\KasBulananRtObserver;
+use App\Observers\KasBulananRwObserver;
+use App\Observers\KasRtObserver;
 use App\Observers\KasRwObserver;
+use App\Observers\SetoranRtObserver;
 use App\Observers\SetoranRwObserver;
 use App\Observers\SlipGajiObserver;
-use Illuminate\Support\ServiceProvider;
 use Illuminate\Auth\Middleware\RedirectIfAuthenticated;
+use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -39,10 +48,19 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // ── RW observers ──────────────────────────────────────────────────────
         KasRW::observe(KasRwObserver::class);
         SetoranRW::observe(SetoranRwObserver::class);
         SlipGaji::observe(SlipGajiObserver::class);
         Kasbon::observe(KasbonObserver::class);
+        KasBulananRW::observe(KasBulananRwObserver::class);
+
+        // ── RT observers ──────────────────────────────────────────────────────
+        KasRT::observe(KasRtObserver::class);
+        IuranWarga::observe(IuranWargaObserver::class);
+        // SetoranRW also triggers RT recalculation (from RT's perspective)
+        SetoranRW::observe(SetoranRtObserver::class);
+        KasBulananRT::observe(KasBulananRtObserver::class);
 
         RedirectIfAuthenticated::redirectUsing(function ($request) {
             $user = auth()->user();
