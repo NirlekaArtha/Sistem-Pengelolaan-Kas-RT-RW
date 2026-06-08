@@ -7,7 +7,7 @@ use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
-use Filament\Pages\Dashboard;
+use App\Filament\Pages\WargaDashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
@@ -38,7 +38,7 @@ class WargaPanelProvider extends PanelProvider
                 in: app_path("Filament/Warga/Pages"),
                 for: "App\Filament\Warga\Pages",
             )
-            ->pages([Dashboard::class])
+            ->pages([WargaDashboard::class])
             ->discoverWidgets(
                 in: app_path("Filament/Warga/Widgets"),
                 for: "App\Filament\Warga\Widgets",
