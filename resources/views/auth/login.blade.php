@@ -17,7 +17,7 @@
 <body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 min-h-screen flex flex-col justify-center items-center p-6 transition-colors duration-200">
 
     <div class="absolute top-4 right-4">
-        <button id="theme-toggle" class="p-2 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm text-amber-500 dark:text-purple-400 hover:bg-slate-100 dark:hover:bg-slate-800 focus:outline-hidden cursor-pointer">
+        <button id="theme-toggle" class="p-2 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm text-[#2563EB] dark:text-purple-400 hover:bg-slate-100 dark:hover:bg-slate-800 focus:outline-hidden cursor-pointer">
             <svg id="theme-toggle-sun" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 14.121l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zm-.707-11.314a1 1 0 011.414 0l.707.707a1 1 0 11-1.414 1.414l-.707-.707a1 1 0 010-1.414zM4 11a1 1 0 100-2H3a1 1 0 100 2h1z"></path></svg>
             <svg id="theme-toggle-moon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 116.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
         </button>
@@ -40,7 +40,7 @@
             <div>
                 <label for="login" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Username atau Email</label>
                 <input type="text" name="login" id="login" value="{{ old('login') }}" required autofocus
-                    class="w-full px-4 py-2.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-transparent focus:ring-2 focus:ring-amber-500 focus:border-amber-500 focus:outline-hidden text-sm dark:text-white transition duration-150 @error('login') border-red-500 dark:border-red-500 @enderror">
+                    class="w-full px-4 py-2.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-transparent focus:ring-2 focus:ring-[#2563EB] focus:border-[#2563EB] focus:outline-hidden text-sm dark:text-white transition duration-150 @error('login') border-red-500 dark:border-red-500 @enderror">
                 @error('login')
                     <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
                 @enderror
@@ -50,7 +50,7 @@
                 <label for="password" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Password</label>
                 <div class="relative">
                     <input type="password" name="password" id="password" required
-                        class="w-full pl-4 pr-10 py-2.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-transparent focus:ring-2 focus:ring-amber-500 focus:border-amber-500 focus:outline-hidden text-sm dark:text-white transition duration-150">
+                        class="w-full pl-4 pr-10 py-2.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-transparent focus:ring-2 focus:ring-[#2563EB] focus:border-[#2563EB] focus:outline-hidden text-sm dark:text-white transition duration-150">
 
                     <button type="button" id="toggle-password" class="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 focus:outline-none cursor-pointer">
                         <svg id="eye-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -66,13 +66,13 @@
 
             <div class="flex items-center justify-between">
                 <label class="inline-flex items-center text-sm text-slate-600 dark:text-slate-400 cursor-pointer select-none">
-                    <input type="checkbox" name="remember" class="rounded border-slate-300 text-amber-500 focus:ring-amber-500 dark:bg-slate-800 dark:border-slate-700 mr-2">
+                    <input type="checkbox" name="remember" class="rounded border-slate-300 text-[#2563EB] focus:ring-[#2563EB] dark:bg-slate-800 dark:border-slate-700 mr-2">
                     Ingat Saya
                 </label>
             </div>
 
             <button type="submit"
-                class="w-full py-2.5 px-4 font-semibold text-sm bg-amber-500 hover:bg-amber-600 active:bg-amber-700 text-white rounded-lg shadow-sm focus:outline-hidden focus:ring-2 focus:ring-offset-2 focus:ring-amber-500 cursor-pointer transition duration-150">
+                class="w-full py-2.5 px-4 font-semibold text-sm bg-[#2563EBDD] hover:bg-[#2563EBFF] active:bg-[#2563EBAA] text-white rounded-lg shadow-sm focus:outline-hidden focus:ring-2 focus:ring-offset-2 focus:ring-[#2563EB] cursor-pointer transition duration-150">
                 Masuk
             </button>
         </form>

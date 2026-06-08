@@ -30,7 +30,7 @@ class RtPanelProvider extends PanelProvider
             ->path("rt")
             ->navigationGroups(["Data Master", "Transaksi", "Laporan & Rekap"])
             ->colors([
-                "primary" => Color::Amber,
+                "primary" => "#2563EB",
             ])
             ->discoverResources(
                 in: app_path("Filament/Rt/Resources"),

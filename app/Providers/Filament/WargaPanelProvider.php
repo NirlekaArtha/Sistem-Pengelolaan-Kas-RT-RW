@@ -28,7 +28,7 @@ class WargaPanelProvider extends PanelProvider
             ->id("warga")
             ->path("warga")
             ->colors([
-                "primary" => Color::Amber,
+                "primary" => "#2563EB",
             ])
             ->discoverResources(
                 in: app_path("Filament/Warga/Resources"),
