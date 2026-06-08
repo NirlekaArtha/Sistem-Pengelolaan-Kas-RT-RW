@@ -64,7 +64,9 @@ class RT extends Model
 
     public function setoranRWs(): HasMany
     {
-        return $this->hasMany(SetoranRW::class, 'id_rt');
+        return $this->hasMany(SetoranRW::class, 'id_rt')
+            ->orderByDesc('periode')
+            ->orderByDesc('tanggal_setor');
     }
 
     public function jenisIuranWargas(): HasMany

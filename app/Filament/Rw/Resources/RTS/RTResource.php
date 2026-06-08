@@ -5,6 +5,7 @@ namespace App\Filament\Rw\Resources\RTS;
 use App\Filament\Rw\Resources\RTS\Pages\CreateRT;
 use App\Filament\Rw\Resources\RTS\Pages\EditRT;
 use App\Filament\Rw\Resources\RTS\Pages\ListRTS;
+use App\Filament\Rw\Resources\RTS\Pages\ViewRT;
 use App\Filament\Rw\Resources\RTS\Schemas\RTForm;
 use App\Filament\Rw\Resources\RTS\Tables\RTSTable;
 use App\Filament\Rw\Resources\RTS\Widgets\RTOverview;
@@ -73,6 +74,7 @@ class RTResource extends Resource
             "index" => ListRTS::route("/"),
             "create" => CreateRT::route("/create"),
             "edit" => EditRT::route("/{record}/edit"),
+            "view" => ViewRT::route("/{record}"),
         ];
     }
 }

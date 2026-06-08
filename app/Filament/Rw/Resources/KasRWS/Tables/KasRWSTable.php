@@ -16,28 +16,33 @@ class KasRWSTable
     {
         return $table
             ->columns([
-                TextColumn::make('tipe')
+                TextColumn::make("tipe")
                     ->badge()
-                    ->color(fn (string $state): string => match ($state) {
-                        'masuk' => 'success',
-                        'keluar' => 'danger',
-                        default => 'gray',
-                    })
-                    ->icon(fn (string $state): string => match ($state) {
-                        'masuk' => 'heroicon-o-arrow-trending-up',
-                        'keluar' => 'heroicon-o-arrow-trending-down',
-                        default => 'heroicon-o-question-mark-circle',
-                    }),
-                TextColumn::make('jenis')
-                    ->badge()
-                    ->color('info'),
-                TextColumn::make('jumlah')
-                    ->prefix('Rp ')
-                    ->numeric(decimalPlaces: 0, thousandsSeparator: ',', decimalSeparator: '.')
+                    ->color(
+                        fn(string $state): string => match ($state) {
+                            "masuk" => "success",
+                            "keluar" => "danger",
+                            default => "gray",
+                        },
+                    )
+                    ->icon(
+                        fn(string $state): string => match ($state) {
+                            "masuk" => "heroicon-o-arrow-trending-up",
+                            "keluar" => "heroicon-o-arrow-trending-down",
+                            default => "heroicon-o-question-mark-circle",
+                        },
+                    ),
+                TextColumn::make("jenis")->badge()->color("info"),
+                TextColumn::make("jumlah")
+                    ->prefix("Rp ")
+                    ->numeric(
+                        decimalPlaces: 0,
+                        thousandsSeparator: ",",
+                        decimalSeparator: ".",
+                    )
                     ->sortable(),
-                TextColumn::make('sumber_tujuan')
-                    ->searchable(),
-                TextColumn::make('keterangan')
+                TextColumn::make("sumber_tujuan")->searchable(),
+                TextColumn::make("keterangan")
                     ->searchable()
                     ->limit(20)
                     ->tooltip(function (TextColumn $column): ?string {
@@ -47,34 +52,26 @@ class KasRWSTable
                         }
                         return $state;
                     }),
-                TextColumn::make('tanggal')
-                    ->date()
-                    ->sortable(),
-                TextColumn::make('created_at')
+                TextColumn::make("tanggal")->date()->sortable(),
+                TextColumn::make("created_at")
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('updated_at')
+                TextColumn::make("updated_at")
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
-            ->filters([
-                //
-            ])
+            // ->recordUrl(null)
             ->actions([
-                EditAction::make()
-                    ->iconButton()
-                    ->tooltip('Edit'),
-                DeleteAction::make()
-                    ->iconButton()
-                    ->tooltip('Hapus'),
+                ViewAction::make()->iconButton()->tooltip("Lihat"),
+                EditAction::make()->iconButton()->tooltip("Edit"),
+                DeleteAction::make()->iconButton()->tooltip("Hapus"),
             ])
-            ->actionsColumnLabel('Aksi')
+            ->recordAction("view")
+            ->actionsColumnLabel("Aksi")
             ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
+                BulkActionGroup::make([DeleteBulkAction::make()]),
             ]);
     }
 }

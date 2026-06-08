@@ -2,12 +2,13 @@
 
 namespace App\Filament\Rw\Resources\KasBulananRWS\Tables;
 
-use App\Filament\Rw\Resources\KasBulananRWS\Pages\EditKasBulananRW;
+use App\Filament\Rw\Resources\KasBulananRWS\Pages\ViewKasBulananRW;
 use App\Models\KasBulananRW;
 use App\Services\KasBulananRwService;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\ViewAction;
 use Filament\Notifications\Notification;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -72,6 +73,8 @@ class KasBulananRWSTable
                 //
             ])
             ->actions([
+                ViewAction::make()->iconButton(),
+
                 Action::make("recalculate")
                     ->label("recalculate")
                     ->icon("heroicon-o-arrow-path")
@@ -92,6 +95,7 @@ class KasBulananRWSTable
                             ->success()
                             ->send();
                     }),
+
                 Action::make("export")
                     ->label("export")
                     ->icon("heroicon-o-arrow-down-tray")
@@ -104,13 +108,13 @@ class KasBulananRWSTable
                         ),
                     ),
             ])
-            ->actionsColumnLabel("aksi")
+            ->actionsColumnLabel("Aksi")
             ->toolbarActions([
                 BulkActionGroup::make([DeleteBulkAction::make()]),
             ])
             ->defaultSort("periode", "desc")
             ->recordUrl(
-                fn(KasBulananRW $record): string => EditKasBulananRW::getUrl([
+                fn(KasBulananRW $record): string => ViewKasBulananRW::getUrl([
                     "record" => $record,
                 ]),
             );

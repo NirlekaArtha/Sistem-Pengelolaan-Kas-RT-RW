@@ -2,12 +2,13 @@
 
 namespace App\Filament\Rw\Resources\Petugas\Tables;
 
-use App\Filament\Rw\Resources\Petugas\Pages\EditPetugas;
+use App\Filament\Rw\Resources\Petugas\Pages\ViewPetugas;
 use App\Models\Petugas;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -56,12 +57,13 @@ class PetugasTable
                 //
             ])
             ->actions([
+                ViewAction::make()->iconButton()->tooltip("Lihat"),
                 EditAction::make()->iconButton()->tooltip("Edit"),
                 DeleteAction::make()->iconButton()->tooltip("Hapus"),
             ])
             ->actionsColumnLabel("Aksi")
             ->recordUrl(
-                fn(Petugas $record): string => EditPetugas::getUrl([
+                fn(Petugas $record): string => ViewPetugas::getUrl([
                     "record" => $record,
                 ]),
             )

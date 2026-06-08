@@ -5,6 +5,7 @@ namespace App\Filament\Rw\Resources\Petugas\Schemas;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 
 class PetugasForm
@@ -16,16 +17,33 @@ class PetugasForm
                 Hidden::make('id_rw')
                     ->default(fn () => auth()->user()?->rw?->id)
                     ->required(),
-                Select::make('tugas')
-                    ->options(['satpam' => 'Satpam', 'kebersihan' => 'Kebersihan', 'sampah' => 'Sampah'])
-                    ->required(),
-                TextInput::make('nama')
-                    ->required(),
-                TextInput::make('alamat')
-                    ->required(),
-                TextInput::make('gaji_pokok')
-                    ->required()
-                    ->numeric(),
+
+                Section::make('Data Petugas')
+                    ->description('Informasi utama petugas RW')
+                    ->icon('heroicon-o-identification')
+                    ->columns(2)
+                    ->schema([
+                        Select::make('tugas')
+                            ->options(['satpam' => 'Satpam', 'kebersihan' => 'Kebersihan', 'sampah' => 'Sampah'])
+                            ->required(),
+
+                        TextInput::make('nama')
+                            ->required(),
+
+                        TextInput::make('alamat')
+                            ->required()
+                            ->columnSpanFull(),
+                    ]),
+
+                Section::make('Penggajian')
+                    ->description('Nominal gaji pokok petugas')
+                    ->icon('heroicon-o-banknotes')
+                    ->schema([
+                        TextInput::make('gaji_pokok')
+                            ->prefix('Rp')
+                            ->required()
+                            ->numeric(),
+                    ]),
             ]);
     }
 }

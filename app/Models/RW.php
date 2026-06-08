@@ -60,4 +60,11 @@ class RW extends Model
     {
         return $this->hasMany(KasBulananRW::class, 'id_rw');
     }
+
+    public function setoranRWs(): HasMany
+    {
+        return $this->hasMany(SetoranRW::class, 'id_rw')
+            ->orderByDesc('periode')
+            ->orderByDesc('tanggal_setor');
+    }
 }
