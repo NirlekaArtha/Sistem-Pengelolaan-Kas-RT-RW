@@ -2,15 +2,10 @@
 
 namespace Database\Seeders;
 
-use App\Models\IuranWarga;
 use App\Models\JenisIuranWarga;
-use App\Models\KasBulananRT;
-use App\Models\KasBulananRW;
 use App\Models\KasRT;
 use App\Models\KasRW;
 use App\Models\Kasbon;
-use App\Models\KwitansiIuranWarga;
-use App\Models\KwitansiSetoranRW;
 use App\Models\Petugas;
 use App\Models\RT;
 use App\Models\RW;
@@ -154,6 +149,7 @@ class DatabaseSeeder extends Seeder
         return collect(range(1, 4))->map(function ($i) use ($rw) {
             $rtName = fake()->name();
             $userRt = User::factory()->create([
+                "email" => "rt{$i}_{$rw->nomor_rw}@gmail.com",
                 "name" => $rtName,
                 "role" => "RT",
             ]);
@@ -198,7 +194,7 @@ class DatabaseSeeder extends Seeder
 
         // Warga per RT
         $rts->each(function ($rt) {
-            Warga::factory(10)
+            Warga::factory(30)
                 ->make(["id_rt" => $rt->id])
                 ->each(function ($warga) {
                     $name = fake()->name();
@@ -217,8 +213,8 @@ class DatabaseSeeder extends Seeder
                 ->create([
                     "id_rt" => $rt->id,
                     "tanggal" => fn() => fake()->dateTimeBetween(
-                        "2025-06-01",
-                        "2026-07-31",
+                        "2025-07-01",
+                        "2026-06-30",
                     ),
                 ]);
             KasRT::factory(6)
@@ -226,8 +222,8 @@ class DatabaseSeeder extends Seeder
                 ->create([
                     "id_rt" => $rt->id,
                     "tanggal" => fn() => fake()->dateTimeBetween(
-                        "2025-06-01",
-                        "2026-07-31",
+                        "2025-07-01",
+                        "2026-06-30",
                     ),
                 ]);
         });
@@ -263,7 +259,7 @@ class DatabaseSeeder extends Seeder
                 foreach ($jenisIurans as $jenis) {
                     $status = fake()->randomElement($statusOptions);
                     $tanggalBayar =
-                        $status !== "belum bayar"
+                        $status === "dibayar"
                             ? "$periode-" . fake()->numberBetween(1, 28)
                             : null;
 
@@ -399,10 +395,17 @@ class DatabaseSeeder extends Seeder
                 "tanggal" => fn() => "$periode-" . fake()->numberBetween(1, 28),
             ]);
 
+            $periodeCarbon = Carbon::createFromFormat("Y-m", $periode);
+            $gajiStart = $periodeCarbon
+                ->copy()
+                ->subMonth()
+                ->day(26)
+                ->toDateString();
+            $gajiEnd = $periodeCarbon->copy()->day(25)->toDateString();
+
             $kasbonTotal = $p
                 ->kasbons()
-                ->whereYear("tanggal", $year)
-                ->whereMonth("tanggal", $month)
+                ->whereBetween("tanggal", [$gajiStart, $gajiEnd])
                 ->sum("jumlah");
 
             $slipRows[] = [
@@ -429,6 +432,13 @@ class DatabaseSeeder extends Seeder
         float $saldoAwal,
     ): float {
         $now = now();
+        $periodeCarbon = Carbon::createFromFormat("Y-m", $periode);
+        $gajiStart = $periodeCarbon
+            ->copy()
+            ->subMonth()
+            ->day(26)
+            ->toDateString();
+        $gajiEnd = $periodeCarbon->copy()->day(25)->toDateString();
 
         $totalKasMasukRW = KasRW::where("id_rw", $rw->id)
             ->where("tipe", "masuk")
@@ -445,15 +455,13 @@ class DatabaseSeeder extends Seeder
         $totalSlipGaji = DB::table("slip_gajis")
             ->join("petugas", "slip_gajis.id_petugas", "=", "petugas.id")
             ->where("petugas.id_rw", $rw->id)
-            ->whereYear("slip_gajis.tanggal", $year)
-            ->whereMonth("slip_gajis.tanggal", $month)
+            ->whereBetween("slip_gajis.tanggal", [$gajiStart, $gajiEnd])
             ->sum("slip_gajis.total");
 
         $totalKasbon = DB::table("kasbons")
             ->join("petugas", "kasbons.id_petugas", "=", "petugas.id")
             ->where("petugas.id_rw", $rw->id)
-            ->whereYear("kasbons.tanggal", $year)
-            ->whereMonth("kasbons.tanggal", $month)
+            ->whereBetween("kasbons.tanggal", [$gajiStart, $gajiEnd])
             ->sum("kasbons.jumlah");
 
         $totalSetoranMasuk = SetoranRW::where("id_rw", $rw->id)

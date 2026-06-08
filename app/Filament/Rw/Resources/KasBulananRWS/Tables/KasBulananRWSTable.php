@@ -79,7 +79,7 @@ class KasBulananRWSTable
                     ->tooltip("Kalkulasi Ulang")
                     ->color("info")
                     ->action(function (KasBulananRW $record) {
-                        KasBulananRwService::recalculate(
+                        KasBulananRwService::recalculateChain(
                             $record->id_rw,
                             $record->periode,
                         );
@@ -87,7 +87,7 @@ class KasBulananRWSTable
                         Notification::make()
                             ->title("Kalkulasi Ulang Berhasil")
                             ->body(
-                                "Data kas bulanan periode {$record->periode} telah diperbarui.",
+                                "Data kas bulanan periode {$record->periode} dan bulan-bulan setelahnya telah diperbarui.",
                             )
                             ->success()
                             ->send();
