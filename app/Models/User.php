@@ -4,18 +4,26 @@ namespace App\Models;
 
 use Database\Factories\UserFactory;
 use Filament\Models\Contracts\FilamentUser;
+use Filament\Models\Contracts\HasAvatar;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Storage;
 use Filament\Panel;
 
-class User extends Authenticatable implements FilamentUser
+class User extends Authenticatable implements FilamentUser, HasAvatar
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
 
-    protected $fillable = ["name", "email", "role", "password"];
+    protected $fillable = [
+        "name",
+        "email",
+        "role",
+        "password",
+        "profile_picture",
+    ];
 
     protected $hidden = ["password", "remember_token"];
 
@@ -52,5 +60,37 @@ class User extends Authenticatable implements FilamentUser
     public function rw(): HasOne
     {
         return $this->hasOne(RW::class, "id_user");
+    }
+
+    public function profileRecord(): RW|RT|Warga|null
+    {
+        return match ($this->role) {
+            "RW" => $this->rw,
+            "RT" => $this->rt,
+            "Warga" => $this->warga,
+            default => null,
+        };
+    }
+
+    protected static function booted(): void
+    {
+        static::updating(function (User $user): void {
+            if (!$user->isDirty("profile_picture")) {
+                return;
+            }
+
+            $originalProfilePicture = $user->getOriginal("profile_picture");
+
+            if (filled($originalProfilePicture)) {
+                Storage::disk("public")->delete($originalProfilePicture);
+            }
+        });
+    }
+
+    public function getFilamentAvatarUrl(): ?string
+    {
+        return $this->profile_picture
+            ? Storage::url($this->profile_picture)
+            : null;
     }
 }

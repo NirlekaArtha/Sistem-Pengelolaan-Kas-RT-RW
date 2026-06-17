@@ -3,10 +3,12 @@
 namespace App\Providers\Filament;
 
 use App\Http\Middleware\RedirectToProperPanel;
+use App\Filament\Pages\ProfilePage;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Navigation\MenuItem;
 use Filament\Pages\Dashboard;
 use App\Filament\Pages\RTDashboard;
 use Filament\Panel;
@@ -32,6 +34,13 @@ class RtPanelProvider extends PanelProvider
             ->colors([
                 "primary" => "#2563EB",
             ])
+            ->viteTheme("resources/css/filament/theme.css")
+            ->userMenuItems([
+                "profile" => MenuItem::make()
+                    ->label("Profil")
+                    ->icon("heroicon-o-user")
+                    ->url(fn(): string => ProfilePage::getUrl()),
+            ])
             ->discoverResources(
                 in: app_path("Filament/Rt/Resources"),
                 for: "App\Filament\Rt\Resources",
@@ -40,7 +49,7 @@ class RtPanelProvider extends PanelProvider
                 in: app_path("Filament/Rt/Pages"),
                 for: "App\Filament\Rt\Pages",
             )
-            ->pages([RTDashboard::class])
+            ->pages([RTDashboard::class, ProfilePage::class])
             ->discoverWidgets(
                 in: app_path("Filament/Rt/Widgets"),
                 for: "App\Filament\Rt\Widgets",

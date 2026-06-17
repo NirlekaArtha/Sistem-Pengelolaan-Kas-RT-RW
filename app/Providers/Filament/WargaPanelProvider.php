@@ -3,11 +3,13 @@
 namespace App\Providers\Filament;
 
 use App\Http\Middleware\RedirectToProperPanel;
+use App\Filament\Pages\ProfilePage;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use App\Filament\Pages\WargaDashboard;
+use Filament\Navigation\MenuItem;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
@@ -30,6 +32,13 @@ class WargaPanelProvider extends PanelProvider
             ->colors([
                 "primary" => "#2563EB",
             ])
+            ->viteTheme("resources/css/filament/theme.css")
+            ->userMenuItems([
+                "profile" => MenuItem::make()
+                    ->label("Profil")
+                    ->icon("heroicon-o-user")
+                    ->url(fn(): string => ProfilePage::getUrl()),
+            ])
             ->discoverResources(
                 in: app_path("Filament/Warga/Resources"),
                 for: "App\Filament\Warga\Resources",
@@ -38,7 +47,7 @@ class WargaPanelProvider extends PanelProvider
                 in: app_path("Filament/Warga/Pages"),
                 for: "App\Filament\Warga\Pages",
             )
-            ->pages([WargaDashboard::class])
+            ->pages([WargaDashboard::class, ProfilePage::class])
             ->discoverWidgets(
                 in: app_path("Filament/Warga/Widgets"),
                 for: "App\Filament\Warga\Widgets",
