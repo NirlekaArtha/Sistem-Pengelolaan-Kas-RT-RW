@@ -9,11 +9,11 @@ class SetoranRwObserver
 {
     /**
      * Handle the SetoranRW "created" event.
-     * Recalculate KasBulananRW for the setoran's period.
+     * RecalculateChain KasBulananRW for the setoran's period.
      */
     public function created(SetoranRW $setoranRW): void
     {
-        KasBulananRwService::recalculate(
+        KasBulananRwService::recalculateChain(
             $setoranRW->id_rw,
             $setoranRW->periode,
         );
@@ -22,7 +22,7 @@ class SetoranRwObserver
     /**
      * Handle the SetoranRW "updated" event.
      * If periode, id_rw, jumlah_setor, or status_validasi changed,
-     * recalculate the old period/RW as well.
+     * recalculateChain the old period/RW as well.
      */
     public function updated(SetoranRW $setoranRW): void
     {
@@ -33,10 +33,10 @@ class SetoranRwObserver
             $oldRwId = $setoranRW->getOriginal("id_rw") ?? $setoranRW->id_rw;
             $oldPeriode =
                 $setoranRW->getOriginal("periode") ?? $setoranRW->periode;
-            KasBulananRwService::recalculate($oldRwId, $oldPeriode);
+            KasBulananRwService::recalculateChain($oldRwId, $oldPeriode);
         }
 
-        KasBulananRwService::recalculate(
+        KasBulananRwService::recalculateChain(
             $setoranRW->id_rw,
             $setoranRW->periode,
         );
@@ -44,11 +44,11 @@ class SetoranRwObserver
 
     /**
      * Handle the SetoranRW "deleted" event.
-     * Recalculate KasBulananRW for the period the deleted setoran belonged to.
+     * RecalculateChain KasBulananRW for the period the deleted setoran belonged to.
      */
     public function deleted(SetoranRW $setoranRW): void
     {
-        KasBulananRwService::recalculate(
+        KasBulananRwService::recalculateChain(
             $setoranRW->id_rw,
             $setoranRW->periode,
         );

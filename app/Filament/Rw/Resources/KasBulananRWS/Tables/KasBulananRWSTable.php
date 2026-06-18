@@ -106,7 +106,8 @@ class KasBulananRWSTable
                             "rw.kas-bulanan.preview",
                             ["record" => $record],
                         ),
-                    ),
+                    )
+                    ->openUrlInNewTab(),
             ])
             ->actionsColumnLabel("Aksi")
             ->toolbarActions([
