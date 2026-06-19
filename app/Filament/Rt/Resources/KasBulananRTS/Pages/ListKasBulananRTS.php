@@ -17,36 +17,38 @@ class ListKasBulananRTS extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            CreateAction::make()
-                ->label('Tambah Kas Bulanan'),
-            Action::make('exportTahunan')
-                ->label('Export Laporan Tahunan')
-                ->icon('heroicon-o-arrow-down-tray')
-                ->color('success')
+            CreateAction::make()->label("Tambah Kas Bulanan"),
+            Action::make("exportTahunan")
+                ->label("Export Laporan Tahunan")
+                ->icon("heroicon-o-arrow-down-tray")
+                ->color("success")
                 ->form([
-                    Select::make('tahun')
-                        ->label('Pilih Tahun')
+                    Select::make("tahun")
+                        ->label("Pilih Tahun")
                         ->options(function () {
                             $rtId = auth()->user()?->rt?->id;
-                            $years = KasBulananRT::where('id_rt', $rtId)
-                                ->selectRaw('SUBSTRING(periode, 1, 4) as tahun')
+                            $years = KasBulananRT::where("id_rt", $rtId)
+                                ->selectRaw("SUBSTRING(periode, 1, 4) as tahun")
                                 ->distinct()
-                                ->orderBy('tahun', 'desc')
-                                ->pluck('tahun', 'tahun')
+                                ->orderBy("tahun", "desc")
+                                ->pluck("tahun", "tahun")
                                 ->toArray();
 
                             if (empty($years)) {
-                                $currentYear = date('Y');
+                                $currentYear = date("Y");
                                 $years = [$currentYear => $currentYear];
                             }
 
                             return $years;
                         })
                         ->required()
-                        ->default(date('Y')),
+                        ->default(date("Y")),
                 ])
                 ->action(function (array $data) {
-                    return redirect()->route('rt.kas-tahunan.preview', ['tahun' => $data['tahun']]);
+                    $url = route("rt.kas-tahunan.preview", [
+                        "tahun" => $data["tahun"],
+                    ]);
+                    $this->js("window.open('{$url}', '_blank')");
                 }),
         ];
     }

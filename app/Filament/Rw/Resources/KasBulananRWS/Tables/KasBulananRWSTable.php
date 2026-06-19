@@ -20,76 +20,78 @@ class KasBulananRWSTable
     {
         return $table
             ->columns([
-                TextColumn::make('periode')->searchable()->sortable(),
-                TextColumn::make('total_pendapatan')
-                    ->prefix('Rp ')
+                TextColumn::make("periode")->searchable()->sortable(),
+                TextColumn::make("total_pendapatan")
+                    ->prefix("Rp ")
                     ->numeric(
                         decimalPlaces: 0,
-                        thousandsSeparator: ',',
-                        decimalSeparator: '.',
+                        thousandsSeparator: ",",
+                        decimalSeparator: ".",
                     )
                     ->sortable(),
-                TextColumn::make('total_pengeluaran')
-                    ->prefix('Rp ')
+                TextColumn::make("total_pengeluaran")
+                    ->prefix("Rp ")
                     ->numeric(
                         decimalPlaces: 0,
-                        thousandsSeparator: ',',
-                        decimalSeparator: '.',
+                        thousandsSeparator: ",",
+                        decimalSeparator: ".",
                     )
                     ->sortable(),
-                TextColumn::make('total_pendapatan_bersih')
-                    ->prefix('Rp ')
+                TextColumn::make("total_pendapatan_bersih")
+                    ->prefix("Rp ")
                     ->numeric(
                         decimalPlaces: 0,
-                        thousandsSeparator: ',',
-                        decimalSeparator: '.',
+                        thousandsSeparator: ",",
+                        decimalSeparator: ".",
                     )
                     ->sortable(),
-                TextColumn::make('saldo_awal')
-                    ->prefix('Rp ')
+                TextColumn::make("saldo_awal")
+                    ->prefix("Rp ")
                     ->numeric(
                         decimalPlaces: 0,
-                        thousandsSeparator: ',',
-                        decimalSeparator: '.',
+                        thousandsSeparator: ",",
+                        decimalSeparator: ".",
                     )
                     ->sortable(),
-                TextColumn::make('saldo_akhir')
-                    ->prefix('Rp ')
+                TextColumn::make("saldo_akhir")
+                    ->prefix("Rp ")
                     ->numeric(
                         decimalPlaces: 0,
-                        thousandsSeparator: ',',
-                        decimalSeparator: '.',
+                        thousandsSeparator: ",",
+                        decimalSeparator: ".",
                     )
                     ->sortable(),
-                TextColumn::make('created_at')
+                TextColumn::make("created_at")
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('updated_at')
+                TextColumn::make("updated_at")
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                SelectFilter::make('periode')
-                    ->label('Periode')
-                    ->options(fn (): array => KasBulananRW::query()
-                        ->select('periode')
-                        ->distinct()
-                        ->orderBy('periode', 'desc')
-                        ->pluck('periode', 'periode')
-                        ->all())
+                SelectFilter::make("periode")
+                    ->label("Periode")
+                    ->options(
+                        fn(): array => KasBulananRW::query()
+                            ->select("periode")
+                            ->distinct()
+                            ->orderBy("periode", "desc")
+                            ->pluck("periode", "periode")
+                            ->all(),
+                    )
                     ->searchable(),
             ])
             ->actions([
                 ViewAction::make()->iconButton(),
 
-                Action::make('recalculate')
-                    ->label('recalculate')
-                    ->icon('heroicon-o-arrow-path')
+                Action::make("recalculate")
+                    ->label("recalculate")
+                    ->icon("heroicon-o-arrow-path")
                     ->iconButton()
-                    ->tooltip('Kalkulasi Ulang')
-                    ->color('info')
+                    ->tooltip("Kalkulasi Ulang")
+                    ->color("info")
                     ->action(function (KasBulananRW $record) {
                         KasBulananRwService::recalculateChain(
                             $record->id_rw,
@@ -97,7 +99,7 @@ class KasBulananRWSTable
                         );
 
                         Notification::make()
-                            ->title('Kalkulasi Ulang Berhasil')
+                            ->title("Kalkulasi Ulang Berhasil")
                             ->body(
                                 "Data kas bulanan periode {$record->periode} dan bulan-bulan setelahnya telah diperbarui.",
                             )
@@ -105,27 +107,28 @@ class KasBulananRWSTable
                             ->send();
                     }),
 
-                Action::make('export')
-                    ->label('export')
-                    ->icon('heroicon-o-arrow-down-tray')
+                Action::make("export")
+                    ->label("Preview PDF")
+                    ->icon("heroicon-o-document-arrow-down")
+                    ->color("success")
                     ->iconButton()
-                    ->tooltip('Export')
+                    ->tooltip("Preview & Export PDF")
                     ->url(
-                        fn (KasBulananRW $record): string => route(
-                            'rw.kas-bulanan.preview',
-                            ['record' => $record],
+                        fn(KasBulananRW $record): string => route(
+                            "rw.kas-bulanan.preview",
+                            ["record" => $record],
                         ),
                     )
                     ->openUrlInNewTab(),
             ])
-            ->actionsColumnLabel('Aksi')
+            ->actionsColumnLabel("Aksi")
             ->toolbarActions([
                 BulkActionGroup::make([DeleteBulkAction::make()]),
             ])
-            ->defaultSort('periode', 'desc')
+            ->defaultSort("periode", "desc")
             ->recordUrl(
-                fn (KasBulananRW $record): string => ViewKasBulananRW::getUrl([
-                    'record' => $record,
+                fn(KasBulananRW $record): string => ViewKasBulananRW::getUrl([
+                    "record" => $record,
                 ]),
             );
     }

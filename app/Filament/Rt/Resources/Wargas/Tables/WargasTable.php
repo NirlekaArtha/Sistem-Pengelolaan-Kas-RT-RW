@@ -17,22 +17,18 @@ class WargasTable
     {
         return $table
             ->columns([
-                TextColumn::make('nama_kepala_keluarga')->searchable(),
-                TextColumn::make('user.name')
-                    ->label('Username')
+                TextColumn::make("nama_kepala_keluarga")->searchable(),
+                TextColumn::make("no_telepon")->searchable(),
+                TextColumn::make("user.email")
+                    ->label("Email")
                     ->searchable()
-                    ->default('-'),
-                TextColumn::make('user.email')
-                    ->label('Email')
-                    ->searchable()
-                    ->default('-'),
-                TextColumn::make('alamat')->searchable(),
-                TextColumn::make('no_telepon')->searchable(),
-                TextColumn::make('created_at')
+                    ->default("-"),
+                TextColumn::make("alamat")->searchable()->limit(28),
+                TextColumn::make("created_at")
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('updated_at')
+                TextColumn::make("updated_at")
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -41,14 +37,14 @@ class WargasTable
                 //
             ])
             ->actions([
-                ViewAction::make()->iconButton()->tooltip('Lihat'),
-                EditAction::make()->iconButton()->tooltip('Edit'),
-                DeleteAction::make()->iconButton()->tooltip('Hapus'),
+                ViewAction::make()->iconButton()->tooltip("Lihat"),
+                EditAction::make()->iconButton()->tooltip("Edit"),
+                DeleteAction::make()->iconButton()->tooltip("Hapus"),
             ])
-            ->actionsColumnLabel('Aksi')
+            ->actionsColumnLabel("Aksi")
             ->recordUrl(
-                fn ($record): string => ViewWarga::getUrl([
-                    'record' => $record,
+                fn($record): string => ViewWarga::getUrl([
+                    "record" => $record,
                 ]),
             )
             ->toolbarActions([
