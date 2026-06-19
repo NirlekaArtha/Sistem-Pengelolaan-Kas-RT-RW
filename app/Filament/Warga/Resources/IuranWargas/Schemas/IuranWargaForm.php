@@ -2,6 +2,7 @@
 
 namespace App\Filament\Warga\Resources\IuranWargas\Schemas;
 
+use App\Enums\IuranWargaStatus;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -32,8 +33,8 @@ class IuranWargaForm
                             ->required(),
                         DatePicker::make('tanggal_bayar'),
                         Select::make('status')
-                            ->options(['belum bayar' => 'Belum bayar', 'dibayar' => 'Dibayar', 'telat' => 'Telat'])
-                            ->default('belum bayar')
+                            ->options(IuranWargaStatus::class)
+                            ->default(IuranWargaStatus::BELUM_BAYAR)
                             ->required(),
                     ]),
             ]);

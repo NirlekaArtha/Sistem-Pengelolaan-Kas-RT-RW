@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
+use Database\Factories\KasbonFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Kasbon extends Model
 {
-    /** @use HasFactory<\Database\Factories\KasbonFactory> */
+    /** @use HasFactory<KasbonFactory> */
     use HasFactory;
 
     protected $fillable = [
@@ -18,7 +19,7 @@ class Kasbon extends Model
     ];
 
     protected $casts = [
-        'jumlah'  => 'decimal:2',
+        'jumlah' => 'decimal:2',
         'tanggal' => 'date',
     ];
 

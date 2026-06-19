@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
+use Database\Factories\SlipGajiFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class SlipGaji extends Model
 {
-    /** @use HasFactory<\Database\Factories\SlipGajiFactory> */
+    /** @use HasFactory<SlipGajiFactory> */
     use HasFactory;
 
     protected $fillable = [
@@ -19,7 +20,7 @@ class SlipGaji extends Model
     ];
 
     protected $casts = [
-        'total'   => 'decimal:2',
+        'total' => 'decimal:2',
         'tanggal' => 'date',
     ];
 

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Warga\Widgets;
 
+use App\Enums\IuranWargaStatus;
 use App\Models\IuranWarga;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -23,9 +24,9 @@ class TabelIuranDibayarBulanIni extends BaseWidget
         return $table
             ->query(
                 IuranWarga::query()
-                    ->when($warga, fn(Builder $q) => $q->where('id_warga', $warga->id))
+                    ->when($warga, fn (Builder $q) => $q->where('id_warga', $warga->id))
                     ->where('periode', $currentPeriode)
-                    ->where('status', 'dibayar')
+                    ->where('status', IuranWargaStatus::DIBAYAR->value)
                     ->with(['jenisIuran'])
                     ->orderBy('tanggal_bayar', 'desc'),
             )
@@ -48,12 +49,10 @@ class TabelIuranDibayarBulanIni extends BaseWidget
                 TextColumn::make('status')
                     ->label('Status')
                     ->badge()
-                    ->color('success')
-                    ->icon('heroicon-m-check-circle')
-                    ->formatStateUsing(fn() => 'Lunas'),
+                    ->formatStateUsing(fn ($state) => $state?->getLabel()),
             ])
             ->emptyStateHeading('Belum Ada Iuran Dibayar')
-            ->emptyStateDescription('Iuran yang sudah dibayar bulan ' . Carbon::now()->translatedFormat('F Y') . ' akan muncul di sini.')
+            ->emptyStateDescription('Iuran yang sudah dibayar bulan '.Carbon::now()->translatedFormat('F Y').' akan muncul di sini.')
             ->emptyStateIcon('heroicon-o-banknotes')
             ->paginated(false);
     }

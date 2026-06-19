@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Enums\PetugasTugas;
+use Database\Factories\PetugasFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -9,7 +11,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Petugas extends Model
 {
-    /** @use HasFactory<\Database\Factories\PetugasFactory> */
+    /** @use HasFactory<PetugasFactory> */
     use HasFactory;
 
     protected $fillable = [
@@ -22,6 +24,7 @@ class Petugas extends Model
 
     protected $casts = [
         'gaji_pokok' => 'decimal:2',
+        'tugas' => PetugasTugas::class,
     ];
 
     // ─── Belongs To ──────────────────────────────────────────────────────────

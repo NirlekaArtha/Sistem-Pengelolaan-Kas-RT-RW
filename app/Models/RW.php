@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Enums\KasTipe;
+use Database\Factories\RWFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -9,7 +11,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class RW extends Model
 {
-    /** @use HasFactory<\Database\Factories\RWFactory> */
+    /** @use HasFactory<RWFactory> */
     use HasFactory;
 
     protected $table = 'r_w_s';
@@ -48,12 +50,12 @@ class RW extends Model
 
     public function kasMasukRWs(): HasMany
     {
-        return $this->hasMany(KasRW::class, 'id_rw')->where('tipe', 'masuk');
+        return $this->hasMany(KasRW::class, 'id_rw')->where('tipe', KasTipe::MASUK->value);
     }
 
     public function kasKeluarRWs(): HasMany
     {
-        return $this->hasMany(KasRW::class, 'id_rw')->where('tipe', 'keluar');
+        return $this->hasMany(KasRW::class, 'id_rw')->where('tipe', KasTipe::KELUAR->value);
     }
 
     public function kasBulananRWs(): HasMany

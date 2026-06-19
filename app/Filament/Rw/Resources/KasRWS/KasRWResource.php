@@ -16,6 +16,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use UnitEnum;
 
 class KasRWResource extends Resource
@@ -24,17 +25,17 @@ class KasRWResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedClipboardDocumentList;
 
-    protected static string|UnitEnum|null $navigationGroup = "Transaksi";
+    protected static string|UnitEnum|null $navigationGroup = 'Transaksi';
 
     protected static ?int $navigationSort = 1;
 
-    protected static ?string $navigationLabel = "Kelola Kas Harian";
+    protected static ?string $navigationLabel = 'Kelola Kas Harian';
 
-    protected static ?string $modelLabel = "Kas Harian";
+    protected static ?string $modelLabel = 'Kas Harian';
 
-    protected static ?string $pluralModelLabel = "Kelola Kas Harian";
+    protected static ?string $pluralModelLabel = 'Kelola Kas Harian';
 
-    protected static ?string $recordTitleAttribute = "sumber_tujuan";
+    protected static ?string $recordTitleAttribute = 'sumber_tujuan';
 
     public static function form(Schema $schema): Schema
     {
@@ -54,14 +55,14 @@ class KasRWResource extends Resource
     public static function getRelations(): array
     {
         return [
-                //
-            ];
+            //
+        ];
     }
 
-    public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
+    public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()->where(
-            "id_rw",
+            'id_rw',
             auth()->user()?->rw?->id,
         );
     }
@@ -74,10 +75,10 @@ class KasRWResource extends Resource
     public static function getPages(): array
     {
         return [
-            "index" => ListKasRWS::route("/"),
-            "create" => CreateKasRW::route("/create"),
-            "view" => ViewKasRW::route("/{record}"),
-            "edit" => EditKasRW::route("/{record}/edit"),
+            'index' => ListKasRWS::route('/'),
+            'create' => CreateKasRW::route('/create'),
+            'view' => ViewKasRW::route('/{record}'),
+            'edit' => EditKasRW::route('/{record}/edit'),
         ];
     }
 }

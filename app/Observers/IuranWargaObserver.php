@@ -14,11 +14,11 @@ class IuranWargaObserver
      */
     public function created(IuranWarga $iuranWarga): void
     {
-        if (!$iuranWarga->tanggal_bayar || !$iuranWarga->id_rt) {
+        if (! $iuranWarga->tanggal_bayar || ! $iuranWarga->id_rt) {
             return;
         }
 
-        $periode = $iuranWarga->tanggal_bayar->format("Y-m");
+        $periode = $iuranWarga->tanggal_bayar->format('Y-m');
         KasBulananRtService::recalculateChain($iuranWarga->id_rt, $periode);
     }
 
@@ -29,23 +29,23 @@ class IuranWargaObserver
     public function updated(IuranWarga $iuranWarga): void
     {
         if (
-            $iuranWarga->wasChanged("tanggal_bayar") ||
-            $iuranWarga->wasChanged("id_rt")
+            $iuranWarga->wasChanged('tanggal_bayar') ||
+            $iuranWarga->wasChanged('id_rt')
         ) {
-            $oldRtId = $iuranWarga->getOriginal("id_rt") ?? $iuranWarga->id_rt;
-            $oldTanggal = $iuranWarga->getOriginal("tanggal_bayar");
+            $oldRtId = $iuranWarga->getOriginal('id_rt') ?? $iuranWarga->id_rt;
+            $oldTanggal = $iuranWarga->getOriginal('tanggal_bayar');
 
             if ($oldTanggal && $oldRtId) {
-                $oldPeriode = Carbon::parse($oldTanggal)->format("Y-m");
+                $oldPeriode = Carbon::parse($oldTanggal)->format('Y-m');
                 KasBulananRtService::recalculateChain($oldRtId, $oldPeriode);
             }
         }
 
-        if (!$iuranWarga->tanggal_bayar || !$iuranWarga->id_rt) {
+        if (! $iuranWarga->tanggal_bayar || ! $iuranWarga->id_rt) {
             return;
         }
 
-        $periode = $iuranWarga->tanggal_bayar->format("Y-m");
+        $periode = $iuranWarga->tanggal_bayar->format('Y-m');
         KasBulananRtService::recalculateChain($iuranWarga->id_rt, $periode);
     }
 
@@ -55,11 +55,11 @@ class IuranWargaObserver
      */
     public function deleted(IuranWarga $iuranWarga): void
     {
-        if (!$iuranWarga->tanggal_bayar || !$iuranWarga->id_rt) {
+        if (! $iuranWarga->tanggal_bayar || ! $iuranWarga->id_rt) {
             return;
         }
 
-        $periode = $iuranWarga->tanggal_bayar->format("Y-m");
+        $periode = $iuranWarga->tanggal_bayar->format('Y-m');
         KasBulananRtService::recalculateChain($iuranWarga->id_rt, $periode);
     }
 }

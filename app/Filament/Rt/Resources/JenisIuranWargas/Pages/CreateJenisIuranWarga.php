@@ -11,13 +11,13 @@ class CreateJenisIuranWarga extends CreateRecord
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {
-        $data["id_rt"] = auth()->user()?->rt?->id;
+        $data['id_rt'] = auth()->user()?->rt?->id;
 
         return $data;
     }
 
     protected function getRedirectUrl(): string
     {
-        return $this->getResource()::getUrl("index");
+        return $this->getResource()::getUrl('index');
     }
 }

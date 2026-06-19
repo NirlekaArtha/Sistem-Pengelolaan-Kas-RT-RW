@@ -2,6 +2,7 @@
 
 namespace App\Filament\Rw\Resources\SetoranRWS\Widgets;
 
+use App\Enums\SetoranStatusValidasi;
 use App\Models\RT;
 use App\Models\SetoranRW;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
@@ -13,48 +14,48 @@ class SetoranRWOverview extends BaseWidget
     {
         $rw = auth()->user()?->rw;
 
-        if (!$rw) {
+        if (! $rw) {
             return [];
         }
 
-        $currentPeriode = now()->format("Y-m");
+        $currentPeriode = now()->format('Y-m');
 
         // 1. Jumlah setoran bulan ini (yang berstatus valid)
-        $totalSetoranBulanIni = SetoranRW::where("id_rw", $rw->id)
-            ->where("periode", $currentPeriode)
-            ->where("status_validasi", "valid")
-            ->sum("jumlah_setor");
+        $totalSetoranBulanIni = SetoranRW::where('id_rw', $rw->id)
+            ->where('periode', $currentPeriode)
+            ->where('status_validasi', SetoranStatusValidasi::VALID->value)
+            ->sum('jumlah_setor');
 
         // 2. Jumlah RT yang menyetor (berstatus valid)
-        $totalRt = RT::where("id_rw", $rw->id)->count();
-        $rtMenyetor = SetoranRW::where("id_rw", $rw->id)
-            ->where("periode", $currentPeriode)
-            ->where("status_validasi", "valid")
-            ->distinct("id_rt")
-            ->count("id_rt");
+        $totalRt = RT::where('id_rw', $rw->id)->count();
+        $rtMenyetor = SetoranRW::where('id_rw', $rw->id)
+            ->where('periode', $currentPeriode)
+            ->where('status_validasi', SetoranStatusValidasi::VALID->value)
+            ->distinct('id_rt')
+            ->count('id_rt');
 
         // 3. Banyaknya setoran bulan ini yang berstatus pending
-        $pendingSetoranBulanIni = SetoranRW::where("id_rw", $rw->id)
-            ->where("periode", $currentPeriode)
-            ->where("status_validasi", "pending")
+        $pendingSetoranBulanIni = SetoranRW::where('id_rw', $rw->id)
+            ->where('periode', $currentPeriode)
+            ->where('status_validasi', SetoranStatusValidasi::PENDING->value)
             ->count();
 
         return [
             Stat::make(
-                "Jumlah Setoran Bulan Ini",
-                "Rp " . number_format($totalSetoranBulanIni, 0, ",", "."),
+                'Jumlah Setoran Bulan Ini',
+                'Rp '.number_format($totalSetoranBulanIni, 0, ',', '.'),
             )
-                ->description("Dari RT bulan ini")
-                ->descriptionIcon("heroicon-m-banknotes")
-                ->color("success"),
-            Stat::make("Jumlah Setoran", "{$rtMenyetor} dari {$totalRt} RT")
-                ->description("Telah terverifikasi")
-                ->descriptionIcon("heroicon-m-user-group")
-                ->color("info"),
-            Stat::make("Jumlah Setoran Pending", $pendingSetoranBulanIni)
-                ->description("Menunggu validasi")
-                ->descriptionIcon("heroicon-m-clock")
-                ->color("warning"),
+                ->description('Dari RT bulan ini')
+                ->descriptionIcon('heroicon-m-banknotes')
+                ->color('success'),
+            Stat::make('Jumlah Setoran', "{$rtMenyetor} dari {$totalRt} RT")
+                ->description('Telah terverifikasi')
+                ->descriptionIcon('heroicon-m-user-group')
+                ->color('info'),
+            Stat::make('Jumlah Setoran Pending', $pendingSetoranBulanIni)
+                ->description('Menunggu validasi')
+                ->descriptionIcon('heroicon-m-clock')
+                ->color('warning'),
         ];
     }
 }

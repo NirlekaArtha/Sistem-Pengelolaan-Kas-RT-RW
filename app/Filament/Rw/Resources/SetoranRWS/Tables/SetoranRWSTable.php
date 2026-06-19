@@ -2,7 +2,7 @@
 
 namespace App\Filament\Rw\Resources\SetoranRWS\Tables;
 
-use Filament\Forms\Components\DatePicker;
+use App\Enums\SetoranStatusValidasi;
 use App\Filament\Rw\Resources\SetoranRWS\Pages\ViewSetoranRW;
 use App\Models\SetoranRW;
 use Filament\Actions\BulkActionGroup;
@@ -10,8 +10,9 @@ use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
-use Filament\Tables\Filters\Filter;
+use Filament\Forms\Components\DatePicker;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -22,111 +23,91 @@ class SetoranRWSTable
     {
         return $table
             ->columns([
-                TextColumn::make("rt.nama")
-                    ->label("Nama RT")
+                TextColumn::make('rt.nama')
+                    ->label('Nama RT')
                     ->searchable()
                     ->sortable(),
-                TextColumn::make("periode")
-                    ->label("Periode")
+                TextColumn::make('periode')
+                    ->label('Periode')
                     ->searchable()
                     ->sortable(),
-                TextColumn::make("tanggal_setor")
-                    ->label("Tanggal Setor")
+                TextColumn::make('tanggal_setor')
+                    ->label('Tanggal Setor')
                     ->date()
                     ->sortable(),
-                TextColumn::make("jumlah_setor")
-                    ->label("Jumlah Setor")
-                    ->prefix("Rp ")
+                TextColumn::make('jumlah_setor')
+                    ->label('Jumlah Setor')
+                    ->prefix('Rp ')
                     ->numeric(
                         decimalPlaces: 0,
-                        thousandsSeparator: ".",
-                        decimalSeparator: ",",
+                        thousandsSeparator: '.',
+                        decimalSeparator: ',',
                     )
                     ->sortable(),
-                TextColumn::make("status_validasi")
-                    ->label("Status Validasi")
+                TextColumn::make('status_validasi')
+                    ->label('Status Validasi')
                     ->searchable()
-                    ->badge()
-                    ->color(
-                        fn(string $state): string => match ($state) {
-                            "pending" => "warning",
-                            "valid" => "success",
-                            "ditolak" => "danger",
-                            default => "gray",
-                        },
-                    )
-                    ->icon(
-                        fn(string $state): string => match ($state) {
-                            "pending" => "heroicon-o-clock",
-                            "valid" => "heroicon-o-check-circle",
-                            "ditolak" => "heroicon-o-x-circle",
-                            default => "heroicon-o-question-mark-circle",
-                        },
-                    ),
-                TextColumn::make("created_at")
+                    ->badge(),
+                TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make("updated_at")
+                TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                SelectFilter::make("periode")
-                    ->label("Periode")
+                SelectFilter::make('periode')
+                    ->label('Periode')
                     ->options(fn (): array => SetoranRW::query()
-                        ->select("periode")
+                        ->select('periode')
                         ->distinct()
-                        ->orderBy("periode", "desc")
-                        ->pluck("periode", "periode")
+                        ->orderBy('periode', 'desc')
+                        ->pluck('periode', 'periode')
                         ->all())
                     ->searchable(),
-                SelectFilter::make("rt")
-                    ->label("RT")
-                    ->relationship("rt", "nama")
+                SelectFilter::make('rt')
+                    ->label('RT')
+                    ->relationship('rt', 'nama')
                     ->searchable(),
-                SelectFilter::make("status_validasi")
-                    ->label("Status Validasi")
-                    ->options([
-                        "pending" => "Pending",
-                        "valid" => "Valid",
-                        "ditolak" => "Ditolak",
-                    ]),
-                Filter::make("tanggal_setor")
+                SelectFilter::make('status_validasi')
+                    ->label('Status Validasi')
+                    ->options(SetoranStatusValidasi::class),
+                Filter::make('tanggal_setor')
                     ->form([
-                        DatePicker::make("from")->label("Dari Tanggal"),
-                        DatePicker::make("until")->label("Sampai Tanggal"),
+                        DatePicker::make('from')->label('Dari Tanggal'),
+                        DatePicker::make('until')->label('Sampai Tanggal'),
                     ])
                     ->query(function (Builder $query, array $data): Builder {
                         return $query
                             ->when(
-                                $data["from"] ?? null,
+                                $data['from'] ?? null,
                                 fn (Builder $query, $date): Builder => $query->whereDate(
-                                    "tanggal_setor",
-                                    ">=",
+                                    'tanggal_setor',
+                                    '>=',
                                     $date,
                                 ),
                             )
                             ->when(
-                                $data["until"] ?? null,
+                                $data['until'] ?? null,
                                 fn (Builder $query, $date): Builder => $query->whereDate(
-                                    "tanggal_setor",
-                                    "<=",
+                                    'tanggal_setor',
+                                    '<=',
                                     $date,
                                 ),
                             );
                     }),
             ])
             ->actions([
-                ViewAction::make()->iconButton()->tooltip("Lihat"),
-                EditAction::make()->iconButton()->tooltip("Edit"),
-                DeleteAction::make()->iconButton()->tooltip("Hapus"),
+                ViewAction::make()->iconButton()->tooltip('Lihat'),
+                EditAction::make()->iconButton()->tooltip('Edit'),
+                DeleteAction::make()->iconButton()->tooltip('Hapus'),
             ])
-            ->actionsColumnLabel("Aksi")
+            ->actionsColumnLabel('Aksi')
             ->recordUrl(
-                fn(SetoranRW $record): string => ViewSetoranRW::getUrl([
-                    "record" => $record,
+                fn (SetoranRW $record): string => ViewSetoranRW::getUrl([
+                    'record' => $record,
                 ]),
             )
             ->toolbarActions([

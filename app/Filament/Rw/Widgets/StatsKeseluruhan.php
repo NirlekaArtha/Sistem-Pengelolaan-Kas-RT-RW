@@ -9,57 +9,58 @@ use Illuminate\Support\Carbon;
 
 class StatsKeseluruhan extends StatsOverviewWidget
 {
-    protected int|string|array $columnSpan = "full";
+    protected int|string|array $columnSpan = 'full';
+
     protected int|null|array $columns = [
-        "sm" => 2,
-        "xl" => 4,
+        'sm' => 2,
+        'xl' => 4,
     ];
 
     protected function getStats(): array
     {
         $rw = auth()->user()?->rw;
-        if (!$rw) {
+        if (! $rw) {
             return [];
         }
 
         // Get the latest month that has records
         $latest = KasBulananRW::query()
-            ->where("id_rw", $rw->id)
-            ->orderBy("periode", "desc")
+            ->where('id_rw', $rw->id)
+            ->orderBy('periode', 'desc')
             ->first();
 
-        if (!$latest) {
+        if (! $latest) {
             return [
-                Stat::make("Pendapatan", "Rp 0")
-                    ->description("Belum ada data")
-                    ->color("gray"),
-                Stat::make("Laba Bersih", "Rp 0")
-                    ->description("Belum ada data")
-                    ->color("gray"),
-                Stat::make("Pengeluaran", "Rp 0")
-                    ->description("Belum ada data")
-                    ->color("gray"),
-                Stat::make("Kas Bulan ini", "Rp 0")
-                    ->description("Belum ada data")
-                    ->color("gray"),
+                Stat::make('Pendapatan', 'Rp 0')
+                    ->description('Belum ada data')
+                    ->color('gray'),
+                Stat::make('Laba Bersih', 'Rp 0')
+                    ->description('Belum ada data')
+                    ->color('gray'),
+                Stat::make('Pengeluaran', 'Rp 0')
+                    ->description('Belum ada data')
+                    ->color('gray'),
+                Stat::make('Kas Bulan ini', 'Rp 0')
+                    ->description('Belum ada data')
+                    ->color('gray'),
             ];
         }
 
         // Parse latest periode
-        $latestCarbon = Carbon::parse($latest->periode . "-01");
-        $monthLabel = $latestCarbon->translatedFormat("F Y");
+        $latestCarbon = Carbon::parse($latest->periode.'-01');
+        $monthLabel = $latestCarbon->translatedFormat('F Y');
 
         // Fetch previous month
-        $prevPeriod = $latestCarbon->copy()->subMonth()->format("Y-m");
+        $prevPeriod = $latestCarbon->copy()->subMonth()->format('Y-m');
         $prev = KasBulananRW::query()
-            ->where("id_rw", $rw->id)
-            ->where("periode", $prevPeriod)
+            ->where('id_rw', $rw->id)
+            ->where('periode', $prevPeriod)
             ->first();
 
         // 1. Pendapatan Stat
         $currentPendapatan = (float) $latest->total_pendapatan;
         $formattedPendapatan =
-            "Rp " . number_format($currentPendapatan, 0, ",", ".");
+            'Rp '.number_format($currentPendapatan, 0, ',', '.');
 
         $pendapatanStat = Stat::make(
             "Pendapatan ({$monthLabel})",
@@ -75,8 +76,8 @@ class StatsKeseluruhan extends StatsOverviewWidget
                 $formattedPercentage = number_format(
                     abs($percentageChange),
                     1,
-                    ",",
-                    ".",
+                    ',',
+                    '.',
                 );
 
                 if ($percentageChange > 0) {
@@ -84,78 +85,78 @@ class StatsKeseluruhan extends StatsOverviewWidget
                         ->description(
                             "Naik {$formattedPercentage}% dari bulan lalu",
                         )
-                        ->descriptionIcon("heroicon-m-arrow-trending-up")
-                        ->color("success");
+                        ->descriptionIcon('heroicon-m-arrow-trending-up')
+                        ->color('success');
                 } elseif ($percentageChange < 0) {
                     $pendapatanStat
                         ->description(
                             "Turun {$formattedPercentage}% dari bulan lalu",
                         )
-                        ->descriptionIcon("heroicon-m-arrow-trending-down")
-                        ->color("danger");
+                        ->descriptionIcon('heroicon-m-arrow-trending-down')
+                        ->color('danger');
                 } else {
                     $pendapatanStat
-                        ->description("Stabil dibanding bulan lalu")
-                        ->descriptionIcon("heroicon-m-minus")
-                        ->color("gray");
+                        ->description('Stabil dibanding bulan lalu')
+                        ->descriptionIcon('heroicon-m-minus')
+                        ->color('gray');
                 }
             } else {
                 $pendapatanStat
-                    ->description("Mulai mencatat pendapatan")
-                    ->descriptionIcon("heroicon-m-arrow-trending-up")
-                    ->color("success");
+                    ->description('Mulai mencatat pendapatan')
+                    ->descriptionIcon('heroicon-m-arrow-trending-up')
+                    ->color('success');
             }
         } else {
             $pendapatanStat
-                ->description("Bulan pertama dengan data")
-                ->descriptionIcon("heroicon-m-information-circle")
-                ->color("info");
+                ->description('Bulan pertama dengan data')
+                ->descriptionIcon('heroicon-m-information-circle')
+                ->color('info');
         }
 
         // 2. Laba Bersih Stat
         $currentLaba = (float) $latest->total_pendapatan_bersih;
-        $formattedLaba = "Rp " . number_format($currentLaba, 0, ",", ".");
+        $formattedLaba = 'Rp '.number_format($currentLaba, 0, ',', '.');
 
         $labaStat = Stat::make("Laba Bersih ({$monthLabel})", $formattedLaba);
 
         if ($currentLaba >= 0) {
             $labaStat
-                ->description("Surplus Keuangan")
-                ->descriptionIcon("heroicon-m-check-circle")
-                ->color("success");
+                ->description('Surplus Keuangan')
+                ->descriptionIcon('heroicon-m-check-circle')
+                ->color('success');
         } else {
             $labaStat
-                ->description("Defisit Keuangan")
-                ->descriptionIcon("heroicon-m-x-circle")
-                ->color("danger");
+                ->description('Defisit Keuangan')
+                ->descriptionIcon('heroicon-m-x-circle')
+                ->color('danger');
         }
 
         // 3. Pengeluaran Stat
         $currentPengeluaran = (float) $latest->total_pengeluaran;
         $formattedPengeluaran =
-            "Rp " . number_format($currentPengeluaran, 0, ",", ".");
+            'Rp '.number_format($currentPengeluaran, 0, ',', '.');
 
         $pengeluaranStat = Stat::make(
             "Pengeluaran ({$monthLabel})",
             $formattedPengeluaran,
         )
-            ->description("Total pengeluaran bulan ini")
-            ->descriptionIcon("heroicon-m-arrow-trending-down")
-            ->color("danger");
+            ->description('Total pengeluaran bulan ini')
+            ->descriptionIcon('heroicon-m-arrow-trending-down')
+            ->color('danger');
 
         $kasBulanIni = (float) $latest->saldo_akhir;
         $formattedKasBulanIni =
-            "Rp " . number_format($kasBulanIni, 0, ",", ".");
+            'Rp '.number_format($kasBulanIni, 0, ',', '.');
 
         $kasBulanIniStat = Stat::make(
             "Kas Bulan Ini ({$monthLabel})",
             $formattedKasBulanIni,
         )
-            ->description("Saldo akhir kas bulan ini")
-            ->descriptionIcon("heroicon-m-currency-dollar")
-            ->color("info")
+            ->description('Saldo akhir kas bulan ini')
+            ->descriptionIcon('heroicon-m-currency-dollar')
+            ->color('info')
             ->extraAttributes([
-                "class" => "cursor-pointer",
+                'class' => 'cursor-pointer',
             ]);
 
         return [$pendapatanStat, $labaStat, $pengeluaranStat, $kasBulanIniStat];

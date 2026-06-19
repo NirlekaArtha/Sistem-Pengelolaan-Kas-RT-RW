@@ -39,6 +39,7 @@ class ListKasBulananRTS extends ListRecords
                                 $currentYear = date('Y');
                                 $years = [$currentYear => $currentYear];
                             }
+
                             return $years;
                         })
                         ->required()

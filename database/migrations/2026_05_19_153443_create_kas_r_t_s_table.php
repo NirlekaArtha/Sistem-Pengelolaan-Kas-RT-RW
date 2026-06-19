@@ -18,7 +18,7 @@ return new class extends Migration
             $table->enum('jenis', [
                 'donasi', 'sponsorship', 'hibah', 'hasil usaha',
                 'operasional', 'kegiatan',
-                'lainnya'
+                'lainnya',
             ]);
             $table->decimal('jumlah', 15, 2);
             $table->string('sumber_tujuan');

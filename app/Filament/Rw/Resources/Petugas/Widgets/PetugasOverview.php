@@ -8,7 +8,8 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class PetugasOverview extends BaseWidget
 {
-    protected int|string|array $columnSpan = "full";
+    protected int|string|array $columnSpan = 'full';
+
     protected int|null|array $columns = 3;
 
     protected function getStats(): array
@@ -17,24 +18,24 @@ class PetugasOverview extends BaseWidget
 
         $query = Petugas::query();
         if ($rw) {
-            $query->where("id_rw", $rw->id);
+            $query->where('id_rw', $rw->id);
         }
 
         $jumlahPetugas = $query->clone()->count();
-        $totalGajiPokok = $query->clone()->sum("gaji_pokok");
+        $totalGajiPokok = $query->clone()->sum('gaji_pokok');
 
         return [
-            Stat::make("Jumlah Petugas", $jumlahPetugas)
-                ->description("Total petugas aktif")
-                ->descriptionIcon("heroicon-m-user-group")
-                ->color("info"),
+            Stat::make('Jumlah Petugas', $jumlahPetugas)
+                ->description('Total petugas aktif')
+                ->descriptionIcon('heroicon-m-user-group')
+                ->color('info'),
             Stat::make(
-                "Total Gaji Pokok",
-                "Rp " . number_format($totalGajiPokok, 0, ",", "."),
+                'Total Gaji Pokok',
+                'Rp '.number_format($totalGajiPokok, 0, ',', '.'),
             )
-                ->description("Total pengeluaran gaji pokok")
-                ->descriptionIcon("heroicon-m-banknotes")
-                ->color("success"),
+                ->description('Total pengeluaran gaji pokok')
+                ->descriptionIcon('heroicon-m-banknotes')
+                ->color('success'),
         ];
     }
 }

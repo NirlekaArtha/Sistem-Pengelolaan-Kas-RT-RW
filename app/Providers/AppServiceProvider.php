@@ -2,6 +2,9 @@
 
 namespace App\Providers;
 
+use App\Enums\UserRole;
+use App\Http\Responses\LoginResponse;
+use App\Http\Responses\LogoutResponse;
 use App\Models\IuranWarga;
 use App\Models\Kasbon;
 use App\Models\KasBulananRT;
@@ -25,10 +28,8 @@ use Illuminate\Support\ServiceProvider;
 class AppServiceProvider extends ServiceProvider
 {
     public $singletons = [
-        \Filament\Auth\Http\Responses\Contracts\LoginResponse::class =>
-            \App\Http\Responses\LoginResponse::class,
-        \Filament\Auth\Http\Responses\Contracts\LogoutResponse::class =>
-            \App\Http\Responses\LogoutResponse::class,
+        \Filament\Auth\Http\Responses\Contracts\LoginResponse::class => LoginResponse::class,
+        \Filament\Auth\Http\Responses\Contracts\LogoutResponse::class => LogoutResponse::class,
     ];
 
     /**
@@ -66,13 +67,14 @@ class AppServiceProvider extends ServiceProvider
             $user = auth()->user();
             if ($user) {
                 return match ($user->role) {
-                    "RW" => "/rw",
-                    "RT" => "/rt",
-                    "Warga" => "/warga",
-                    default => "/",
+                    UserRole::RW => UserRole::RW->getPath(),
+                    UserRole::RT => UserRole::RT->getPath(),
+                    UserRole::WARGA => UserRole::WARGA->getPath(),
+                    default => '/',
                 };
             }
-            return "/";
+
+            return '/';
         });
     }
 }

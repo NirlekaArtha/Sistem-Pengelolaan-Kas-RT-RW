@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
+use Database\Factories\KwitansiIuranWargaFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class KwitansiIuranWarga extends Model
 {
-    /** @use HasFactory<\Database\Factories\KwitansiIuranWargaFactory> */
+    /** @use HasFactory<KwitansiIuranWargaFactory> */
     use HasFactory;
 
     protected $fillable = [

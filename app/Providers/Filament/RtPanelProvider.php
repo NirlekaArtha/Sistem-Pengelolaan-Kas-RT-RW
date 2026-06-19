@@ -2,20 +2,17 @@
 
 namespace App\Providers\Filament;
 
-use App\Http\Middleware\RedirectToProperPanel;
 use App\Filament\Pages\ProfilePage;
+use App\Filament\Pages\RTDashboard;
+use App\Http\Middleware\RedirectToProperPanel;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Navigation\MenuItem;
-use Filament\Pages\Dashboard;
-use App\Filament\Pages\RTDashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
-use Filament\Support\Colors\Color;
 use Filament\Widgets\AccountWidget;
-use Filament\Widgets\FilamentInfoWidget;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
@@ -28,30 +25,30 @@ class RtPanelProvider extends PanelProvider
     public function panel(Panel $panel): Panel
     {
         return $panel
-            ->id("rt")
-            ->path("rt")
-            ->navigationGroups(["Data Master", "Transaksi", "Laporan & Rekap"])
+            ->id('rt')
+            ->path('rt')
+            ->navigationGroups(['Data Master', 'Transaksi', 'Laporan & Rekap'])
             ->colors([
-                "primary" => "#2563EB",
+                'primary' => '#2563EB',
             ])
-            ->viteTheme("resources/css/filament/theme.css")
+            ->viteTheme('resources/css/filament/theme.css')
             ->userMenuItems([
-                "profile" => MenuItem::make()
-                    ->label("Profil")
-                    ->icon("heroicon-o-user")
-                    ->url(fn(): string => ProfilePage::getUrl()),
+                'profile' => MenuItem::make()
+                    ->label('Profil')
+                    ->icon('heroicon-o-user')
+                    ->url(fn (): string => ProfilePage::getUrl()),
             ])
             ->discoverResources(
-                in: app_path("Filament/Rt/Resources"),
+                in: app_path('Filament/Rt/Resources'),
                 for: "App\Filament\Rt\Resources",
             )
             ->discoverPages(
-                in: app_path("Filament/Rt/Pages"),
+                in: app_path('Filament/Rt/Pages'),
                 for: "App\Filament\Rt\Pages",
             )
             ->pages([RTDashboard::class, ProfilePage::class])
             ->discoverWidgets(
-                in: app_path("Filament/Rt/Widgets"),
+                in: app_path('Filament/Rt/Widgets'),
                 for: "App\Filament\Rt\Widgets",
             )
             ->widgets([AccountWidget::class])

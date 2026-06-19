@@ -22,7 +22,7 @@ class KasBulananRtObserver
     {
         // Only cascade when saldo_akhir actually changed, as that is what
         // propagates to the next month's saldo_awal.
-        if (!$kasBulananRT->wasChanged('saldo_akhir')) {
+        if (! $kasBulananRT->wasChanged('saldo_akhir')) {
             return;
         }
 

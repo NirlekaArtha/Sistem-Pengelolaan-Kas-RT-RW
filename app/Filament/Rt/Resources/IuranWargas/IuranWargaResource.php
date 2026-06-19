@@ -24,17 +24,17 @@ class IuranWargaResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBanknotes;
 
-    protected static ?string $recordTitleAttribute = "id_warga";
+    protected static ?string $recordTitleAttribute = 'id_warga';
 
-    protected static string|UnitEnum|null $navigationGroup = "Transaksi";
+    protected static string|UnitEnum|null $navigationGroup = 'Transaksi';
 
     protected static ?int $navigationSort = 1;
 
-    protected static ?string $navigationLabel = "Iuran Warga";
+    protected static ?string $navigationLabel = 'Iuran Warga';
 
-    protected static ?string $modelLabel = "Iuran Warga";
+    protected static ?string $modelLabel = 'Iuran Warga';
 
-    protected static ?string $pluralModelLabel = "Data Iuran Warga";
+    protected static ?string $pluralModelLabel = 'Data Iuran Warga';
 
     public static function form(Schema $schema): Schema
     {
@@ -54,14 +54,14 @@ class IuranWargaResource extends Resource
     public static function getRelations(): array
     {
         return [
-                //
-            ];
+            //
+        ];
     }
 
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()->where(
-            "id_rt",
+            'id_rt',
             auth()->user()?->rt?->id,
         );
     }
@@ -69,10 +69,10 @@ class IuranWargaResource extends Resource
     public static function getPages(): array
     {
         return [
-            "index" => ListIuranWargas::route("/"),
-            "create" => CreateIuranWarga::route("/create"),
-            "view" => ViewIuranWarga::route("/{record}"),
-            "edit" => EditIuranWarga::route("/{record}/edit"),
+            'index' => ListIuranWargas::route('/'),
+            'create' => CreateIuranWarga::route('/create'),
+            'view' => ViewIuranWarga::route('/{record}'),
+            'edit' => EditIuranWarga::route('/{record}/edit'),
         ];
     }
 }

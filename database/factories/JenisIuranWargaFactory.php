@@ -22,9 +22,9 @@ class JenisIuranWargaFactory extends Factory
         ]);
 
         return [
-            'id_rt'       => RT::inRandomOrder()->first()->id,
+            'id_rt' => RT::inRandomOrder()->first()->id,
             'jenis_iuran' => $jenis,
-            'jumlah'      => fake()->randomElement([10000, 15000, 20000, 25000, 30000, 50000]),
+            'jumlah' => fake()->randomElement([10000, 15000, 20000, 25000, 30000, 50000]),
         ];
     }
 }

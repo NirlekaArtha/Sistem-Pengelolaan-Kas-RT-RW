@@ -6,32 +6,33 @@ use App\Models\RT;
 use App\Models\RW;
 use App\Models\User;
 use App\Models\Warga;
+use BackedEnum;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
-use BackedEnum;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Livewire\WithFileUploads;
 
 class ProfilePage extends Page
 {
     use WithFileUploads;
 
-    protected static string|BackedEnum|null $navigationIcon = "heroicon-o-user-circle";
+    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-user-circle';
 
-    protected static ?string $navigationLabel = "Profil Saya";
+    protected static ?string $navigationLabel = 'Profil Saya';
 
-    protected static ?string $title = "Profil Saya";
+    protected static ?string $title = 'Profil Saya';
 
     protected static ?int $navigationSort = 99;
 
-    protected string $view = "filament.pages.profile-page";
+    protected string $view = 'filament.pages.profile-page';
 
     public bool $isEditing = false;
 
-    public string $name = "";
+    public string $name = '';
 
-    public string $email = "";
+    public string $email = '';
 
     public ?string $noTelepon = null;
 
@@ -62,34 +63,34 @@ class ProfilePage extends Page
         $user = auth()->user();
 
         $validated = $this->validate([
-            "name" => ["required", "string", "max:255"],
-            "email" => [
-                "required",
-                "string",
-                "email",
-                "max:255",
-                Rule::unique("users", "email")->ignore($user->id),
+            'name' => ['required', 'string', 'max:255'],
+            'email' => [
+                'required',
+                'string',
+                'email',
+                'max:255',
+                Rule::unique('users', 'email')->ignore($user->id),
             ],
-            "noTelepon" => ["nullable", "string", "max:20"],
-            "profilePicture" => ["nullable", "image", "max:2048"],
+            'noTelepon' => ['nullable', 'string', 'max:20'],
+            'profilePicture' => ['nullable', 'image', 'max:2048'],
         ]);
 
         $profilePicturePath = $this->profilePicture?->storePublicly(
-            "profile-pictures",
-            "public",
+            'profile-pictures',
+            'public',
         );
 
         $user->update([
-            "name" => $validated["name"],
-            "email" => $validated["email"],
-            "profile_picture" => $profilePicturePath ?? $user->profile_picture,
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'profile_picture' => $profilePicturePath ?? $user->profile_picture,
         ]);
 
         $profileRecord = $user->profileRecord();
 
         if ($profileRecord !== null) {
             $profileRecord->update([
-                "no_telepon" => $validated["noTelepon"],
+                'no_telepon' => $validated['noTelepon'],
             ]);
         }
 
@@ -98,7 +99,7 @@ class ProfilePage extends Page
         $this->fillFromUser();
 
         Notification::make()
-            ->title("Profile updated successfully")
+            ->title('Profile updated successfully')
             ->success()
             ->send();
     }
@@ -112,11 +113,11 @@ class ProfilePage extends Page
     {
         $user = auth()->user();
 
-        if (!$user instanceof User) {
+        if (! $user instanceof User) {
             return;
         }
 
-        $user->loadMissing(["rw", "rt", "warga"]);
+        $user->loadMissing(['rw', 'rt', 'warga']);
 
         $this->name = $user->name;
         $this->email = $user->email;
@@ -128,8 +129,7 @@ class ProfilePage extends Page
     public function profileImageUrl(): string
     {
         if (
-            $this->profilePicture instanceof
-            \Livewire\Features\SupportFileUploads\TemporaryUploadedFile
+            $this->profilePicture instanceof TemporaryUploadedFile
         ) {
             return $this->profilePicture->temporaryUrl();
         }
@@ -138,7 +138,7 @@ class ProfilePage extends Page
             return Storage::url($this->profilePicturePath);
         }
 
-        return "https://ui-avatars.com/api/?name=" .
-            urlencode($this->name ?: "User");
+        return 'https://ui-avatars.com/api/?name='.
+            urlencode($this->name ?: 'User');
     }
 }

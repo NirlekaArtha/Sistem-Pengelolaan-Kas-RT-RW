@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\KasTipe;
+use App\Enums\SetoranStatusValidasi;
+use App\Models\IuranWarga;
 use App\Models\KasBulananRT;
 use App\Models\KasRT;
 use App\Models\SetoranRW;
-use App\Models\IuranWarga;
-use Illuminate\Http\Request;
 use Dompdf\Dompdf;
 use Dompdf\Options;
 
@@ -18,7 +19,7 @@ class KasBulananRTController extends Controller
         $rt = auth()->user()?->rt;
 
         // Security check
-        if (!$rt || $record->id_rt !== $rt->id) {
+        if (! $rt || $record->id_rt !== $rt->id) {
             abort(403, 'Unauthorized action.');
         }
 
@@ -29,23 +30,23 @@ class KasBulananRTController extends Controller
 
         // 2. Total pendapatan kas harian RT (tipe masuk)
         $totalPendapatanKasHarian = KasRT::where('id_rt', $rtId)
-            ->where('tipe', 'masuk')
+            ->where('tipe', KasTipe::MASUK->value)
             ->where('tanggal', 'like', "{$record->periode}-%")
             ->sum('jumlah');
 
         // 3. Total pengeluaran kas harian RT (tipe keluar)
         $totalPengeluaranKasHarian = KasRT::where('id_rt', $rtId)
-            ->where('tipe', 'keluar')
+            ->where('tipe', KasTipe::KELUAR->value)
             ->where('tanggal', 'like', "{$record->periode}-%")
             ->sum('jumlah');
 
         // 4. Total pendapatan iuran warga
         $totalPendapatanIuranWarga = IuranWarga::join(
-                'jenis_iuran_wargas',
-                'iuran_wargas.id_jenis_iuran',
-                '=',
-                'jenis_iuran_wargas.id',
-            )
+            'jenis_iuran_wargas',
+            'iuran_wargas.id_jenis_iuran',
+            '=',
+            'jenis_iuran_wargas.id',
+        )
             ->where('jenis_iuran_wargas.id_rt', $rtId)
             ->where('iuran_wargas.tanggal_bayar', 'like', "{$record->periode}-%")
             ->sum('jenis_iuran_wargas.jumlah');
@@ -53,7 +54,7 @@ class KasBulananRTController extends Controller
         // 5. Total pengeluaran setoran ke RW (validated)
         $totalPengeluaranSetoranRW = SetoranRW::where('id_rt', $rtId)
             ->where('periode', $record->periode)
-            ->where('status_validasi', 'valid')
+            ->where('status_validasi', SetoranStatusValidasi::VALID->value)
             ->sum('jumlah_setor');
 
         // 6. Total semua pemasukan
@@ -86,6 +87,7 @@ class KasBulananRTController extends Controller
     public function preview($recordId)
     {
         $data = $this->getReportData($recordId);
+
         return view('rt.kas-bulanan.preview', $data);
     }
 
@@ -95,7 +97,7 @@ class KasBulananRTController extends Controller
 
         $html = view('rt.kas-bulanan.pdf', $data)->render();
 
-        $options = new Options();
+        $options = new Options;
         $options->set('isHtml5ParserEnabled', true);
         $options->set('isRemoteEnabled', true);
 
@@ -108,7 +110,7 @@ class KasBulananRTController extends Controller
 
         return response($dompdf->output(), 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+            'Content-Disposition' => 'attachment; filename="'.$filename.'"',
         ]);
     }
 
@@ -117,7 +119,7 @@ class KasBulananRTController extends Controller
         $rt = auth()->user()?->rt;
 
         // Security check
-        if (!$rt) {
+        if (! $rt) {
             abort(403, 'Unauthorized action.');
         }
 
@@ -145,6 +147,7 @@ class KasBulananRTController extends Controller
     public function previewTahunan($tahun)
     {
         $data = $this->getAnnualReportData($tahun);
+
         return view('rt.kas-bulanan.preview-tahunan', $data);
     }
 
@@ -154,7 +157,7 @@ class KasBulananRTController extends Controller
 
         $html = view('rt.kas-bulanan.pdf-tahunan', $data)->render();
 
-        $options = new Options();
+        $options = new Options;
         $options->set('isHtml5ParserEnabled', true);
         $options->set('isRemoteEnabled', true);
 
@@ -167,7 +170,7 @@ class KasBulananRTController extends Controller
 
         return response($dompdf->output(), 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+            'Content-Disposition' => 'attachment; filename="'.$filename.'"',
         ]);
     }
 }

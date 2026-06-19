@@ -2,6 +2,7 @@
 
 namespace App\Filament\Warga\Resources\IuranWargas\Pages;
 
+use App\Enums\IuranWargaStatus;
 use App\Filament\Warga\Resources\IuranWargas\IuranWargaResource;
 use App\Filament\Warga\Resources\IuranWargas\Widgets\IuranWargaOverview;
 use Filament\Resources\Pages\ListRecords;
@@ -29,12 +30,12 @@ class ListIuranWargas extends ListRecords
     {
         return [
             'all' => Tab::make('Semua'),
-            'dibayar' => Tab::make('Dibayar')
-                ->modifyQueryUsing(fn (Builder $query) => $query->where('status', 'dibayar')),
-            'belum_bayar' => Tab::make('Belum Bayar')
-                ->modifyQueryUsing(fn (Builder $query) => $query->where('status', 'belum bayar')),
-            'telat' => Tab::make('Telat')
-                ->modifyQueryUsing(fn (Builder $query) => $query->where('status', 'telat')),
+            IuranWargaStatus::DIBAYAR->value => Tab::make(IuranWargaStatus::DIBAYAR->getLabel())
+                ->modifyQueryUsing(fn (Builder $query) => $query->where('status', IuranWargaStatus::DIBAYAR->value)),
+            IuranWargaStatus::BELUM_BAYAR->value => Tab::make(IuranWargaStatus::BELUM_BAYAR->getLabel())
+                ->modifyQueryUsing(fn (Builder $query) => $query->where('status', IuranWargaStatus::BELUM_BAYAR->value)),
+            IuranWargaStatus::TELAT->value => Tab::make(IuranWargaStatus::TELAT->getLabel())
+                ->modifyQueryUsing(fn (Builder $query) => $query->where('status', IuranWargaStatus::TELAT->value)),
         ];
     }
 }

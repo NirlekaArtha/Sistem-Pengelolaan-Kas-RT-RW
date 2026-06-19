@@ -2,37 +2,37 @@
 
 namespace App\Filament\Rw\Widgets;
 
-use Filament\Support\RawJs;
 use App\Models\KasBulananRW;
+use Filament\Support\RawJs;
 use Filament\Widgets\ChartWidget;
 use Illuminate\Support\Carbon;
 
 class ChartPendapatanBulanan extends ChartWidget
 {
-    protected ?string $heading = "Pendapatan & Laba Bersih Bulanan";
+    protected ?string $heading = 'Pendapatan & Laba Bersih Bulanan';
 
-    protected ?string $description = "*dalam juta rupiah";
+    protected ?string $description = '*dalam juta rupiah';
 
-    protected ?string $maxHeight = "300px";
+    protected ?string $maxHeight = '300px';
 
     public ?string $filter = null;
 
     public function mount(): void
     {
-        $this->filter = (string) date("Y");
+        $this->filter = (string) date('Y');
     }
 
     protected function getFilters(): ?array
     {
-        $years = Kasbulananrw::query()
-            ->selectRaw("LEFT(periode, 4) as tahun")
+        $years = KasBulananRW::query()
+            ->selectRaw('LEFT(periode, 4) as tahun')
             ->distinct()
-            ->orderBy("tahun", "desc")
-            ->pluck("tahun")
+            ->orderBy('tahun', 'desc')
+            ->pluck('tahun')
             ->toArray();
 
         if (empty($years)) {
-            $years = [date("Y")];
+            $years = [date('Y')];
         }
 
         return array_combine($years, $years);
@@ -41,56 +41,56 @@ class ChartPendapatanBulanan extends ChartWidget
     protected function getData(): array
     {
         $rw = auth()->user()?->rw;
-        if (!$rw) {
+        if (! $rw) {
             return [
-                "datasets" => [],
-                "labels" => [],
+                'datasets' => [],
+                'labels' => [],
             ];
         }
 
-        $year = $this->filter ?? date("Y");
+        $year = $this->filter ?? date('Y');
 
         $records = KasBulananRW::query()
-            ->select("periode", "total_pendapatan", "total_pendapatan_bersih")
-            ->where("id_rw", $rw->id)
-            ->whereBetween("periode", ["{$year}-01", "{$year}-12"])
-            ->orderBy("periode", "asc")
+            ->select('periode', 'total_pendapatan', 'total_pendapatan_bersih')
+            ->where('id_rw', $rw->id)
+            ->whereBetween('periode', ["{$year}-01", "{$year}-12"])
+            ->orderBy('periode', 'asc')
             ->get();
 
         $processed = $records->map(function ($record) {
             return [
-                "label" => Carbon::parse($record->periode)->translatedFormat(
-                    "F",
+                'label' => Carbon::parse($record->periode)->translatedFormat(
+                    'F',
                 ),
-                "pendapatan" => (float) $record->total_pendapatan / 1_000_000,
-                "laba" => (float) $record->total_pendapatan_bersih / 1_000_000,
+                'pendapatan' => (float) $record->total_pendapatan / 1_000_000,
+                'laba' => (float) $record->total_pendapatan_bersih / 1_000_000,
             ];
         });
 
-        $labels = $processed->pluck("label")->toArray();
-        $pendapatanValues = $processed->pluck("pendapatan")->toArray();
-        $labaValues = $processed->pluck("laba")->toArray();
+        $labels = $processed->pluck('label')->toArray();
+        $pendapatanValues = $processed->pluck('pendapatan')->toArray();
+        $labaValues = $processed->pluck('laba')->toArray();
 
         return [
-            "datasets" => [
+            'datasets' => [
                 [
-                    "label" => "Pendapatan",
-                    "data" => $pendapatanValues,
-                    "borderColor" => "#10b981", // Emerald green
-                    "backgroundColor" => "rgba(16, 185, 129, 0.1)",
-                    "fill" => true,
-                    "tension" => 0.4,
+                    'label' => 'Pendapatan',
+                    'data' => $pendapatanValues,
+                    'borderColor' => '#10b981', // Emerald green
+                    'backgroundColor' => 'rgba(16, 185, 129, 0.1)',
+                    'fill' => true,
+                    'tension' => 0.4,
                 ],
                 [
-                    "label" => "Laba Bersih",
-                    "data" => $labaValues,
-                    "borderColor" => "#06b6d4", // Cyan
-                    "backgroundColor" => "rgba(6, 180, 212, 0.1)",
-                    "fill" => true,
-                    "tension" => 0.4,
+                    'label' => 'Laba Bersih',
+                    'data' => $labaValues,
+                    'borderColor' => '#06b6d4', // Cyan
+                    'backgroundColor' => 'rgba(6, 180, 212, 0.1)',
+                    'fill' => true,
+                    'tension' => 0.4,
                 ],
             ],
-            "labels" => $labels,
+            'labels' => $labels,
         ];
     }
 
@@ -133,6 +133,6 @@ class ChartPendapatanBulanan extends ChartWidget
 
     protected function getType(): string
     {
-        return "line";
+        return 'line';
     }
 }

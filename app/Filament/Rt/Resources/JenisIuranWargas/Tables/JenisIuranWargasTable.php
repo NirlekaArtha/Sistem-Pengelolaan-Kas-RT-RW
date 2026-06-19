@@ -17,20 +17,20 @@ class JenisIuranWargasTable
     {
         return $table
             ->columns([
-                TextColumn::make("jenis_iuran")->searchable(),
-                TextColumn::make("jumlah")
-                    ->prefix("Rp ")
+                TextColumn::make('jenis_iuran')->searchable(),
+                TextColumn::make('jumlah')
+                    ->prefix('Rp ')
                     ->numeric(
                         decimalPlaces: 0,
-                        thousandsSeparator: ",",
-                        decimalSeparator: ".",
+                        thousandsSeparator: ',',
+                        decimalSeparator: '.',
                     )
                     ->sortable(),
-                TextColumn::make("created_at")
+                TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make("updated_at")
+                TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -39,14 +39,14 @@ class JenisIuranWargasTable
                 //
             ])
             ->actions([
-                ViewAction::make()->iconButton()->tooltip("Lihat"),
-                EditAction::make()->iconButton()->tooltip("Edit"),
-                DeleteAction::make()->iconButton()->tooltip("Hapus"),
+                ViewAction::make()->iconButton()->tooltip('Lihat'),
+                EditAction::make()->iconButton()->tooltip('Edit'),
+                DeleteAction::make()->iconButton()->tooltip('Hapus'),
             ])
-            ->actionsColumnLabel("Aksi")
+            ->actionsColumnLabel('Aksi')
             ->recordUrl(
-                fn($record): string => ViewJenisIuranWarga::getUrl([
-                    "record" => $record,
+                fn ($record): string => ViewJenisIuranWarga::getUrl([
+                    'record' => $record,
                 ]),
             )
             ->toolbarActions([

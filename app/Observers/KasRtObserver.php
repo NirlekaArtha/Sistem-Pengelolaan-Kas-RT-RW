@@ -14,7 +14,7 @@ class KasRtObserver
      */
     public function created(KasRT $kasRT): void
     {
-        $periode = $kasRT->tanggal->format("Y-m");
+        $periode = $kasRT->tanggal->format('Y-m');
         KasBulananRtService::recalculateChain($kasRT->id_rt, $periode);
     }
 
@@ -24,15 +24,15 @@ class KasRtObserver
      */
     public function updated(KasRT $kasRT): void
     {
-        if ($kasRT->wasChanged("tanggal") || $kasRT->wasChanged("id_rt")) {
-            $oldRtId = $kasRT->getOriginal("id_rt") ?? $kasRT->id_rt;
-            $oldPeriode = Carbon::parse($kasRT->getOriginal("tanggal"))->format(
-                "Y-m",
+        if ($kasRT->wasChanged('tanggal') || $kasRT->wasChanged('id_rt')) {
+            $oldRtId = $kasRT->getOriginal('id_rt') ?? $kasRT->id_rt;
+            $oldPeriode = Carbon::parse($kasRT->getOriginal('tanggal'))->format(
+                'Y-m',
             );
             KasBulananRtService::recalculateChain($oldRtId, $oldPeriode);
         }
 
-        $periode = $kasRT->tanggal->format("Y-m");
+        $periode = $kasRT->tanggal->format('Y-m');
         KasBulananRtService::recalculateChain($kasRT->id_rt, $periode);
     }
 
@@ -42,7 +42,7 @@ class KasRtObserver
      */
     public function deleted(KasRT $kasRT): void
     {
-        $periode = $kasRT->tanggal->format("Y-m");
+        $periode = $kasRT->tanggal->format('Y-m');
         KasBulananRtService::recalculateChain($kasRT->id_rt, $periode);
     }
 }

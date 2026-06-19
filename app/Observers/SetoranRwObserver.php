@@ -27,12 +27,12 @@ class SetoranRwObserver
     public function updated(SetoranRW $setoranRW): void
     {
         if (
-            $setoranRW->wasChanged("periode") ||
-            $setoranRW->wasChanged("id_rw")
+            $setoranRW->wasChanged('periode') ||
+            $setoranRW->wasChanged('id_rw')
         ) {
-            $oldRwId = $setoranRW->getOriginal("id_rw") ?? $setoranRW->id_rw;
+            $oldRwId = $setoranRW->getOriginal('id_rw') ?? $setoranRW->id_rw;
             $oldPeriode =
-                $setoranRW->getOriginal("periode") ?? $setoranRW->periode;
+                $setoranRW->getOriginal('periode') ?? $setoranRW->periode;
             KasBulananRwService::recalculateChain($oldRwId, $oldPeriode);
         }
 

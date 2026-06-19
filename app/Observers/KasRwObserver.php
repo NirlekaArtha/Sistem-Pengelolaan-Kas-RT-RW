@@ -14,7 +14,7 @@ class KasRwObserver
      */
     public function created(KasRW $kasRW): void
     {
-        $periode = $kasRW->tanggal->format("Y-m");
+        $periode = $kasRW->tanggal->format('Y-m');
         KasBulananRwService::recalculateChain($kasRW->id_rw, $periode);
     }
 
@@ -24,15 +24,15 @@ class KasRwObserver
      */
     public function updated(KasRW $kasRW): void
     {
-        if ($kasRW->wasChanged("tanggal") || $kasRW->wasChanged("id_rw")) {
-            $oldRwId = $kasRW->getOriginal("id_rw") ?? $kasRW->id_rw;
-            $oldPeriode = Carbon::parse($kasRW->getOriginal("tanggal"))->format(
-                "Y-m",
+        if ($kasRW->wasChanged('tanggal') || $kasRW->wasChanged('id_rw')) {
+            $oldRwId = $kasRW->getOriginal('id_rw') ?? $kasRW->id_rw;
+            $oldPeriode = Carbon::parse($kasRW->getOriginal('tanggal'))->format(
+                'Y-m',
             );
             KasBulananRwService::recalculateChain($oldRwId, $oldPeriode);
         }
 
-        $periode = $kasRW->tanggal->format("Y-m");
+        $periode = $kasRW->tanggal->format('Y-m');
         KasBulananRwService::recalculateChain($kasRW->id_rw, $periode);
     }
 
@@ -42,7 +42,7 @@ class KasRwObserver
      */
     public function deleted(KasRW $kasRW): void
     {
-        $periode = $kasRW->tanggal->format("Y-m");
+        $periode = $kasRW->tanggal->format('Y-m');
         KasBulananRwService::recalculateChain($kasRW->id_rw, $periode);
     }
 }

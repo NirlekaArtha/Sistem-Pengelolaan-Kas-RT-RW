@@ -2,6 +2,7 @@
 
 namespace App\Filament\Rw\Resources\SetoranRWS\Pages;
 
+use App\Enums\SetoranStatusValidasi;
 use App\Filament\Rw\Resources\SetoranRWS\SetoranRWResource;
 use App\Filament\Rw\Resources\SetoranRWS\Widgets\SetoranRWOverview;
 use Filament\Actions\CreateAction;
@@ -31,12 +32,12 @@ class ListSetoranRWS extends ListRecords
     {
         return [
             'all' => Tab::make('Semua'),
-            'valid' => Tab::make('Valid')
-                ->modifyQueryUsing(fn (Builder $query) => $query->where('status_validasi', 'valid')),
-            'pending' => Tab::make('Pending')
-                ->modifyQueryUsing(fn (Builder $query) => $query->where('status_validasi', 'pending')),
-            'ditolak' => Tab::make('Ditolak')
-                ->modifyQueryUsing(fn (Builder $query) => $query->where('status_validasi', 'ditolak')),
+            SetoranStatusValidasi::VALID->value => Tab::make(SetoranStatusValidasi::VALID->getLabel())
+                ->modifyQueryUsing(fn (Builder $query) => $query->where('status_validasi', SetoranStatusValidasi::VALID->value)),
+            SetoranStatusValidasi::PENDING->value => Tab::make(SetoranStatusValidasi::PENDING->getLabel())
+                ->modifyQueryUsing(fn (Builder $query) => $query->where('status_validasi', SetoranStatusValidasi::PENDING->value)),
+            SetoranStatusValidasi::DITOLAK->value => Tab::make(SetoranStatusValidasi::DITOLAK->getLabel())
+                ->modifyQueryUsing(fn (Builder $query) => $query->where('status_validasi', SetoranStatusValidasi::DITOLAK->value)),
         ];
     }
 }

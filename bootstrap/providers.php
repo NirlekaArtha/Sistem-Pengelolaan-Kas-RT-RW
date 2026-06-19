@@ -1,8 +1,13 @@
 <?php
 
+use App\Providers\AppServiceProvider;
+use App\Providers\Filament\RtPanelProvider;
+use App\Providers\Filament\RwPanelProvider;
+use App\Providers\Filament\WargaPanelProvider;
+
 return [
-    App\Providers\AppServiceProvider::class,
-    App\Providers\Filament\RtPanelProvider::class,
-    App\Providers\Filament\RwPanelProvider::class,
-    App\Providers\Filament\WargaPanelProvider::class,
+    AppServiceProvider::class,
+    RtPanelProvider::class,
+    RwPanelProvider::class,
+    WargaPanelProvider::class,
 ];

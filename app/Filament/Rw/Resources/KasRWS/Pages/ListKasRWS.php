@@ -2,6 +2,7 @@
 
 namespace App\Filament\Rw\Resources\KasRWS\Pages;
 
+use App\Enums\KasTipe;
 use App\Filament\Rw\Resources\KasRWS\KasRWResource;
 use App\Filament\Rw\Resources\KasRWS\Widgets\KasRWOverview;
 use Filament\Actions\CreateAction;
@@ -32,10 +33,10 @@ class ListKasRWS extends ListRecords
     {
         return [
             'all' => Tab::make('Semua'),
-            'masuk' => Tab::make('Masuk')
-                ->modifyQueryUsing(fn (Builder $query) => $query->where('tipe', 'masuk')),
-            'keluar' => Tab::make('Keluar')
-                ->modifyQueryUsing(fn (Builder $query) => $query->where('tipe', 'keluar')),
+            KasTipe::MASUK->value => Tab::make(KasTipe::MASUK->getLabel())
+                ->modifyQueryUsing(fn (Builder $query) => $query->where('tipe', KasTipe::MASUK->value)),
+            KasTipe::KELUAR->value => Tab::make(KasTipe::KELUAR->getLabel())
+                ->modifyQueryUsing(fn (Builder $query) => $query->where('tipe', KasTipe::KELUAR->value)),
         ];
     }
 }

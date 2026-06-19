@@ -25,17 +25,17 @@ class SlipGajiResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedDocumentText;
 
-    protected static string|UnitEnum|null $navigationGroup = "Laporan & Rekap";
+    protected static string|UnitEnum|null $navigationGroup = 'Laporan & Rekap';
 
     protected static ?int $navigationSort = 2;
 
-    protected static ?string $recordTitleAttribute = "id_petugas";
+    protected static ?string $recordTitleAttribute = 'id_petugas';
 
-    protected static ?string $navigationLabel = "Slip Gaji";
+    protected static ?string $navigationLabel = 'Slip Gaji';
 
-    protected static ?string $modelLabel = "Slip Gaji";
+    protected static ?string $modelLabel = 'Slip Gaji';
 
-    protected static ?string $pluralModelLabel = "Slip Gaji";
+    protected static ?string $pluralModelLabel = 'Slip Gaji';
 
     public static function form(Schema $schema): Schema
     {
@@ -55,28 +55,31 @@ class SlipGajiResource extends Resource
     public static function getRelations(): array
     {
         return [
-                //
-            ];
+            //
+        ];
     }
+
     public static function getEloquentQuery(): Builder
     {
-        return parent::getEloquentQuery()->whereHas("petugas", function (
+        return parent::getEloquentQuery()->whereHas('petugas', function (
             $query,
         ) {
-            $query->where("id_rw", auth()->user()?->rw?->id);
+            $query->where('id_rw', auth()->user()?->rw?->id);
         });
     }
+
     public static function getWidgets(): array
     {
         return [SlipGajiOverview::class];
     }
+
     public static function getPages(): array
     {
         return [
-            "index" => ListSlipGajis::route("/"),
-            "create" => CreateSlipGaji::route("/create"),
-            "view" => ViewSlipGaji::route("/{record}"),
-            "edit" => EditSlipGaji::route("/{record}/edit"),
+            'index' => ListSlipGajis::route('/'),
+            'create' => CreateSlipGaji::route('/create'),
+            'view' => ViewSlipGaji::route('/{record}'),
+            'edit' => EditSlipGaji::route('/{record}/edit'),
         ];
     }
 }

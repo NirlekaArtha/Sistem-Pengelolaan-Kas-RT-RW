@@ -12,7 +12,7 @@ class JenisIuranWargaOverview extends BaseWidget
     {
         $warga = auth()->user()?->warga;
 
-        if (!$warga) {
+        if (! $warga) {
             return [];
         }
 
@@ -28,7 +28,7 @@ class JenisIuranWargaOverview extends BaseWidget
                 ->descriptionIcon('heroicon-m-tag')
                 ->color('primary'),
 
-            Stat::make('Total Kewajiban per Bulan', 'Rp ' . number_format($totalJumlah, 0, ',', '.'))
+            Stat::make('Total Kewajiban per Bulan', 'Rp '.number_format($totalJumlah, 0, ',', '.'))
                 ->description('Akumulasi nilai seluruh jenis iuran bulanan')
                 ->descriptionIcon('heroicon-m-banknotes')
                 ->color('success'),

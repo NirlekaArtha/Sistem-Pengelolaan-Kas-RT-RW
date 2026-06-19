@@ -25,17 +25,17 @@ class JenisIuranWargaResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedTag;
 
-    protected static ?string $navigationLabel = "Daftar Iuran";
+    protected static ?string $navigationLabel = 'Daftar Iuran';
 
-    protected static ?string $recordTitleAttribute = "jenis_iuran";
+    protected static ?string $recordTitleAttribute = 'jenis_iuran';
 
-    protected static string|UnitEnum|null $navigationGroup = "Iuran";
+    protected static string|UnitEnum|null $navigationGroup = 'Iuran';
 
     protected static ?int $navigationSort = 1;
 
-    protected static ?string $modelLabel = "Jenis Iuran";
+    protected static ?string $modelLabel = 'Jenis Iuran';
 
-    protected static ?string $pluralModelLabel = "Jenis-jenis Iuran";
+    protected static ?string $pluralModelLabel = 'Jenis-jenis Iuran';
 
     public static function form(Schema $schema): Schema
     {
@@ -61,7 +61,7 @@ class JenisIuranWargaResource extends Resource
 
         return parent::getEloquentQuery()->when(
             $warga,
-            fn(Builder $q) => $q->where("id_rt", $warga->id_rt),
+            fn (Builder $q) => $q->where('id_rt', $warga->id_rt),
         );
     }
 
@@ -73,17 +73,17 @@ class JenisIuranWargaResource extends Resource
     public static function getRelations(): array
     {
         return [
-                //
-            ];
+            //
+        ];
     }
 
     public static function getPages(): array
     {
         return [
-            "index" => ListJenisIuranWargas::route("/"),
-            "create" => CreateJenisIuranWarga::route("/create"),
-            "view" => ViewJenisIuranWarga::route("/{record}"),
-            "edit" => EditJenisIuranWarga::route("/{record}/edit"),
+            'index' => ListJenisIuranWargas::route('/'),
+            'create' => CreateJenisIuranWarga::route('/create'),
+            'view' => ViewJenisIuranWarga::route('/{record}'),
+            'edit' => EditJenisIuranWarga::route('/{record}/edit'),
         ];
     }
 }

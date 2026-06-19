@@ -2,10 +2,14 @@
 
 namespace App\Services;
 
+use App\Enums\IuranWargaStatus;
+use App\Enums\KasTipe;
+use App\Enums\SetoranStatusValidasi;
 use App\Models\IuranWarga;
 use App\Models\KasBulananRT;
 use App\Models\KasRT;
 use App\Models\SetoranRW;
+use Carbon\Carbon;
 
 class KasBulananRtService
 {
@@ -22,8 +26,8 @@ class KasBulananRtService
      * saldo_awal is automatically inherited from the previous month's saldo_akhir
      * if a previous-month record exists for the same RT.
      *
-     * @param  int    $rtId    The RT's primary key
-     * @param  string $periode Period in YYYY-MM format
+     * @param  int  $rtId  The RT's primary key
+     * @param  string  $periode  Period in YYYY-MM format
      */
     public static function recalculate(int $rtId, string $periode): void
     {
@@ -31,13 +35,13 @@ class KasBulananRtService
             ->where('periode', $periode)
             ->first();
 
-        if (!$record) {
+        if (! $record) {
             // No kas bulanan record exists for this period — nothing to update.
             return;
         }
 
         // ── Inherit saldo_awal from previous month's saldo_akhir ─────────────
-        $prevPeriode = \Carbon\Carbon::createFromFormat('Y-m', $periode)
+        $prevPeriode = Carbon::createFromFormat('Y-m', $periode)
             ->subMonth()
             ->format('Y-m');
 
@@ -51,7 +55,7 @@ class KasBulananRtService
 
         // ── Pendapatan ────────────────────────────────────────────────────────
         $totalPendapatanKasHarian = KasRT::where('id_rt', $rtId)
-            ->where('tipe', 'masuk')
+            ->where('tipe', KasTipe::MASUK->value)
             ->where('tanggal', 'like', "{$periode}-%")
             ->sum('jumlah');
 
@@ -62,7 +66,7 @@ class KasBulananRtService
             'jenis_iuran_wargas.id',
         )
             ->where('jenis_iuran_wargas.id_rt', $rtId)
-            ->where('status', 'dibayar')
+            ->where('status', IuranWargaStatus::DIBAYAR->value)
             ->where(
                 'iuran_wargas.tanggal_bayar',
                 'like',
@@ -72,13 +76,13 @@ class KasBulananRtService
 
         // ── Pengeluaran ───────────────────────────────────────────────────────
         $totalPengeluaranKasHarian = KasRT::where('id_rt', $rtId)
-            ->where('tipe', 'keluar')
+            ->where('tipe', KasTipe::KELUAR->value)
             ->where('tanggal', 'like', "{$periode}-%")
             ->sum('jumlah');
 
         $totalPengeluaranSetoranRW = SetoranRW::where('id_rt', $rtId)
             ->where('periode', $periode)
-            ->where('status_validasi', 'valid')
+            ->where('status_validasi', SetoranStatusValidasi::VALID->value)
             ->sum('jumlah_setor');
 
         // ── Write back ────────────────────────────────────────────────────────
@@ -103,8 +107,8 @@ class KasBulananRtService
      * saldo_akhir, recalculating from a given month forward ensures the entire
      * chain stays consistent.
      *
-     * @param  int    $rtId        The RT's primary key
-     * @param  string $fromPeriode Starting period (YYYY-MM) — inclusive
+     * @param  int  $rtId  The RT's primary key
+     * @param  string  $fromPeriode  Starting period (YYYY-MM) — inclusive
      */
     public static function recalculateChain(int $rtId, string $fromPeriode): void
     {

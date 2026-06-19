@@ -11,22 +11,22 @@ class JenisIuranWargaInfolist
     public static function configure(Schema $schema): Schema
     {
         return $schema->components([
-            Section::make("Informasi Jenis Iuran")
-                ->description("Detail jenis iuran wajib di RT Anda")
-                ->icon("heroicon-o-tag")
+            Section::make('Informasi Jenis Iuran')
+                ->description('Detail jenis iuran wajib di RT Anda')
+                ->icon('heroicon-o-tag')
                 ->columns(2)
                 ->schema([
-                    TextEntry::make("jenis_iuran")
-                        ->label("Jenis Iuran")
-                        ->icon("heroicon-m-tag")
-                        ->weight("bold")
+                    TextEntry::make('jenis_iuran')
+                        ->label('Jenis Iuran')
+                        ->icon('heroicon-m-tag')
+                        ->weight('bold')
                         ->columnSpan(2),
 
-                    TextEntry::make("jumlah")
-                        ->label("Jumlah Iuran")
-                        ->icon("heroicon-m-currency-dollar")
-                        ->money("IDR")
-                        ->placeholder("-"),
+                    TextEntry::make('jumlah')
+                        ->label('Jumlah Iuran')
+                        ->icon('heroicon-m-currency-dollar')
+                        ->money('IDR')
+                        ->placeholder('-'),
                 ]),
         ]);
     }

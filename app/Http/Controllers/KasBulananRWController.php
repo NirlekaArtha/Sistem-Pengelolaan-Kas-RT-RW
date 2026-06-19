@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\KasTipe;
+use App\Enums\SetoranStatusValidasi;
 use App\Models\KasBulananRW;
 use App\Models\KasRW;
-use App\Models\SlipGaji;
 use App\Models\SetoranRW;
-use Illuminate\Http\Request;
+use App\Models\SlipGaji;
 use Dompdf\Dompdf;
 use Dompdf\Options;
 
@@ -18,7 +19,7 @@ class KasBulananRWController extends Controller
         $rw = auth()->user()?->rw;
 
         // Security check
-        if (!$rw || $record->id_rw !== $rw->id) {
+        if (! $rw || $record->id_rw !== $rw->id) {
             abort(403, 'Unauthorized action.');
         }
 
@@ -29,27 +30,27 @@ class KasBulananRWController extends Controller
 
         // 2. Total pendapatan dari kas harian
         $totalPendapatanKasHarian = KasRW::where('id_rw', $rwId)
-            ->where('tipe', 'masuk')
+            ->where('tipe', KasTipe::MASUK->value)
             ->where('tanggal', 'like', "{$record->periode}-%")
             ->sum('jumlah');
 
         // 3. Total pengeluaran kas harian
         $totalPengeluaranKasHarian = KasRW::where('id_rw', $rwId)
-            ->where('tipe', 'keluar')
+            ->where('tipe', KasTipe::KELUAR->value)
             ->where('tanggal', 'like', "{$record->periode}-%")
             ->sum('jumlah');
 
         // 4. Total pengeluaran gaji petugas
         $totalPengeluaranGajiPetugas = SlipGaji::whereHas('petugas', function ($q) use ($rwId) {
-                $q->where('id_rw', $rwId);
-            })
+            $q->where('id_rw', $rwId);
+        })
             ->where('tanggal', 'like', "{$record->periode}-%")
             ->sum('total');
 
         // 5. Total pemasukan setoran dari RT
         $totalPemasukanSetoranRT = SetoranRW::where('id_rw', $rwId)
             ->where('periode', $record->periode)
-            ->where('status_validasi', 'valid')
+            ->where('status_validasi', SetoranStatusValidasi::VALID->value)
             ->sum('jumlah_setor');
 
         // 6. Total semua pemasukan
@@ -82,6 +83,7 @@ class KasBulananRWController extends Controller
     public function preview($recordId)
     {
         $data = $this->getReportData($recordId);
+
         return view('rw.kas-bulanan.preview', $data);
     }
 
@@ -91,7 +93,7 @@ class KasBulananRWController extends Controller
 
         $html = view('rw.kas-bulanan.pdf', $data)->render();
 
-        $options = new Options();
+        $options = new Options;
         $options->set('isHtml5ParserEnabled', true);
         $options->set('isRemoteEnabled', true);
 
@@ -104,7 +106,7 @@ class KasBulananRWController extends Controller
 
         return response($dompdf->output(), 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+            'Content-Disposition' => 'attachment; filename="'.$filename.'"',
         ]);
     }
 
@@ -113,7 +115,7 @@ class KasBulananRWController extends Controller
         $rw = auth()->user()?->rw;
 
         // Security check
-        if (!$rw) {
+        if (! $rw) {
             abort(403, 'Unauthorized action.');
         }
 
@@ -141,6 +143,7 @@ class KasBulananRWController extends Controller
     public function previewTahunan($tahun)
     {
         $data = $this->getAnnualReportData($tahun);
+
         return view('rw.kas-bulanan.preview-tahunan', $data);
     }
 
@@ -150,7 +153,7 @@ class KasBulananRWController extends Controller
 
         $html = view('rw.kas-bulanan.pdf-tahunan', $data)->render();
 
-        $options = new Options();
+        $options = new Options;
         $options->set('isHtml5ParserEnabled', true);
         $options->set('isRemoteEnabled', true);
 
@@ -163,7 +166,7 @@ class KasBulananRWController extends Controller
 
         return response($dompdf->output(), 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+            'Content-Disposition' => 'attachment; filename="'.$filename.'"',
         ]);
     }
 }

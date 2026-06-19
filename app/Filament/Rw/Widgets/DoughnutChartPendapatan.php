@@ -2,25 +2,26 @@
 
 namespace App\Filament\Rw\Widgets;
 
+use App\Enums\KasTipe;
 use App\Models\KasRW;
 use App\Models\SetoranRW;
+use Filament\Support\RawJs;
 use Filament\Widgets\ChartWidget;
 use Illuminate\Support\Carbon;
-use Filament\Support\RawJs;
 
 class DoughnutChartPendapatan extends ChartWidget
 {
-    protected ?string $heading = "Komposisi Pendapatan";
+    protected ?string $heading = 'Komposisi Pendapatan';
 
-    protected ?string $description = "Perbandingan pendapatan harian dan setoran RW";
+    protected ?string $description = 'Perbandingan pendapatan harian dan setoran RW';
 
-    protected ?string $maxHeight = "320px";
+    protected ?string $maxHeight = '320px';
 
     public ?string $filter = null;
 
     public function mount(): void
     {
-        $this->filter = Carbon::now()->format("Y-m");
+        $this->filter = Carbon::now()->format('Y-m');
     }
 
     protected function getFilters(): ?array
@@ -29,35 +30,36 @@ class DoughnutChartPendapatan extends ChartWidget
         $now = Carbon::now();
         for ($i = 0; $i < 6; $i++) {
             $date = $now->copy()->subMonths($i);
-            $key = $date->format("Y-m");
-            $label = $date->translatedFormat("F Y");
+            $key = $date->format('Y-m');
+            $label = $date->translatedFormat('F Y');
             $filters[$key] = $label;
         }
+
         return $filters;
     }
 
     protected function getData(): array
     {
         $rw = auth()->user()?->rw;
-        if (!$rw) {
-            return ["datasets" => [], "labels" => []];
+        if (! $rw) {
+            return ['datasets' => [], 'labels' => []];
         }
 
-        $periode = $this->filter ?? Carbon::now()->format("Y-m");
-        $year = Carbon::parse($periode . "-01")->year;
-        $month = Carbon::parse($periode . "-01")->month;
+        $periode = $this->filter ?? Carbon::now()->format('Y-m');
+        $year = Carbon::parse($periode.'-01')->year;
+        $month = Carbon::parse($periode.'-01')->month;
 
         // 1. Pendapatan Harian (KasRW tipe = masuk) in the selected month
-        $totalPendapatanHarian = KasRW::where("id_rw", $rw->id)
-            ->where("tipe", "masuk")
-            ->whereYear("tanggal", $year)
-            ->whereMonth("tanggal", $month)
-            ->sum("jumlah");
+        $totalPendapatanHarian = KasRW::where('id_rw', $rw->id)
+            ->where('tipe', KasTipe::MASUK->value)
+            ->whereYear('tanggal', $year)
+            ->whereMonth('tanggal', $month)
+            ->sum('jumlah');
 
         // 2. Setoran RW in the selected month (by periode field Y-m format)
-        $totalSetoranRW = SetoranRW::where("id_rw", $rw->id)
-            ->where("periode", $periode)
-            ->sum("jumlah_setor");
+        $totalSetoranRW = SetoranRW::where('id_rw', $rw->id)
+            ->where('periode', $periode)
+            ->sum('jumlah_setor');
 
         $totalPendapatanHarian = (float) $totalPendapatanHarian;
         $totalSetoranRW = (float) $totalSetoranRW;
@@ -74,25 +76,25 @@ class DoughnutChartPendapatan extends ChartWidget
                 : 0;
 
         return [
-            "datasets" => [
+            'datasets' => [
                 [
-                    "data" => [
+                    'data' => [
                         round($totalPendapatanHarian, 2),
                         round($totalSetoranRW, 2),
                     ],
-                    "backgroundColor" => [
-                        "rgba(16, 185, 129, 0.85)", // Emerald - Pendapatan Harian
-                        "rgba(6, 182, 212, 0.85)", // Cyan - Setoran RW
+                    'backgroundColor' => [
+                        'rgba(16, 185, 129, 0.85)', // Emerald - Pendapatan Harian
+                        'rgba(6, 182, 212, 0.85)', // Cyan - Setoran RW
                     ],
-                    "borderColor" => [
-                        "rgba(16, 185, 129, 1)",
-                        "rgba(6, 182, 212, 1)",
+                    'borderColor' => [
+                        'rgba(16, 185, 129, 1)',
+                        'rgba(6, 182, 212, 1)',
                     ],
-                    "borderWidth" => 2,
-                    "hoverOffset" => 8,
+                    'borderWidth' => 2,
+                    'hoverOffset' => 8,
                 ],
             ],
-            "labels" => [
+            'labels' => [
                 "Pendapatan Harian ({$pctHarian}%)",
                 "Setoran RW ({$pctSetoran}%)",
             ],
@@ -102,7 +104,7 @@ class DoughnutChartPendapatan extends ChartWidget
     protected function getOptions(): array|RawJs|null
     {
         return RawJs::make(
-            <<<JS
+            <<<'JS'
                 {
                     plugins: {
                         tooltip: {
@@ -135,6 +137,6 @@ class DoughnutChartPendapatan extends ChartWidget
 
     protected function getType(): string
     {
-        return "doughnut";
+        return 'doughnut';
     }
 }

@@ -1,38 +1,43 @@
 <?php
+
 namespace App\Http\Middleware;
 
+use App\Enums\UserRole;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class RedirectToProperPanel
 {
-    // Map role → path panel
-    private array $rolePanelMap = [
-        "RW" => "rw",
-        "RT" => "rt",
-        "Warga" => "warga",
-    ];
+    private function getPanelIdForRole(?string $role): ?string
+    {
+        return match ($role) {
+            UserRole::RW->value => UserRole::RW->getPanelId(),
+            UserRole::RT->value => UserRole::RT->getPanelId(),
+            UserRole::WARGA->value => UserRole::WARGA->getPanelId(),
+            default => null,
+        };
+    }
 
     public function handle(Request $request, Closure $next): Response
     {
-        if (!auth()->check()) {
+        if (! auth()->check()) {
             return $next($request);
         }
 
-        $role = auth()->user()->role;
-        $userPanel = $this->rolePanelMap[$role] ?? null;
+        $userPanel = $this->getPanelIdForRole(auth()->user()->role?->value);
 
-        if (!$userPanel) {
+        if ($userPanel === null) {
             return $next($request);
         }
 
         // Cek apakah request path sesuai dengan panel user
         $requestPath = $request->path(); // e.g. "rw/something" atau "rt/dashboard"
 
-        if (!str_starts_with($requestPath, $userPanel)) {
+        if (! str_starts_with($requestPath, $userPanel)) {
             // User akses panel yang bukan miliknya → redirect ke panel yang benar
             $correctUrl = filament()->getPanel($userPanel)->getUrl();
+
             return redirect()->to($correctUrl);
         }
 

@@ -11,19 +11,19 @@ class IuranWargaInfolist
     public static function configure(Schema $schema): Schema
     {
         return $schema->components([
-            Section::make("Informasi Iuran")
-                ->description("Detail data pembayaran iuran warga")
-                ->icon("heroicon-o-banknotes")
+            Section::make('Informasi Iuran')
+                ->description('Detail data pembayaran iuran warga')
+                ->icon('heroicon-o-banknotes')
                 ->columns(2)
                 ->schema([
-                    TextEntry::make("periode")->label("Periode"),
+                    TextEntry::make('periode')->label('Periode'),
 
-                    TextEntry::make("status")->label("Status")->badge(),
+                    TextEntry::make('status')->label('Status')->badge(),
 
-                    TextEntry::make("tanggal_bayar")
-                        ->label("Tanggal Bayar")
+                    TextEntry::make('tanggal_bayar')
+                        ->label('Tanggal Bayar')
                         ->date()
-                        ->placeholder("-"),
+                        ->placeholder('-'),
                 ]),
         ]);
     }

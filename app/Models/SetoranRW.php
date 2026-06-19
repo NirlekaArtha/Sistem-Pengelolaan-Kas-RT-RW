@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Enums\SetoranStatusValidasi;
+use Database\Factories\SetoranRWFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -9,7 +11,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class SetoranRW extends Model
 {
-    /** @use HasFactory<\Database\Factories\SetoranRWFactory> */
+    /** @use HasFactory<SetoranRWFactory> */
     use HasFactory;
 
     protected $table = 'setoran_r_w_s';
@@ -25,7 +27,8 @@ class SetoranRW extends Model
 
     protected $casts = [
         'tanggal_setor' => 'date',
-        'jumlah_setor'  => 'decimal:2',
+        'jumlah_setor' => 'decimal:2',
+        'status_validasi' => SetoranStatusValidasi::class,
     ];
 
     // ─── Belongs To ──────────────────────────────────────────────────────────

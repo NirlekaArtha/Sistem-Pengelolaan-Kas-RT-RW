@@ -15,9 +15,9 @@ class SlipGajiFactory extends Factory
     {
         return [
             'id_petugas' => Petugas::inRandomOrder()->first()->id,
-            'total'      => fake()->numberBetween(1000000, 3000000),
-            'tanggal'    => fake()->dateTimeBetween('-6 months', 'now')->format('Y-m-d'),
-            'file_path'  => null,
+            'total' => fake()->numberBetween(1000000, 3000000),
+            'tanggal' => fake()->dateTimeBetween('-6 months', 'now')->format('Y-m-d'),
+            'file_path' => null,
         ];
     }
 }

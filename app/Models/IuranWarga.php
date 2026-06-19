@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Enums\IuranWargaStatus;
+use Database\Factories\IuranWargaFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -9,7 +11,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class IuranWarga extends Model
 {
-    /** @use HasFactory<\Database\Factories\IuranWargaFactory> */
+    /** @use HasFactory<IuranWargaFactory> */
     use HasFactory;
 
     protected $fillable = [
@@ -23,6 +25,7 @@ class IuranWarga extends Model
 
     protected $casts = [
         'tanggal_bayar' => 'date',
+        'status' => IuranWargaStatus::class,
     ];
 
     // ─── Belongs To ──────────────────────────────────────────────────────────

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Rw\Resources\SetoranRWS\Schemas;
 
+use App\Enums\SetoranStatusValidasi;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
@@ -60,21 +61,7 @@ class SetoranRWForm
                     ->schema([
                         ToggleButtons::make('status_validasi')
                             ->label('Status Validasi')
-                            ->options([
-                                'pending' => 'Pending',
-                                'valid' => 'Valid',
-                                'ditolak' => 'Ditolak',
-                            ])
-                            ->colors([
-                                'pending' => 'warning',
-                                'valid' => 'success',
-                                'ditolak' => 'danger',
-                            ])
-                            ->icons([
-                                'pending' => 'heroicon-o-clock',
-                                'valid' => 'heroicon-o-check-circle',
-                                'ditolak' => 'heroicon-o-x-circle',
-                            ])
+                            ->options(SetoranStatusValidasi::class)
                             ->inline()
                             ->required(),
                     ]),

@@ -24,17 +24,17 @@ class WargaResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedArrowUpTray;
 
-    protected static ?string $recordTitleAttribute = "nama_kepala_keluarga";
+    protected static ?string $recordTitleAttribute = 'nama_kepala_keluarga';
 
-    protected static string|UnitEnum|null $navigationGroup = "Data Master";
+    protected static string|UnitEnum|null $navigationGroup = 'Data Master';
 
     protected static ?int $navigationSort = 1;
 
-    protected static ?string $navigationLabel = "Kelola Warga";
+    protected static ?string $navigationLabel = 'Kelola Warga';
 
-    protected static ?string $modelLabel = "Warga (per KK)";
+    protected static ?string $modelLabel = 'Warga (per KK)';
 
-    protected static ?string $pluralModelLabel = "Data Warga (per KK)";
+    protected static ?string $pluralModelLabel = 'Data Warga (per KK)';
 
     public static function form(Schema $schema): Schema
     {
@@ -54,7 +54,7 @@ class WargaResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()->where(
-            "id_rt",
+            'id_rt',
             auth()->user()?->rt?->id,
         );
     }
@@ -62,10 +62,10 @@ class WargaResource extends Resource
     public static function getPages(): array
     {
         return [
-            "index" => ListWargas::route("/"),
-            "create" => CreateWarga::route("/create"),
-            "view" => ViewWarga::route("/{record}"),
-            "edit" => EditWarga::route("/{record}/edit"),
+            'index' => ListWargas::route('/'),
+            'create' => CreateWarga::route('/create'),
+            'view' => ViewWarga::route('/{record}'),
+            'edit' => EditWarga::route('/{record}/edit'),
         ];
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Enums\UserRole;
 use App\Models\RT;
 use App\Models\RW;
 use App\Models\User;
@@ -18,7 +19,7 @@ class ProfilePageTest extends TestCase
         $rwUser = User::factory()->create([
             'name' => 'RW User',
             'email' => 'rw@example.com',
-            'role' => 'RW',
+            'role' => UserRole::RW,
         ]);
 
         $rw = RW::create([
@@ -32,7 +33,7 @@ class ProfilePageTest extends TestCase
         $rtUser = User::factory()->create([
             'name' => 'RT User',
             'email' => 'rt@example.com',
-            'role' => 'RT',
+            'role' => UserRole::RT,
         ]);
 
         $rt = RT::create([
@@ -47,7 +48,7 @@ class ProfilePageTest extends TestCase
         $wargaUser = User::factory()->create([
             'name' => 'Warga User',
             'email' => 'warga@example.com',
-            'role' => 'Warga',
+            'role' => UserRole::WARGA,
         ]);
 
         Warga::create([

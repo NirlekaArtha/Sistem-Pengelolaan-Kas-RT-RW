@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Enums\KasTipe;
+use Database\Factories\RTFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -9,7 +11,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class RT extends Model
 {
-    /** @use HasFactory<\Database\Factories\RTFactory> */
+    /** @use HasFactory<RTFactory> */
     use HasFactory;
 
     protected $table = 'r_t_s';
@@ -49,12 +51,12 @@ class RT extends Model
 
     public function kasMasukRTs(): HasMany
     {
-        return $this->hasMany(KasRT::class, 'id_rt')->where('tipe', 'masuk');
+        return $this->hasMany(KasRT::class, 'id_rt')->where('tipe', KasTipe::MASUK->value);
     }
 
     public function kasKeluarRTs(): HasMany
     {
-        return $this->hasMany(KasRT::class, 'id_rt')->where('tipe', 'keluar');
+        return $this->hasMany(KasRT::class, 'id_rt')->where('tipe', KasTipe::KELUAR->value);
     }
 
     public function kasBulananRTs(): HasMany

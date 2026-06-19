@@ -2,9 +2,9 @@
 
 namespace App\Filament\Rt\Resources\SetoranRWS\Pages;
 
+use App\Enums\SetoranStatusValidasi;
 use App\Filament\Rt\Resources\SetoranRWS\SetoranRWResource;
 use Filament\Actions\DeleteAction;
-use Filament\Actions\ViewAction;
 use Filament\Resources\Pages\EditRecord;
 
 class EditSetoranRW extends EditRecord
@@ -18,9 +18,9 @@ class EditSetoranRW extends EditRecord
 
     protected function mutateFormDataBeforeSave(array $data): array
     {
-        $data["id_rt"] = auth()->user()?->rt?->id;
-        $data["id_rw"] = auth()->user()?->rt?->id_rw;
-        $data["status_validasi"] = "pending";
+        $data['id_rt'] = auth()->user()?->rt?->id;
+        $data['id_rw'] = auth()->user()?->rt?->id_rw;
+        $data['status_validasi'] = SetoranStatusValidasi::PENDING;
 
         return $data;
     }

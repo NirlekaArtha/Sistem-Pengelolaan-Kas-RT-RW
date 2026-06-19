@@ -20,75 +20,75 @@ class KasBulananRTSTable
     {
         return $table
             ->columns([
-                TextColumn::make("periode")->searchable()->sortable(),
-                TextColumn::make("total_pendapatan")
-                    ->prefix("Rp ")
+                TextColumn::make('periode')->searchable()->sortable(),
+                TextColumn::make('total_pendapatan')
+                    ->prefix('Rp ')
                     ->numeric(
                         decimalPlaces: 0,
-                        thousandsSeparator: ",",
-                        decimalSeparator: ".",
+                        thousandsSeparator: ',',
+                        decimalSeparator: '.',
                     )
                     ->sortable(),
-                TextColumn::make("total_pengeluaran")
-                    ->prefix("Rp ")
+                TextColumn::make('total_pengeluaran')
+                    ->prefix('Rp ')
                     ->numeric(
                         decimalPlaces: 0,
-                        thousandsSeparator: ",",
-                        decimalSeparator: ".",
+                        thousandsSeparator: ',',
+                        decimalSeparator: '.',
                     )
                     ->sortable(),
-                TextColumn::make("saldo_awal")
-                    ->prefix("Rp ")
+                TextColumn::make('saldo_awal')
+                    ->prefix('Rp ')
                     ->numeric(
                         decimalPlaces: 0,
-                        thousandsSeparator: ",",
-                        decimalSeparator: ".",
+                        thousandsSeparator: ',',
+                        decimalSeparator: '.',
                     )
                     ->sortable(),
-                TextColumn::make("saldo_akhir")
-                    ->prefix("Rp ")
+                TextColumn::make('saldo_akhir')
+                    ->prefix('Rp ')
                     ->numeric(
                         decimalPlaces: 0,
-                        thousandsSeparator: ",",
-                        decimalSeparator: ".",
+                        thousandsSeparator: ',',
+                        decimalSeparator: '.',
                     )
                     ->sortable(),
-                TextColumn::make("total_pendapatan_bersih")
-                    ->prefix("Rp ")
+                TextColumn::make('total_pendapatan_bersih')
+                    ->prefix('Rp ')
                     ->numeric(
                         decimalPlaces: 0,
-                        thousandsSeparator: ",",
-                        decimalSeparator: ".",
+                        thousandsSeparator: ',',
+                        decimalSeparator: '.',
                     )
                     ->sortable(),
-                TextColumn::make("created_at")
+                TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make("updated_at")
+                TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                SelectFilter::make("periode")
-                    ->label("Periode")
+                SelectFilter::make('periode')
+                    ->label('Periode')
                     ->options(fn (): array => KasBulananRT::query()
-                        ->select("periode")
+                        ->select('periode')
                         ->distinct()
-                        ->orderBy("periode", "desc")
-                        ->pluck("periode", "periode")
+                        ->orderBy('periode', 'desc')
+                        ->pluck('periode', 'periode')
                         ->all())
                     ->searchable(),
             ])
             ->actions([
-                ViewAction::make()->iconButton()->tooltip("Lihat"),
-                Action::make("recalculate")
-                    ->label("recalculate")
-                    ->icon("heroicon-o-arrow-path")
+                ViewAction::make()->iconButton()->tooltip('Lihat'),
+                Action::make('recalculate')
+                    ->label('recalculate')
+                    ->icon('heroicon-o-arrow-path')
                     ->iconButton()
-                    ->tooltip("Kalkulasi Ulang")
-                    ->color("info")
+                    ->tooltip('Kalkulasi Ulang')
+                    ->color('info')
                     ->action(function (KasBulananRT $record) {
                         KasBulananRtService::recalculateChain(
                             $record->id_rt,
@@ -103,22 +103,22 @@ class KasBulananRTSTable
                             ->success()
                             ->send();
                     }),
-                Action::make("export")
-                    ->label("export")
-                    ->icon("heroicon-o-arrow-down-tray")
+                Action::make('export')
+                    ->label('export')
+                    ->icon('heroicon-o-arrow-down-tray')
                     ->iconButton()
-                    ->tooltip("Export Bulanan")
+                    ->tooltip('Export Bulanan')
                     ->url(
-                        fn(KasBulananRT $record): string => route(
-                            "rt.kas-bulanan.preview",
-                            ["record" => $record],
+                        fn (KasBulananRT $record): string => route(
+                            'rt.kas-bulanan.preview',
+                            ['record' => $record],
                         ),
                     ),
             ])
-            ->actionsColumnLabel("aksi")
+            ->actionsColumnLabel('aksi')
             ->recordUrl(
-                fn(KasBulananRT $record): string => ViewKasBulananRT::getUrl([
-                    "record" => $record,
+                fn (KasBulananRT $record): string => ViewKasBulananRT::getUrl([
+                    'record' => $record,
                 ]),
             )
             ->toolbarActions([

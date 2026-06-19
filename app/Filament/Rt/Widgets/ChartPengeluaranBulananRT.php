@@ -2,45 +2,47 @@
 
 namespace App\Filament\Rt\Widgets;
 
-use Filament\Support\RawJs;
+use App\Enums\KasTipe;
+use App\Enums\SetoranStatusValidasi;
 use App\Models\KasBulananRT;
+use App\Models\KasRW;
 use App\Models\SetoranRW;
-use App\Models\KasRW; // TAMBAHKAN: Import model KasRW untuk pengeluaran harian
+use Filament\Support\RawJs; // TAMBAHKAN: Import model KasRW untuk pengeluaran harian
 use Filament\Widgets\ChartWidget;
 use Illuminate\Support\Carbon;
 
 class ChartPengeluaranBulananRT extends ChartWidget
 {
-    protected ?string $heading = "Pengeluaran Bulanan";
+    protected ?string $heading = 'Pengeluaran Bulanan';
 
-    protected ?string $description = "*dalam juta rupiah";
+    protected ?string $description = '*dalam juta rupiah';
 
-    protected ?string $maxHeight = "300px";
+    protected ?string $maxHeight = '300px';
 
     public ?string $filter = null;
 
     public function mount(): void
     {
-        $this->filter = (string) date("Y");
+        $this->filter = (string) date('Y');
     }
 
     protected function getFilters(): ?array
     {
         $rt = auth()->user()?->rt;
-        if (!$rt) {
-            return [date("Y") => date("Y")];
+        if (! $rt) {
+            return [date('Y') => date('Y')];
         }
 
         $years = KasBulananRT::query()
-            ->where("id_rt", $rt->id)
-            ->selectRaw("LEFT(periode, 4) as tahun")
+            ->where('id_rt', $rt->id)
+            ->selectRaw('LEFT(periode, 4) as tahun')
             ->distinct()
-            ->orderBy("tahun", "desc")
-            ->pluck("tahun")
+            ->orderBy('tahun', 'desc')
+            ->pluck('tahun')
             ->toArray();
 
         if (empty($years)) {
-            $years = [date("Y")];
+            $years = [date('Y')];
         }
 
         return array_combine($years, $years);
@@ -49,61 +51,61 @@ class ChartPengeluaranBulananRT extends ChartWidget
     protected function getData(): array
     {
         $rt = auth()->user()?->rt;
-        if (!$rt) {
+        if (! $rt) {
             return [
-                "datasets" => [],
-                "labels" => [],
+                'datasets' => [],
+                'labels' => [],
             ];
         }
 
-        $year = $this->filter ?? date("Y");
+        $year = $this->filter ?? date('Y');
 
         $records = KasBulananRT::query()
-            ->where("id_rt", $rt->id)
-            ->whereBetween("periode", ["{$year}-01", "{$year}-12"])
-            ->orderBy("periode", "asc")
+            ->where('id_rt', $rt->id)
+            ->whereBetween('periode', ["{$year}-01", "{$year}-12"])
+            ->orderBy('periode', 'asc')
             ->get();
 
         $processed = $records->map(function ($record) use ($rt) {
             // 1. Ambil total Setoran RW untuk periode/bulan ini
-            $totalSetoranRW = SetoranRW::where("id_rt", $rt->id)
-                ->where("periode", $record->periode)
-                ->where("status_validasi", "valid")
-                ->sum("jumlah_setor");
+            $totalSetoranRW = SetoranRW::where('id_rt', $rt->id)
+                ->where('periode', $record->periode)
+                ->where('status_validasi', SetoranStatusValidasi::VALID->value)
+                ->sum('jumlah_setor');
 
             // 2. MODIFIKASI: Ambil total pengeluaran harian (KasRW) di bulan ini
             // Menggunakan match string 'YYYY-MM-%' dari format periode yang ada
-            $totalPengeluaranHarian = KasRW::where("tipe", "keluar")
-                ->whereLike("tanggal", "{$record->periode}-%")
-                ->sum("jumlah");
+            $totalPengeluaranHarian = KasRW::where('tipe', KasTipe::KELUAR->value)
+                ->whereLike('tanggal', "{$record->periode}-%")
+                ->sum('jumlah');
 
             // 3. Gabungkan kedua pengeluaran ke dalam satu variabel rumus
             $totalPengeluaranGabungan =
                 $totalSetoranRW + $totalPengeluaranHarian;
 
             return [
-                "label" => Carbon::parse($record->periode)->translatedFormat(
-                    "F",
+                'label' => Carbon::parse($record->periode)->translatedFormat(
+                    'F',
                 ),
-                "pengeluaran" => (float) $totalPengeluaranGabungan / 1_000_000, // Dimasukkan ke satu baris data tunggal
+                'pengeluaran' => (float) $totalPengeluaranGabungan / 1_000_000, // Dimasukkan ke satu baris data tunggal
             ];
         });
 
-        $labels = $processed->pluck("label")->toArray();
-        $pengeluaranValues = $processed->pluck("pengeluaran")->toArray();
+        $labels = $processed->pluck('label')->toArray();
+        $pengeluaranValues = $processed->pluck('pengeluaran')->toArray();
 
         return [
-            "datasets" => [
+            'datasets' => [
                 [
-                    "label" => "Pengeluaran",
-                    "data" => $pengeluaranValues, // Nilai gabungan otomatis masuk ke sini
-                    "borderColor" => "#f43f5e", // Rose red
-                    "backgroundColor" => "rgba(244, 63, 94, 0.1)",
-                    "fill" => true,
-                    "tension" => 0.4,
+                    'label' => 'Pengeluaran',
+                    'data' => $pengeluaranValues, // Nilai gabungan otomatis masuk ke sini
+                    'borderColor' => '#f43f5e', // Rose red
+                    'backgroundColor' => 'rgba(244, 63, 94, 0.1)',
+                    'fill' => true,
+                    'tension' => 0.4,
                 ],
             ],
-            "labels" => $labels,
+            'labels' => $labels,
         ];
     }
 
@@ -146,6 +148,6 @@ class ChartPengeluaranBulananRT extends ChartWidget
 
     protected function getType(): string
     {
-        return "line";
+        return 'line';
     }
 }

@@ -13,7 +13,7 @@ class SetoranRtObserver
      */
     public function created(SetoranRW $setoranRW): void
     {
-        if (!$setoranRW->id_rt) {
+        if (! $setoranRW->id_rt) {
             return;
         }
 
@@ -31,19 +31,19 @@ class SetoranRtObserver
     public function updated(SetoranRW $setoranRW): void
     {
         if (
-            $setoranRW->wasChanged("periode") ||
-            $setoranRW->wasChanged("id_rt")
+            $setoranRW->wasChanged('periode') ||
+            $setoranRW->wasChanged('id_rt')
         ) {
-            $oldRtId = $setoranRW->getOriginal("id_rt") ?? $setoranRW->id_rt;
+            $oldRtId = $setoranRW->getOriginal('id_rt') ?? $setoranRW->id_rt;
             $oldPeriode =
-                $setoranRW->getOriginal("periode") ?? $setoranRW->periode;
+                $setoranRW->getOriginal('periode') ?? $setoranRW->periode;
 
             if ($oldRtId) {
                 KasBulananRtService::recalculateChain($oldRtId, $oldPeriode);
             }
         }
 
-        if (!$setoranRW->id_rt) {
+        if (! $setoranRW->id_rt) {
             return;
         }
 
@@ -59,7 +59,7 @@ class SetoranRtObserver
      */
     public function deleted(SetoranRW $setoranRW): void
     {
-        if (!$setoranRW->id_rt) {
+        if (! $setoranRW->id_rt) {
             return;
         }
 

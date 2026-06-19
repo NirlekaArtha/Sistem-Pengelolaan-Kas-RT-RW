@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -13,37 +14,38 @@ class LoginController extends Controller
         if (Auth::check()) {
             return $this->redirectUser(Auth::user());
         }
-        return view("auth.login");
+
+        return view('auth.login');
     }
 
     public function login(Request $request)
     {
         $request->validate([
-            "login" => "required|string",
-            "password" => "required|string",
+            'login' => 'required|string',
+            'password' => 'required|string',
         ]);
 
         // Cek apakah input berupa email atau name biasa
         $loginType = filter_var($request->login, FILTER_VALIDATE_EMAIL)
-            ? "email"
-            : "name";
+            ? 'email'
+            : 'name';
 
         $credentials = [
             $loginType => $request->login,
-            "password" => $request->password,
+            'password' => $request->password,
         ];
 
         if (Auth::attempt($credentials, $request->remember)) {
             $request->session()->regenerate();
+
             return $this->redirectUser(Auth::user());
         }
 
         return back()
             ->withErrors([
-                "login" =>
-                    "Kredensial yang Anda masukkan tidak cocok dengan data kami.",
+                'login' => 'Kredensial yang Anda masukkan tidak cocok dengan data kami.',
             ])
-            ->onlyInput("login");
+            ->onlyInput('login');
     }
 
     public function logout(Request $request)
@@ -51,7 +53,8 @@ class LoginController extends Controller
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-        return redirect()->route("login");
+
+        return redirect()->route('login');
     }
 
     // Fungsi pembantu untuk mengarahkan user berdasarkan role ke panelnya masing-masing
@@ -59,10 +62,10 @@ class LoginController extends Controller
     {
         // Sesuaikan nama kolom role di database Anda (misal: $user->role)
         return match ($user->role) {
-            "RW" => redirect("/rw"),
-            "RT" => redirect("/rt"),
-            "Warga" => redirect("/warga"),
-            default => redirect("/"),
+            UserRole::RW => redirect(UserRole::RW->getPath()),
+            UserRole::RT => redirect(UserRole::RT->getPath()),
+            UserRole::WARGA => redirect(UserRole::WARGA->getPath()),
+            default => redirect('/'),
         };
     }
 }

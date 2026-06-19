@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\UserRole;
 use App\Models\RT;
 use App\Models\User;
 use App\Models\Warga;
@@ -15,11 +16,11 @@ class WargaFactory extends Factory
     public function definition(): array
     {
         return [
-            'id_rt'                => RT::inRandomOrder()->first()->id,
-            'id_user'              => User::factory()->create(['role' => 'Warga'])->id,
+            'id_rt' => RT::inRandomOrder()->first()->id,
+            'id_user' => User::factory()->create(['role' => UserRole::WARGA])->id,
             'nama_kepala_keluarga' => fake()->name('male'),
-            'alamat'               => fake()->address(),
-            'no_telepon'           => '08' . fake()->numerify('##########'),
+            'alamat' => fake()->address(),
+            'no_telepon' => '08'.fake()->numerify('##########'),
         ];
     }
 }

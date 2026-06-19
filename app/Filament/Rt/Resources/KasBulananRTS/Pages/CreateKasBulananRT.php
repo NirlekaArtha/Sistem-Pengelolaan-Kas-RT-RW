@@ -11,7 +11,7 @@ class CreateKasBulananRT extends CreateRecord
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {
-        $data["id_rt"] = auth()->user()?->rt?->id;
+        $data['id_rt'] = auth()->user()?->rt?->id;
 
         return $data;
     }

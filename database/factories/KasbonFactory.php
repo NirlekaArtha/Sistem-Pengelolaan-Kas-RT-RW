@@ -15,8 +15,8 @@ class KasbonFactory extends Factory
     {
         return [
             'id_petugas' => Petugas::inRandomOrder()->first()->id,
-            'jumlah'     => fake()->randomElement([100000, 200000, 250000, 300000, 500000]),
-            'tanggal'    => fake()->dateTimeBetween('-3 months', 'now')->format('Y-m-d'),
+            'jumlah' => fake()->randomElement([100000, 200000, 250000, 300000, 500000]),
+            'tanggal' => fake()->dateTimeBetween('-3 months', 'now')->format('Y-m-d'),
         ];
     }
 }

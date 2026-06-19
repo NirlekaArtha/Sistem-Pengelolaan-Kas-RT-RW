@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Enums\KasJenis;
+use App\Enums\KasTipe;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -23,8 +25,10 @@ class KasRW extends Model
     ];
 
     protected $casts = [
-        'jumlah'  => 'decimal:2',
+        'jumlah' => 'decimal:2',
         'tanggal' => 'date',
+        'tipe' => KasTipe::class,
+        'jenis' => KasJenis::class,
     ];
 
     // ─── Belongs To ──────────────────────────────────────────────────────────

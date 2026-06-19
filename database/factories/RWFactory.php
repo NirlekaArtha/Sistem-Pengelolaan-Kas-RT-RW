@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\UserRole;
 use App\Models\RW;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -14,14 +15,14 @@ class RWFactory extends Factory
     public function definition(): array
     {
         return [
-            "id_user" => fn () => User::factory()->create([
-                "role" => "RW",
-                "email" => "adminrw@gmail.com",
+            'id_user' => fn () => User::factory()->create([
+                'role' => UserRole::RW,
+                'email' => 'adminrw@gmail.com',
             ])->id,
-            "nomor_rw" => fake()->unique()->numerify("###"),
-            "nama" => "RW " . fake()->numerify("###"),
-            "alamat" => fake()->address(),
-            "no_telepon" => "08" . fake()->numerify("##########"),
+            'nomor_rw' => fake()->unique()->numerify('###'),
+            'nama' => 'RW '.fake()->numerify('###'),
+            'alamat' => fake()->address(),
+            'no_telepon' => '08'.fake()->numerify('##########'),
         ];
     }
 }

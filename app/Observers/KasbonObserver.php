@@ -31,12 +31,12 @@ class KasbonObserver
     public function updated(Kasbon $kasbon): void
     {
         if (
-            $kasbon->wasChanged("tanggal") ||
-            $kasbon->wasChanged("id_petugas")
+            $kasbon->wasChanged('tanggal') ||
+            $kasbon->wasChanged('id_petugas')
         ) {
             $oldPetugasId =
-                $kasbon->getOriginal("id_petugas") ?? $kasbon->id_petugas;
-            $oldTanggal = $kasbon->getOriginal("tanggal");
+                $kasbon->getOriginal('id_petugas') ?? $kasbon->id_petugas;
+            $oldTanggal = $kasbon->getOriginal('tanggal');
 
             KasBulananRwService::recalculateSlipGaji(
                 $oldPetugasId,

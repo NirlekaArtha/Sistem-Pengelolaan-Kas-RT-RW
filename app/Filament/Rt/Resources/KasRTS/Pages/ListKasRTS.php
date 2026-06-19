@@ -2,6 +2,7 @@
 
 namespace App\Filament\Rt\Resources\KasRTS\Pages;
 
+use App\Enums\KasTipe;
 use App\Filament\Rt\Resources\KasRTS\KasRTResource;
 use App\Filament\Rt\Resources\KasRTS\Widgets\KasRTOverview;
 use Filament\Actions\CreateAction;
@@ -26,12 +27,12 @@ class ListKasRTS extends ListRecords
     public function getTabs(): array
     {
         return [
-            "all" => Tab::make("All"),
-            "masuk" => Tab::make("Masuk")->modifyQueryUsing(
-                fn(Builder $query) => $query->where("tipe", "masuk"),
+            'all' => Tab::make('All'),
+            KasTipe::MASUK->value => Tab::make(KasTipe::MASUK->getLabel())->modifyQueryUsing(
+                fn (Builder $query) => $query->where('tipe', KasTipe::MASUK->value),
             ),
-            "keluar" => Tab::make("Keluar")->modifyQueryUsing(
-                fn(Builder $query) => $query->where("tipe", "keluar"),
+            KasTipe::KELUAR->value => Tab::make(KasTipe::KELUAR->getLabel())->modifyQueryUsing(
+                fn (Builder $query) => $query->where('tipe', KasTipe::KELUAR->value),
             ),
         ];
     }

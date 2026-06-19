@@ -25,4 +25,3 @@ class ListKasbons extends ListRecords
         ];
     }
 }
-

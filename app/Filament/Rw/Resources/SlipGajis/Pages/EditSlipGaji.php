@@ -17,4 +17,3 @@ class EditSlipGaji extends EditRecord
         ];
     }
 }
-

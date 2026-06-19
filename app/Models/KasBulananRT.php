@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
+use Database\Factories\KasBulananRTFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class KasBulananRT extends Model
 {
-    /** @use HasFactory<\Database\Factories\KasBulananRTFactory> */
+    /** @use HasFactory<KasBulananRTFactory> */
     use HasFactory;
 
     protected $table = 'kas_bulanan_r_t_s';
@@ -25,10 +26,10 @@ class KasBulananRT extends Model
     ];
 
     protected $casts = [
-        'total_pendapatan'        => 'decimal:2',
-        'total_pengeluaran'       => 'decimal:2',
-        'saldo_awal'              => 'decimal:2',
-        'saldo_akhir'             => 'decimal:2',
+        'total_pendapatan' => 'decimal:2',
+        'total_pengeluaran' => 'decimal:2',
+        'saldo_awal' => 'decimal:2',
+        'saldo_akhir' => 'decimal:2',
         'total_pendapatan_bersih' => 'decimal:2',
     ];
 

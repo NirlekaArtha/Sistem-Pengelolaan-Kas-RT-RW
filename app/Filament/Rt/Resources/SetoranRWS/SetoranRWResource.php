@@ -24,17 +24,17 @@ class SetoranRWResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
-    protected static ?string $recordTitleAttribute = "periode";
+    protected static ?string $recordTitleAttribute = 'periode';
 
-    protected static string|UnitEnum|null $navigationGroup = "Transaksi";
+    protected static string|UnitEnum|null $navigationGroup = 'Transaksi';
 
     protected static ?int $navigationSort = 3;
 
-    protected static ?string $navigationLabel = "Pengajuan Setoran RW";
+    protected static ?string $navigationLabel = 'Pengajuan Setoran RW';
 
-    protected static ?string $modelLabel = "Setoran RW";
+    protected static ?string $modelLabel = 'Setoran RW';
 
-    protected static ?string $pluralModelLabel = "Data Setoran RW";
+    protected static ?string $pluralModelLabel = 'Data Setoran RW';
 
     public static function form(Schema $schema): Schema
     {
@@ -54,7 +54,7 @@ class SetoranRWResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()->where(
-            "id_rt",
+            'id_rt',
             auth()->user()?->rt?->id,
         );
     }
@@ -62,10 +62,10 @@ class SetoranRWResource extends Resource
     public static function getPages(): array
     {
         return [
-            "index" => ListSetoranRWS::route("/"),
-            "create" => CreateSetoranRW::route("/create"),
-            "view" => ViewSetoranRW::route("/{record}"),
-            "edit" => EditSetoranRW::route("/{record}/edit"),
+            'index' => ListSetoranRWS::route('/'),
+            'create' => CreateSetoranRW::route('/create'),
+            'view' => ViewSetoranRW::route('/{record}'),
+            'edit' => EditSetoranRW::route('/{record}/edit'),
         ];
     }
 }

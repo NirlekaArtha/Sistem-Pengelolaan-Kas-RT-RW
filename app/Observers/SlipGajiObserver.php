@@ -17,11 +17,11 @@ class SlipGajiObserver
     {
         $rwId = $slipGaji->petugas?->id_rw;
 
-        if (!$rwId) {
+        if (! $rwId) {
             return;
         }
 
-        $periode = $slipGaji->tanggal->format("Y-m");
+        $periode = $slipGaji->tanggal->format('Y-m');
         KasBulananRwService::recalculate($rwId, $periode);
     }
 
@@ -35,14 +35,14 @@ class SlipGajiObserver
     public function updated(SlipGaji $slipGaji): void
     {
         if (
-            $slipGaji->wasChanged("tanggal") ||
-            $slipGaji->wasChanged("id_petugas")
+            $slipGaji->wasChanged('tanggal') ||
+            $slipGaji->wasChanged('id_petugas')
         ) {
             $oldPetugasId =
-                $slipGaji->getOriginal("id_petugas") ?? $slipGaji->id_petugas;
+                $slipGaji->getOriginal('id_petugas') ?? $slipGaji->id_petugas;
             $oldPeriode = Carbon::parse(
-                $slipGaji->getOriginal("tanggal"),
-            )->format("Y-m");
+                $slipGaji->getOriginal('tanggal'),
+            )->format('Y-m');
             $oldRwId = Petugas::find($oldPetugasId)?->id_rw;
 
             if ($oldRwId) {
@@ -52,11 +52,11 @@ class SlipGajiObserver
 
         $rwId = $slipGaji->petugas?->id_rw;
 
-        if (!$rwId) {
+        if (! $rwId) {
             return;
         }
 
-        $periode = $slipGaji->tanggal->format("Y-m");
+        $periode = $slipGaji->tanggal->format('Y-m');
         KasBulananRwService::recalculate($rwId, $periode);
     }
 
@@ -68,11 +68,11 @@ class SlipGajiObserver
     {
         $rwId = $slipGaji->petugas?->id_rw;
 
-        if (!$rwId) {
+        if (! $rwId) {
             return;
         }
 
-        $periode = $slipGaji->tanggal->format("Y-m");
+        $periode = $slipGaji->tanggal->format('Y-m');
         KasBulananRwService::recalculate($rwId, $periode);
     }
 }

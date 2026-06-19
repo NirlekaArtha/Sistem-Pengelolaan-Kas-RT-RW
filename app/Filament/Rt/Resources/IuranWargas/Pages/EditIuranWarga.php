@@ -18,7 +18,7 @@ class EditIuranWarga extends EditRecord
 
     protected function mutateFormDataBeforeSave(array $data): array
     {
-        $data["id_rt"] = auth()->user()?->rt?->id;
+        $data['id_rt'] = auth()->user()?->rt?->id;
 
         return $data;
     }

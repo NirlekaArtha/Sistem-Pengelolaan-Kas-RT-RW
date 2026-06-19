@@ -2,6 +2,7 @@
 
 namespace App\Filament\Rw\Resources\Petugas\Schemas;
 
+use App\Enums\PetugasTugas;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -24,7 +25,7 @@ class PetugasForm
                     ->columns(2)
                     ->schema([
                         Select::make('tugas')
-                            ->options(['satpam' => 'Satpam', 'kebersihan' => 'Kebersihan', 'sampah' => 'Sampah'])
+                            ->options(PetugasTugas::class)
                             ->required(),
 
                         TextInput::make('nama')

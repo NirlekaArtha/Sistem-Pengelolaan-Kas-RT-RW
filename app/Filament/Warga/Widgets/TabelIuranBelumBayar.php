@@ -2,12 +2,13 @@
 
 namespace App\Filament\Warga\Widgets;
 
+use App\Enums\IuranWargaStatus;
 use App\Models\IuranWarga;
-use App\Models\JenisIuranWarga;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Carbon;
 
 class TabelIuranBelumBayar extends BaseWidget
 {
@@ -22,8 +23,11 @@ class TabelIuranBelumBayar extends BaseWidget
         return $table
             ->query(
                 IuranWarga::query()
-                    ->when($warga, fn(Builder $q) => $q->where('id_warga', $warga->id))
-                    ->whereIn('status', ['telat', 'belum bayar'])
+                    ->when($warga, fn (Builder $q) => $q->where('id_warga', $warga->id))
+                    ->whereIn('status', [
+                        IuranWargaStatus::TELAT->value,
+                        IuranWargaStatus::BELUM_BAYAR->value,
+                    ])
                     ->with(['jenisIuran'])
                     ->orderBy('status', 'asc')   // telat dulu (alphabetical: belum bayar > telat)
                     ->orderBy('periode', 'asc'),  // periode terlama dulu
@@ -41,29 +45,14 @@ class TabelIuranBelumBayar extends BaseWidget
 
                 TextColumn::make('periode')
                     ->label('Periode')
-                    ->formatStateUsing(fn($state) => \Illuminate\Support\Carbon::parse($state . '-01')
+                    ->formatStateUsing(fn ($state) => Carbon::parse($state.'-01')
                         ->translatedFormat('F Y'))
                     ->searchable()
                     ->sortable(),
 
                 TextColumn::make('status')
                     ->label('Status')
-                    ->badge()
-                    ->color(fn($state): string => match ($state) {
-                        'telat'       => 'danger',
-                        'belum bayar' => 'warning',
-                        default       => 'gray',
-                    })
-                    ->icon(fn($state): string => match ($state) {
-                        'telat'       => 'heroicon-m-x-circle',
-                        'belum bayar' => 'heroicon-m-clock',
-                        default       => 'heroicon-m-question-mark-circle',
-                    })
-                    ->formatStateUsing(fn($state): string => match ($state) {
-                        'telat'       => 'Tunggakan (Telat)',
-                        'belum bayar' => 'Belum Dibayar',
-                        default       => (string) $state,
-                    }),
+                    ->badge(),
             ])
             ->emptyStateHeading('Semua Iuran Lunas!')
             ->emptyStateDescription('Tidak ada iuran yang menunggak atau belum dibayar.')
