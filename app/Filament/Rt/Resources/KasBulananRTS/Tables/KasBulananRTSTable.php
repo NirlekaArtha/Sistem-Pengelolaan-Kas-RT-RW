@@ -11,6 +11,7 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\ViewAction;
 use Filament\Notifications\Notification;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 
 class KasBulananRTSTable
@@ -19,7 +20,7 @@ class KasBulananRTSTable
     {
         return $table
             ->columns([
-                TextColumn::make("periode")->searchable(),
+                TextColumn::make("periode")->searchable()->sortable(),
                 TextColumn::make("total_pendapatan")
                     ->prefix("Rp ")
                     ->numeric(
@@ -70,7 +71,15 @@ class KasBulananRTSTable
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                SelectFilter::make("periode")
+                    ->label("Periode")
+                    ->options(fn (): array => KasBulananRT::query()
+                        ->select("periode")
+                        ->distinct()
+                        ->orderBy("periode", "desc")
+                        ->pluck("periode", "periode")
+                        ->all())
+                    ->searchable(),
             ])
             ->actions([
                 ViewAction::make()->iconButton()->tooltip("Lihat"),

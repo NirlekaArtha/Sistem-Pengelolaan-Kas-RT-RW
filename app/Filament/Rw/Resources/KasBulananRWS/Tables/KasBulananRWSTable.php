@@ -11,6 +11,7 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\ViewAction;
 use Filament\Notifications\Notification;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 
 class KasBulananRWSTable
@@ -70,7 +71,15 @@ class KasBulananRWSTable
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                SelectFilter::make("periode")
+                    ->label("Periode")
+                    ->options(fn (): array => KasBulananRW::query()
+                        ->select("periode")
+                        ->distinct()
+                        ->orderBy("periode", "desc")
+                        ->pluck("periode", "periode")
+                        ->all())
+                    ->searchable(),
             ])
             ->actions([
                 ViewAction::make()->iconButton(),

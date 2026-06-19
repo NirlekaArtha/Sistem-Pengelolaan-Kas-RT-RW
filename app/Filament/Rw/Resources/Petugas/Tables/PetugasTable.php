@@ -10,6 +10,7 @@ use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 
 class PetugasTable
@@ -20,6 +21,7 @@ class PetugasTable
             ->columns([
                 TextColumn::make("nama")->searchable(),
                 TextColumn::make("tugas")
+                    ->searchable()
                     ->badge()
                     ->color(
                         fn(string $state): string => match ($state) {
@@ -54,7 +56,13 @@ class PetugasTable
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                SelectFilter::make("tugas")
+                    ->label("Tugas")
+                    ->options([
+                        "satpam" => "Satpam",
+                        "kebersihan" => "Kebersihan",
+                        "sampah" => "Sampah",
+                    ]),
             ])
             ->actions([
                 ViewAction::make()->iconButton()->tooltip("Lihat"),

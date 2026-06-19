@@ -2,6 +2,7 @@
 
 namespace App\Filament\Rw\Resources\Kasbons\Tables;
 
+use Filament\Forms\Components\DatePicker;
 use App\Filament\Rw\Resources\Kasbons\Pages\ViewKasbon;
 use App\Models\Kasbon;
 use Filament\Actions\BulkActionGroup;
@@ -9,8 +10,11 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class KasbonsTable
 {
@@ -41,7 +45,34 @@ class KasbonsTable
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                SelectFilter::make("petugas")
+                    ->label("Petugas")
+                    ->relationship("petugas", "nama")
+                    ->searchable(),
+                Filter::make("tanggal")
+                    ->form([
+                        DatePicker::make("from")->label("Dari Tanggal"),
+                        DatePicker::make("until")->label("Sampai Tanggal"),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data["from"] ?? null,
+                                fn (Builder $query, $date): Builder => $query->whereDate(
+                                    "tanggal",
+                                    ">=",
+                                    $date,
+                                ),
+                            )
+                            ->when(
+                                $data["until"] ?? null,
+                                fn (Builder $query, $date): Builder => $query->whereDate(
+                                    "tanggal",
+                                    "<=",
+                                    $date,
+                                ),
+                            );
+                    }),
             ])
             ->actions([
                 ViewAction::make()->iconButton()->tooltip("Lihat"),
