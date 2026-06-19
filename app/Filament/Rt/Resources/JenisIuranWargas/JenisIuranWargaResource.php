@@ -7,6 +7,7 @@ use App\Filament\Rt\Resources\JenisIuranWargas\Pages\EditJenisIuranWarga;
 use App\Filament\Rt\Resources\JenisIuranWargas\Pages\ListJenisIuranWargas;
 use App\Filament\Rt\Resources\JenisIuranWargas\Pages\ViewJenisIuranWarga;
 use App\Filament\Rt\Resources\JenisIuranWargas\Schemas\JenisIuranWargaForm;
+use App\Filament\Rt\Resources\JenisIuranWargas\Schemas\JenisIuranWargaInfolist;
 use App\Filament\Rt\Resources\JenisIuranWargas\Tables\JenisIuranWargasTable;
 use App\Models\JenisIuranWarga;
 use BackedEnum;
@@ -43,6 +44,11 @@ class JenisIuranWargaResource extends Resource
     public static function table(Table $table): Table
     {
         return JenisIuranWargasTable::configure($table);
+    }
+
+    public static function infolist(Schema $schema): Schema
+    {
+        return JenisIuranWargaInfolist::configure($schema);
     }
 
     public static function getRelations(): array

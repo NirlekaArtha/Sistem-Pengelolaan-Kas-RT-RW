@@ -46,6 +46,11 @@ class IuranWargaResource extends Resource
         return IuranWargasTable::configure($table);
     }
 
+    public static function infolist(Schema $schema): Schema
+    {
+        return IuranWargaInfolist::configure($schema);
+    }
+
     public static function getRelations(): array
     {
         return [

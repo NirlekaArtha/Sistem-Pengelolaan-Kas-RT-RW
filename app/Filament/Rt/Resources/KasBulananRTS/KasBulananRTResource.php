@@ -7,6 +7,7 @@ use App\Filament\Rt\Resources\KasBulananRTS\Pages\EditKasBulananRT;
 use App\Filament\Rt\Resources\KasBulananRTS\Pages\ListKasBulananRTS;
 use App\Filament\Rt\Resources\KasBulananRTS\Pages\ViewKasBulananRT;
 use App\Filament\Rt\Resources\KasBulananRTS\Schemas\KasBulananRTForm;
+use App\Filament\Rt\Resources\KasBulananRTS\Schemas\KasBulananRTInfolist;
 use App\Filament\Rt\Resources\KasBulananRTS\Tables\KasBulananRTSTable;
 use App\Models\KasBulananRT;
 use BackedEnum;
@@ -43,6 +44,11 @@ class KasBulananRTResource extends Resource
     public static function table(Table $table): Table
     {
         return KasBulananRTSTable::configure($table);
+    }
+
+    public static function infolist(Schema $schema): Schema
+    {
+        return KasBulananRTInfolist::configure($schema);
     }
 
     public static function getEloquentQuery(): Builder

@@ -24,7 +24,11 @@ class RTSTable
                     ->sortable(),
                 TextColumn::make("nama")->label("Nama RT")->searchable(),
                 TextColumn::make("user.name")
-                    ->label("Nama Akun RT")
+                    ->label("Username RT")
+                    ->searchable()
+                    ->default("-"),
+                TextColumn::make("user.email")
+                    ->label("Email RT")
                     ->searchable()
                     ->default("-"),
                 TextColumn::make("alamat")

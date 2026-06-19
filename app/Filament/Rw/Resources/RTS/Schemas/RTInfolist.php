@@ -11,16 +11,26 @@ class RTInfolist
     public static function configure(Schema $schema): Schema
     {
         return $schema->components([
-            // Section 1: Informasi RT (Atas)
-            Section::make("Informasi RT")
-                ->description("Detail data RT beserta akun yang terhubung")
-                ->icon("heroicon-o-home")
+            Section::make("Akun Login")
+                ->description("Informasi akun RT yang terhubung ke data ini")
+                ->icon("heroicon-o-user-circle")
                 ->columns(2)
                 ->schema([
                     TextEntry::make("user.name")
-                        ->label("Akun")
+                        ->label("Username")
                         ->placeholder("-"),
 
+                    TextEntry::make("user.email")
+                        ->label("Email")
+                        ->placeholder("-")
+                        ->columnSpanFull(),
+                ]),
+
+            Section::make("Informasi RT")
+                ->description("Detail data RT")
+                ->icon("heroicon-o-home")
+                ->columns(2)
+                ->schema([
                     TextEntry::make("nomor_rt")
                         ->label("Nomor RT")
                         ->badge()
@@ -33,23 +43,6 @@ class RTInfolist
                         ->columnSpanFull(),
 
                     TextEntry::make("no_telepon")->label("No. Telepon"),
-                ]),
-
-            // Section 2: Waktu (Bawah)
-            Section::make("Waktu")
-                ->icon("heroicon-o-clock")
-                ->columns(2)
-                ->collapsed()
-                ->schema([
-                    TextEntry::make("created_at")
-                        ->label("Dibuat Pada")
-                        ->dateTime("d F Y, H:i")
-                        ->placeholder("-"),
-
-                    TextEntry::make("updated_at")
-                        ->label("Terakhir Diperbarui")
-                        ->dateTime("d F Y, H:i")
-                        ->placeholder("-"),
                 ]),
         ]);
     }

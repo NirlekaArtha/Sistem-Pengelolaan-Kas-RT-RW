@@ -3,35 +3,73 @@
 namespace App\Filament\Rt\Resources\KasBulananRTS\Schemas;
 
 use Filament\Infolists\Components\TextEntry;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 
 class KasBulananRTInfolist
 {
     public static function configure(Schema $schema): Schema
     {
-        return $schema
-            ->components([
-                TextEntry::make('id_rt')
-                    ->numeric(),
-                TextEntry::make('periode'),
-                TextEntry::make('total_pendapatan')
-                    ->numeric(),
-                TextEntry::make('total_pengeluaran')
-                    ->numeric(),
-                TextEntry::make('saldo_awal')
-                    ->numeric(),
-                TextEntry::make('saldo_akhir')
-                    ->numeric(),
-                TextEntry::make('total_pendapatan_bersih')
-                    ->numeric(),
-                TextEntry::make('file_path')
-                    ->placeholder('-'),
-                TextEntry::make('created_at')
-                    ->dateTime()
-                    ->placeholder('-'),
-                TextEntry::make('updated_at')
-                    ->dateTime()
-                    ->placeholder('-'),
-            ]);
+        return $schema->components([
+            Section::make("Informasi Umum")
+                ->description("Data periode laporan kas")
+                ->icon("heroicon-o-information-circle")
+                ->columns(1)
+                ->schema([
+                    TextEntry::make("periode")
+                        ->label("Periode")
+                        ->formatStateUsing(
+                            fn($state) => $state
+                                ? \Carbon\Carbon::createFromFormat(
+                                    "Y-m",
+                                    $state,
+                                )->translatedFormat("F Y")
+                                : "-",
+                        ),
+                ]),
+
+            Section::make("Ringkasan Arus Kas")
+                ->description(
+                    "Detail perputaran dana dan akumulasi saldo akhir",
+                )
+                ->icon("heroicon-o-arrows-right-left")
+                ->schema([
+                    Grid::make(3)->schema([
+                        TextEntry::make("saldo_awal")
+                            ->label("Saldo Awal")
+                            ->money("IDR")
+                            ->color("gray"),
+
+                        TextEntry::make("total_pendapatan")
+                            ->label("Total Pendapatan (+)")
+                            ->money("IDR")
+                            ->color("success"),
+
+                        TextEntry::make("total_pengeluaran")
+                            ->label("Total Pengeluaran (-)")
+                            ->money("IDR")
+                            ->color("danger"),
+                    ]),
+
+                    Grid::make(3)
+                        ->extraAttributes([
+                            "class" =>
+                                "border-t pt-4 mt-4 border-gray-200 dark:border-gray-700",
+                        ])
+                        ->schema([
+                            TextEntry::make("total_pendapatan_bersih")
+                                ->label("Pendapatan Bersih (Net)")
+                                ->money("IDR")
+                                ->weight("bold"),
+
+                            TextEntry::make("saldo_akhir")
+                                ->label("Saldo Akhir")
+                                ->money("IDR")
+                                ->weight("bold")
+                                ->color("primary"),
+                        ]),
+                ]),
+        ]);
     }
 }

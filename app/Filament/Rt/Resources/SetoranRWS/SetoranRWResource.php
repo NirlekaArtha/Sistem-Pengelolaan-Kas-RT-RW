@@ -46,6 +46,11 @@ class SetoranRWResource extends Resource
         return SetoranRWSTable::configure($table);
     }
 
+    public static function infolist(Schema $schema): Schema
+    {
+        return SetoranRWInfolist::configure($schema);
+    }
+
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()->where(

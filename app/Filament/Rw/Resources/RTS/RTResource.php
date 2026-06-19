@@ -7,6 +7,7 @@ use App\Filament\Rw\Resources\RTS\Pages\EditRT;
 use App\Filament\Rw\Resources\RTS\Pages\ListRTS;
 use App\Filament\Rw\Resources\RTS\Pages\ViewRT;
 use App\Filament\Rw\Resources\RTS\Schemas\RTForm;
+use App\Filament\Rw\Resources\RTS\Schemas\RTInfolist;
 use App\Filament\Rw\Resources\RTS\Tables\RTSTable;
 use App\Filament\Rw\Resources\RTS\Widgets\RTOverview;
 use App\Models\RT;
@@ -43,6 +44,11 @@ class RTResource extends Resource
     public static function table(Table $table): Table
     {
         return RTSTable::configure($table);
+    }
+
+    public static function infolist(Schema $schema): Schema
+    {
+        return RTInfolist::configure($schema);
     }
 
     public static function getRelations(): array

@@ -18,6 +18,14 @@ class WargasTable
         return $table
             ->columns([
                 TextColumn::make("nama_kepala_keluarga")->searchable(),
+                TextColumn::make("user.name")
+                    ->label("Username")
+                    ->searchable()
+                    ->default("-"),
+                TextColumn::make("user.email")
+                    ->label("Email")
+                    ->searchable()
+                    ->default("-"),
                 TextColumn::make("alamat")->searchable(),
                 TextColumn::make("no_telepon")->searchable(),
                 TextColumn::make("created_at")

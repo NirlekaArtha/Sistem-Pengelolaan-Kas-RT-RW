@@ -7,6 +7,7 @@ use App\Filament\Rt\Resources\Wargas\Pages\EditWarga;
 use App\Filament\Rt\Resources\Wargas\Pages\ListWargas;
 use App\Filament\Rt\Resources\Wargas\Pages\ViewWarga;
 use App\Filament\Rt\Resources\Wargas\Schemas\WargaForm;
+use App\Filament\Rt\Resources\Wargas\Schemas\WargaInfolist;
 use App\Filament\Rt\Resources\Wargas\Tables\WargasTable;
 use App\Models\Warga;
 use BackedEnum;
@@ -43,6 +44,11 @@ class WargaResource extends Resource
     public static function table(Table $table): Table
     {
         return WargasTable::configure($table);
+    }
+
+    public static function infolist(Schema $schema): Schema
+    {
+        return WargaInfolist::configure($schema);
     }
 
     public static function getEloquentQuery(): Builder

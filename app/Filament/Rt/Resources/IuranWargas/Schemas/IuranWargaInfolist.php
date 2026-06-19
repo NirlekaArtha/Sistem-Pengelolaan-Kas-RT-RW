@@ -3,32 +3,28 @@
 namespace App\Filament\Rt\Resources\IuranWargas\Schemas;
 
 use Filament\Infolists\Components\TextEntry;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 
 class IuranWargaInfolist
 {
     public static function configure(Schema $schema): Schema
     {
-        return $schema
-            ->components([
-                TextEntry::make('id_warga')
-                    ->numeric(),
-                TextEntry::make('id_jenis_iuran')
-                    ->numeric(),
-                TextEntry::make('id_rt')
-                    ->numeric(),
-                TextEntry::make('periode'),
-                TextEntry::make('tanggal_bayar')
-                    ->date()
-                    ->placeholder('-'),
-                TextEntry::make('status')
-                    ->badge(),
-                TextEntry::make('created_at')
-                    ->dateTime()
-                    ->placeholder('-'),
-                TextEntry::make('updated_at')
-                    ->dateTime()
-                    ->placeholder('-'),
-            ]);
+        return $schema->components([
+            Section::make("Informasi Iuran")
+                ->description("Detail data pembayaran iuran warga")
+                ->icon("heroicon-o-banknotes")
+                ->columns(2)
+                ->schema([
+                    TextEntry::make("periode")->label("Periode"),
+
+                    TextEntry::make("status")->label("Status")->badge(),
+
+                    TextEntry::make("tanggal_bayar")
+                        ->label("Tanggal Bayar")
+                        ->date()
+                        ->placeholder("-"),
+                ]),
+        ]);
     }
 }
