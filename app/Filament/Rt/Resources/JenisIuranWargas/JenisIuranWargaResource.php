@@ -5,6 +5,7 @@ namespace App\Filament\Rt\Resources\JenisIuranWargas;
 use App\Filament\Rt\Resources\JenisIuranWargas\Pages\CreateJenisIuranWarga;
 use App\Filament\Rt\Resources\JenisIuranWargas\Pages\EditJenisIuranWarga;
 use App\Filament\Rt\Resources\JenisIuranWargas\Pages\ListJenisIuranWargas;
+use App\Filament\Rt\Resources\JenisIuranWargas\Pages\ViewJenisIuranWarga;
 use App\Filament\Rt\Resources\JenisIuranWargas\Schemas\JenisIuranWargaForm;
 use App\Filament\Rt\Resources\JenisIuranWargas\Tables\JenisIuranWargasTable;
 use App\Models\JenisIuranWarga;
@@ -64,6 +65,7 @@ class JenisIuranWargaResource extends Resource
         return [
             "index" => ListJenisIuranWargas::route("/"),
             "create" => CreateJenisIuranWarga::route("/create"),
+            "view" => ViewJenisIuranWarga::route("/{record}"),
             "edit" => EditJenisIuranWarga::route("/{record}/edit"),
         ];
     }

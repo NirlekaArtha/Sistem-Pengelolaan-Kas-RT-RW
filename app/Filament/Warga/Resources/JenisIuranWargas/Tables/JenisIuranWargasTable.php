@@ -32,6 +32,7 @@ class JenisIuranWargasTable
                     ->label('Lihat'),
             ])
             ->actionsColumnLabel('Aksi')
+            ->recordAction('view')
             ->toolbarActions([]);
     }
 }

@@ -5,6 +5,7 @@ namespace App\Filament\Rt\Resources\SetoranRWS;
 use App\Filament\Rt\Resources\SetoranRWS\Pages\CreateSetoranRW;
 use App\Filament\Rt\Resources\SetoranRWS\Pages\EditSetoranRW;
 use App\Filament\Rt\Resources\SetoranRWS\Pages\ListSetoranRWS;
+use App\Filament\Rt\Resources\SetoranRWS\Pages\ViewSetoranRW;
 use App\Filament\Rt\Resources\SetoranRWS\Schemas\SetoranRWForm;
 use App\Filament\Rt\Resources\SetoranRWS\Schemas\SetoranRWInfolist;
 use App\Filament\Rt\Resources\SetoranRWS\Tables\SetoranRWSTable;
@@ -58,6 +59,7 @@ class SetoranRWResource extends Resource
         return [
             "index" => ListSetoranRWS::route("/"),
             "create" => CreateSetoranRW::route("/create"),
+            "view" => ViewSetoranRW::route("/{record}"),
             "edit" => EditSetoranRW::route("/{record}/edit"),
         ];
     }

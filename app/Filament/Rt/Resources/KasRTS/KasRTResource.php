@@ -5,6 +5,7 @@ namespace App\Filament\Rt\Resources\KasRTS;
 use App\Filament\Rt\Resources\KasRTS\Pages\CreateKasRT;
 use App\Filament\Rt\Resources\KasRTS\Pages\EditKasRT;
 use App\Filament\Rt\Resources\KasRTS\Pages\ListKasRTS;
+use App\Filament\Rt\Resources\KasRTS\Pages\ViewKasRT;
 use App\Filament\Rt\Resources\KasRTS\Schemas\KasRTForm;
 use App\Filament\Rt\Resources\KasRTS\Tables\KasRTSTable;
 use App\Models\KasRT;
@@ -56,6 +57,7 @@ class KasRTResource extends Resource
         return [
             "index" => ListKasRTS::route("/"),
             "create" => CreateKasRT::route("/create"),
+            "view" => ViewKasRT::route("/{record}"),
             "edit" => EditKasRT::route("/{record}/edit"),
         ];
     }

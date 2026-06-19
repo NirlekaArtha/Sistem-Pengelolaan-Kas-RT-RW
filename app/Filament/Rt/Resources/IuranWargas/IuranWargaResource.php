@@ -5,6 +5,7 @@ namespace App\Filament\Rt\Resources\IuranWargas;
 use App\Filament\Rt\Resources\IuranWargas\Pages\CreateIuranWarga;
 use App\Filament\Rt\Resources\IuranWargas\Pages\EditIuranWarga;
 use App\Filament\Rt\Resources\IuranWargas\Pages\ListIuranWargas;
+use App\Filament\Rt\Resources\IuranWargas\Pages\ViewIuranWarga;
 use App\Filament\Rt\Resources\IuranWargas\Schemas\IuranWargaForm;
 use App\Filament\Rt\Resources\IuranWargas\Schemas\IuranWargaInfolist;
 use App\Filament\Rt\Resources\IuranWargas\Tables\IuranWargasTable;
@@ -65,6 +66,7 @@ class IuranWargaResource extends Resource
         return [
             "index" => ListIuranWargas::route("/"),
             "create" => CreateIuranWarga::route("/create"),
+            "view" => ViewIuranWarga::route("/{record}"),
             "edit" => EditIuranWarga::route("/{record}/edit"),
         ];
     }

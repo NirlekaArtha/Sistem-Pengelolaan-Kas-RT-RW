@@ -2,6 +2,7 @@
 
 namespace App\Filament\Rt\Resources\KasRTS\Tables;
 
+use App\Filament\Rt\Resources\KasRTS\Pages\ViewKasRT;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
@@ -68,10 +69,16 @@ class KasRTSTable
                 //
             ])
             ->actions([
+                ViewAction::make()->iconButton()->tooltip("Lihat"),
                 EditAction::make()->iconButton()->tooltip("Edit"),
                 DeleteAction::make()->iconButton()->tooltip("Hapus"),
             ])
             ->actionsColumnLabel("Aksi")
+            ->recordUrl(
+                fn($record): string => ViewKasRT::getUrl([
+                    "record" => $record,
+                ]),
+            )
             ->toolbarActions([
                 BulkActionGroup::make([DeleteBulkAction::make()]),
             ]);

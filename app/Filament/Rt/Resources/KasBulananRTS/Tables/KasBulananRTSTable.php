@@ -2,11 +2,13 @@
 
 namespace App\Filament\Rt\Resources\KasBulananRTS\Tables;
 
+use App\Filament\Rt\Resources\KasBulananRTS\Pages\ViewKasBulananRT;
 use App\Models\KasBulananRT;
 use App\Services\KasBulananRtService;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\ViewAction;
 use Filament\Notifications\Notification;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -71,6 +73,7 @@ class KasBulananRTSTable
                 //
             ])
             ->actions([
+                ViewAction::make()->iconButton()->tooltip("Lihat"),
                 Action::make("recalculate")
                     ->label("recalculate")
                     ->icon("heroicon-o-arrow-path")
@@ -104,6 +107,11 @@ class KasBulananRTSTable
                     ),
             ])
             ->actionsColumnLabel("aksi")
+            ->recordUrl(
+                fn(KasBulananRT $record): string => ViewKasBulananRT::getUrl([
+                    "record" => $record,
+                ]),
+            )
             ->toolbarActions([
                 BulkActionGroup::make([DeleteBulkAction::make()]),
             ]);

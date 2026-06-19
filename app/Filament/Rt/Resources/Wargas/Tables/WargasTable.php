@@ -2,11 +2,12 @@
 
 namespace App\Filament\Rt\Resources\Wargas\Tables;
 
-use App\Filament\Rw\Resources\RTS\Pages\EditRT;
+use App\Filament\Rt\Resources\Wargas\Pages\ViewWarga;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -32,10 +33,16 @@ class WargasTable
                 //
             ])
             ->actions([
+                ViewAction::make()->iconButton()->tooltip("Lihat"),
                 EditAction::make()->iconButton()->tooltip("Edit"),
                 DeleteAction::make()->iconButton()->tooltip("Hapus"),
             ])
             ->actionsColumnLabel("Aksi")
+            ->recordUrl(
+                fn($record): string => ViewWarga::getUrl([
+                    "record" => $record,
+                ]),
+            )
             ->toolbarActions([
                 BulkActionGroup::make([DeleteBulkAction::make()]),
             ]);

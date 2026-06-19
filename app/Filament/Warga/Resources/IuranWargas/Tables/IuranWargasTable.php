@@ -60,6 +60,7 @@ class IuranWargasTable
                     ->label('Lihat'),
             ])
             ->actionsColumnLabel('Aksi')
+            ->recordAction('view')
             ->toolbarActions([])
             ->defaultSort('periode', 'desc');
     }

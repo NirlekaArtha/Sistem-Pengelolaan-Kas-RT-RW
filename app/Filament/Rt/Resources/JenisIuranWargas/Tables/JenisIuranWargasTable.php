@@ -2,10 +2,12 @@
 
 namespace App\Filament\Rt\Resources\JenisIuranWargas\Tables;
 
+use App\Filament\Rt\Resources\JenisIuranWargas\Pages\ViewJenisIuranWarga;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -37,10 +39,16 @@ class JenisIuranWargasTable
                 //
             ])
             ->actions([
+                ViewAction::make()->iconButton()->tooltip("Lihat"),
                 EditAction::make()->iconButton()->tooltip("Edit"),
                 DeleteAction::make()->iconButton()->tooltip("Hapus"),
             ])
             ->actionsColumnLabel("Aksi")
+            ->recordUrl(
+                fn($record): string => ViewJenisIuranWarga::getUrl([
+                    "record" => $record,
+                ]),
+            )
             ->toolbarActions([
                 BulkActionGroup::make([DeleteBulkAction::make()]),
             ]);

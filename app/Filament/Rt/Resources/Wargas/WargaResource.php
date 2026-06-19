@@ -5,6 +5,7 @@ namespace App\Filament\Rt\Resources\Wargas;
 use App\Filament\Rt\Resources\Wargas\Pages\CreateWarga;
 use App\Filament\Rt\Resources\Wargas\Pages\EditWarga;
 use App\Filament\Rt\Resources\Wargas\Pages\ListWargas;
+use App\Filament\Rt\Resources\Wargas\Pages\ViewWarga;
 use App\Filament\Rt\Resources\Wargas\Schemas\WargaForm;
 use App\Filament\Rt\Resources\Wargas\Tables\WargasTable;
 use App\Models\Warga;
@@ -57,6 +58,7 @@ class WargaResource extends Resource
         return [
             "index" => ListWargas::route("/"),
             "create" => CreateWarga::route("/create"),
+            "view" => ViewWarga::route("/{record}"),
             "edit" => EditWarga::route("/{record}/edit"),
         ];
     }

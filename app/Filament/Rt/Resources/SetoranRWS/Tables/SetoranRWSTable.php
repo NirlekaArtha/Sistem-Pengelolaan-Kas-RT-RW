@@ -2,6 +2,7 @@
 
 namespace App\Filament\Rt\Resources\SetoranRWS\Tables;
 
+use App\Filament\Rt\Resources\SetoranRWS\Pages\ViewSetoranRW;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
@@ -57,10 +58,16 @@ class SetoranRWSTable
                 //
             ])
             ->actions([
+                ViewAction::make()->iconButton()->tooltip("Lihat"),
                 EditAction::make()->iconButton()->tooltip("Edit"),
                 DeleteAction::make()->iconButton()->tooltip("Hapus"),
             ])
             ->actionsColumnLabel("Aksi")
+            ->recordUrl(
+                fn($record): string => ViewSetoranRW::getUrl([
+                    "record" => $record,
+                ]),
+            )
             ->toolbarActions([
                 BulkActionGroup::make([DeleteBulkAction::make()]),
             ]);

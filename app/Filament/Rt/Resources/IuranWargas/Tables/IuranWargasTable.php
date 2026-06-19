@@ -2,6 +2,7 @@
 
 namespace App\Filament\Rt\Resources\IuranWargas\Tables;
 
+use App\Filament\Rt\Resources\IuranWargas\Pages\ViewIuranWarga;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
@@ -55,10 +56,16 @@ class IuranWargasTable
                 //
             ])
             ->actions([
+                ViewAction::make()->iconButton()->tooltip("Lihat"),
                 EditAction::make()->iconButton()->tooltip("Edit"),
                 DeleteAction::make()->iconButton()->tooltip("Hapus"),
             ])
             ->actionsColumnLabel("Aksi")
+            ->recordUrl(
+                fn($record): string => ViewIuranWarga::getUrl([
+                    "record" => $record,
+                ]),
+            )
             ->toolbarActions([
                 BulkActionGroup::make([DeleteBulkAction::make()]),
             ]);
