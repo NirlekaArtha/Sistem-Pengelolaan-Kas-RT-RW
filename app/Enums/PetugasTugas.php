@@ -18,9 +18,9 @@ enum PetugasTugas: string implements HasColor, HasIcon, HasLabel
     public function getLabel(): ?string
     {
         return match ($this) {
-            self::SATPAM => 'Satpam',
-            self::KEBERSIHAN => 'Kebersihan',
-            self::SAMPAH => 'Sampah',
+            self::SATPAM => 'Petugas Keamanan/Security',
+            self::KEBERSIHAN => 'Petugas Kebersihan',
+            self::SAMPAH => 'Petugas Pengangkutan Sampah',
         };
     }
 

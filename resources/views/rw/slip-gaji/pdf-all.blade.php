@@ -233,25 +233,33 @@
             $periodeAwal = $tanggalBayar->copy()->subMonthNoOverflow()->day(26);
             $periodeAkhir = $tanggalBayar->copy()->day(25);
 
-            $tunjanganTransportasi = $petugas->tunjangan_transportasi
-                ?? $record->tunjangan_transportasi
-                ?? 50000;
-
-            $totalGajiBersih = $record->total
-                ?? (($petugas->gaji_pokok ?? 0) + $tunjanganTransportasi - $potonganKasbons->sum('jumlah'));
-
             $ketuaRw04 = config('rw.ketua_rw_04', 'Iin Hartanto');
             $ketuaRw05 = config('rw.ketua_rw_05', 'M. Rochmat Hidayat');
 
             $jabatanPetugas = '-';
+            $tugasPetugas = $petugas->tugas ?? null;
 
-            if (isset($petugas->tugas)) {
-                if (is_object($petugas->tugas) && method_exists($petugas->tugas, 'getLabel')) {
-                    $jabatanPetugas = $petugas->tugas->getLabel();
+            if ($tugasPetugas) {
+                if (is_object($tugasPetugas) && method_exists($tugasPetugas, 'getLabel')) {
+                    $jabatanPetugas = $tugasPetugas->getLabel();
                 } else {
-                    $jabatanPetugas = (string) $petugas->tugas;
+                    $jabatanPetugas = (string) $tugasPetugas;
                 }
             }
+
+            $nilaiTugasPetugas = is_object($tugasPetugas) && isset($tugasPetugas->value)
+                ? $tugasPetugas->value
+                : $tugasPetugas;
+
+            $isSatpam = ($tugasPetugas instanceof \App\Enums\PetugasTugas && $tugasPetugas === \App\Enums\PetugasTugas::SATPAM)
+                || strtolower((string) ($nilaiTugasPetugas ?? '')) === 'satpam';
+
+            $tunjanganTransportasi = $isSatpam ? 50000 : 0;
+
+            $totalDasarGaji = $record->total
+                ?? (($petugas->gaji_pokok ?? 0) - $potonganKasbons->sum('jumlah'));
+
+            $totalGajiBersih = $totalDasarGaji + $tunjanganTransportasi;
         @endphp
 
         <div class="document">
@@ -307,12 +315,14 @@
                         </td>
                     </tr>
 
-                    <tr class="normal-row">
-                        <td>Tunjangan Transportasi</td>
-                        <td class="col-amount">
-                            {{ number_format($tunjanganTransportasi, 0, ',', '.') }}
-                        </td>
-                    </tr>
+                    @if($isSatpam)
+                        <tr class="normal-row">
+                            <td>Tunjangan Transportasi</td>
+                            <td class="col-amount">
+                                {{ number_format($tunjanganTransportasi, 0, ',', '.') }}
+                            </td>
+                        </tr>
+                    @endif
 
                     <tr>
                         <td>
