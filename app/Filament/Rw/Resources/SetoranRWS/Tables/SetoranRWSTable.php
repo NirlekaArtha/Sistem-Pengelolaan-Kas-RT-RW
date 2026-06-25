@@ -5,10 +5,7 @@ namespace App\Filament\Rw\Resources\SetoranRWS\Tables;
 use App\Enums\SetoranStatusValidasi;
 use App\Filament\Rw\Resources\SetoranRWS\Pages\ViewSetoranRW;
 use App\Models\SetoranRW;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
+use Filament\Actions\Action;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\DatePicker;
 use Filament\Tables\Columns\TextColumn;
@@ -101,17 +98,38 @@ class SetoranRWSTable
             ])
             ->actions([
                 ViewAction::make()->iconButton()->tooltip('Lihat'),
-                EditAction::make()->iconButton()->tooltip('Edit'),
-                DeleteAction::make()->iconButton()->tooltip('Hapus'),
+                Action::make('verifikasi')
+                    ->label('Verifikasi')
+                    ->icon('heroicon-o-check-circle')
+                    ->color('success')
+                    ->requiresConfirmation()
+                    ->modalHeading('Verifikasi setoran ini?')
+                    ->modalDescription('Status setoran akan diubah menjadi valid.')
+                    ->action(function (SetoranRW $record): void {
+                        $record->update([
+                            'status_validasi' => SetoranStatusValidasi::VALID,
+                        ]);
+                    })
+                    ->visible(fn (SetoranRW $record): bool => $record->status_validasi === SetoranStatusValidasi::PENDING),
+                Action::make('tolak')
+                    ->label('Tolak')
+                    ->icon('heroicon-o-x-circle')
+                    ->color('danger')
+                    ->requiresConfirmation()
+                    ->modalHeading('Tolak setoran ini?')
+                    ->modalDescription('Status setoran akan diubah menjadi ditolak.')
+                    ->action(function (SetoranRW $record): void {
+                        $record->update([
+                            'status_validasi' => SetoranStatusValidasi::DITOLAK,
+                        ]);
+                    })
+                    ->visible(fn (SetoranRW $record): bool => $record->status_validasi === SetoranStatusValidasi::PENDING),
             ])
             ->actionsColumnLabel('Aksi')
             ->recordUrl(
                 fn (SetoranRW $record): string => ViewSetoranRW::getUrl([
                     'record' => $record,
                 ]),
-            )
-            ->toolbarActions([
-                BulkActionGroup::make([DeleteBulkAction::make()]),
-            ]);
+            );
     }
 }

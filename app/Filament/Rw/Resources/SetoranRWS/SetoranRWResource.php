@@ -2,8 +2,6 @@
 
 namespace App\Filament\Rw\Resources\SetoranRWS;
 
-use App\Filament\Rw\Resources\SetoranRWS\Pages\CreateSetoranRW;
-use App\Filament\Rw\Resources\SetoranRWS\Pages\EditSetoranRW;
 use App\Filament\Rw\Resources\SetoranRWS\Pages\ListSetoranRWS;
 use App\Filament\Rw\Resources\SetoranRWS\Pages\ViewSetoranRW;
 use App\Filament\Rw\Resources\SetoranRWS\Schemas\SetoranRWForm;
@@ -72,12 +70,25 @@ class SetoranRWResource extends Resource
         return [SetoranRWOverview::class];
     }
 
+    public static function canCreate(): bool
+    {
+        return false;
+    }
+
+    public static function canEdit($record): bool
+    {
+        return false;
+    }
+
+    public static function canDelete($record): bool
+    {
+        return false;
+    }
+
     public static function getPages(): array
     {
         return [
             'index' => ListSetoranRWS::route('/'),
-            'create' => CreateSetoranRW::route('/create'),
-            'edit' => EditSetoranRW::route('/{record}/edit'),
             'view' => ViewSetoranRW::route('/{record}/'),
         ];
     }

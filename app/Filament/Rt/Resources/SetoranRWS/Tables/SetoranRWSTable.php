@@ -5,9 +5,6 @@ namespace App\Filament\Rt\Resources\SetoranRWS\Tables;
 use App\Enums\SetoranStatusValidasi;
 use App\Filament\Rt\Resources\SetoranRWS\Pages\ViewSetoranRW;
 use App\Models\SetoranRW;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\DatePicker;
@@ -85,17 +82,16 @@ class SetoranRWSTable
             ])
             ->actions([
                 ViewAction::make()->iconButton()->tooltip('Lihat'),
-                EditAction::make()->iconButton()->tooltip('Edit'),
-                DeleteAction::make()->iconButton()->tooltip('Hapus'),
+                EditAction::make()
+                    ->iconButton()
+                    ->tooltip('Edit')
+                    ->visible(fn (SetoranRW $record): bool => $record->status_validasi === SetoranStatusValidasi::PENDING),
             ])
             ->actionsColumnLabel('Aksi')
             ->recordUrl(
                 fn ($record): string => ViewSetoranRW::getUrl([
                     'record' => $record,
                 ]),
-            )
-            ->toolbarActions([
-                BulkActionGroup::make([DeleteBulkAction::make()]),
-            ]);
+            );
     }
 }

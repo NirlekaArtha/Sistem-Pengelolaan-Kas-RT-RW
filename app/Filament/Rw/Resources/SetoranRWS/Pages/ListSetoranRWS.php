@@ -5,7 +5,6 @@ namespace App\Filament\Rw\Resources\SetoranRWS\Pages;
 use App\Enums\SetoranStatusValidasi;
 use App\Filament\Rw\Resources\SetoranRWS\SetoranRWResource;
 use App\Filament\Rw\Resources\SetoranRWS\Widgets\SetoranRWOverview;
-use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Schemas\Components\Tabs\Tab;
 use Illuminate\Database\Eloquent\Builder;
@@ -16,9 +15,7 @@ class ListSetoranRWS extends ListRecords
 
     protected function getHeaderActions(): array
     {
-        return [
-            CreateAction::make(),
-        ];
+        return [];
     }
 
     protected function getHeaderWidgets(): array

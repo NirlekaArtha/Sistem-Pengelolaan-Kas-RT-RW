@@ -17,11 +17,11 @@ class SetoranRWForm
                 ->icon('heroicon-o-banknotes')
                 ->columns(2)
                 ->schema([
-                    DatePicker::make('periode')
-                        ->native(false)
-                        ->displayFormat('Y-m')
-                        ->closeOnDateSelection()
-                        ->placeholder('Tahun-Bulan')
+                    TextInput::make('periode')
+                        ->label('Periode')
+                        ->type('month')
+                        ->placeholder('YYYY-MM')
+                        ->rule('date_format:Y-m')
                         ->required(),
                     DatePicker::make('tanggal_setor')->required(),
                     TextInput::make('jumlah_setor')

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Rt\Resources\SetoranRWS;
 
+use App\Enums\SetoranStatusValidasi;
 use App\Filament\Rt\Resources\SetoranRWS\Pages\CreateSetoranRW;
 use App\Filament\Rt\Resources\SetoranRWS\Pages\EditSetoranRW;
 use App\Filament\Rt\Resources\SetoranRWS\Pages\ListSetoranRWS;
@@ -57,6 +58,16 @@ class SetoranRWResource extends Resource
             'id_rt',
             auth()->user()?->rt?->id,
         );
+    }
+
+    public static function canEdit($record): bool
+    {
+        return $record?->status_validasi === SetoranStatusValidasi::PENDING;
+    }
+
+    public static function canDelete($record): bool
+    {
+        return $record?->status_validasi === SetoranStatusValidasi::PENDING;
     }
 
     public static function getPages(): array

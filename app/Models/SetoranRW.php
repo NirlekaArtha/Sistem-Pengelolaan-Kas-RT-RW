@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\SetoranStatusValidasi;
 use Database\Factories\SetoranRWFactory;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -43,10 +44,35 @@ class SetoranRW extends Model
         return $this->belongsTo(RW::class, 'id_rw');
     }
 
+    protected function periode(): Attribute
+    {
+        return Attribute::make(
+            get: fn (?string $value): ?string => self::normalizePeriode($value),
+            set: fn (?string $value): ?string => self::normalizePeriode($value),
+        );
+    }
+
     // ─── Has One ─────────────────────────────────────────────────────────────
 
     public function kwitansi(): HasOne
     {
         return $this->hasOne(KwitansiSetoranRW::class, 'id_setoran');
+    }
+
+    private static function normalizePeriode(?string $value): ?string
+    {
+        if (blank($value)) {
+            return $value;
+        }
+
+        if (preg_match('/^\d{4}-\d{2}$/', $value) === 1) {
+            return $value;
+        }
+
+        if (preg_match('/^\d{4}-\d{2}-\d{2}/', $value) === 1) {
+            return substr($value, 0, 7);
+        }
+
+        return $value;
     }
 }
