@@ -15,7 +15,7 @@ class SetoranRW extends Model
     /** @use HasFactory<SetoranRWFactory> */
     use HasFactory;
 
-    protected $table = 'setoran_r_w_s';
+    protected $table = 'setoran_rw';
 
     protected $fillable = [
         'id_rt',

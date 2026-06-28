@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('wargas', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('id_rt')->constrained('r_t_s')->cascadeOnDelete();
-            $table->foreignId('id_user')->constrained('users')->cascadeOnDelete();
+            $table->foreignId('id_rt')->constrained('rt')->cascadeOnDelete();
+            $table->foreignId('id_user')->unique()->constrained('users')->cascadeOnDelete();
             $table->string('nama_kepala_keluarga');
             $table->string('alamat');
             $table->string('no_telepon');

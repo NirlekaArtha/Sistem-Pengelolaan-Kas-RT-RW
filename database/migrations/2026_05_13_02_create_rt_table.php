@@ -11,15 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('r_t_s', function (Blueprint $table) {
+        Schema::create('rt', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('id_rw')->constrained('r_w_s')->cascadeOnDelete();
-            $table->foreignId('id_user')->constrained('users')->cascadeOnDelete();
+            $table->foreignId('id_rw')->constrained('rw')->cascadeOnDelete();
+            $table->foreignId('id_user')->unique()->constrained('users')->cascadeOnDelete();
             $table->string('nomor_rt');
             $table->string('nama');
             $table->string('alamat');
             $table->string('no_telepon');
             $table->timestamps();
+
+            $table->unique(['id_rw', 'nomor_rt']);
         });
     }
 
@@ -28,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('r_t_s');
+        Schema::dropIfExists('rt');
     }
 };

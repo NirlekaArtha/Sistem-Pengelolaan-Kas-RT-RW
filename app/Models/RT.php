@@ -14,7 +14,7 @@ class RT extends Model
     /** @use HasFactory<RTFactory> */
     use HasFactory;
 
-    protected $table = 'r_t_s';
+    protected $table = 'rt';
 
     protected $fillable = [
         'id_rw',

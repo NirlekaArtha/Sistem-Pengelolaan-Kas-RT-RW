@@ -14,7 +14,7 @@ class RW extends Model
     /** @use HasFactory<RWFactory> */
     use HasFactory;
 
-    protected $table = 'r_w_s';
+    protected $table = 'rw';
 
     protected $fillable = [
         'id_user',

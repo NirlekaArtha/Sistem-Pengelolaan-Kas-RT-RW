@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\SlipGaji;
+use App\Services\KasBulananRwService;
 use Dompdf\Dompdf;
 use Dompdf\Options;
 
@@ -19,9 +20,13 @@ class SlipGajiController extends Controller
         }
 
         $petugas = $record->petugas;
+        [$startDate, $endDate] = KasBulananRwService::getPayrollDateRangeForDate(
+            $record->tanggal,
+        );
+
         $kasbons = $petugas->kasbons()
-            ->whereYear('tanggal', $record->tanggal->year)
-            ->whereMonth('tanggal', $record->tanggal->month)
+            ->whereDate('tanggal', '>=', $startDate)
+            ->whereDate('tanggal', '<=', $endDate)
             ->get();
 
         return compact('record', 'rw', 'petugas', 'kasbons');
@@ -73,9 +78,13 @@ class SlipGajiController extends Controller
             ->get();
 
         foreach ($records as $record) {
+            [$startDate, $endDate] = KasBulananRwService::getPayrollDateRangeForDate(
+                $record->tanggal,
+            );
+
             $record->kasbons = $record->petugas->kasbons()
-                ->whereYear('tanggal', $record->tanggal->year)
-                ->whereMonth('tanggal', $record->tanggal->month)
+                ->whereDate('tanggal', '>=', $startDate)
+                ->whereDate('tanggal', '<=', $endDate)
                 ->get();
         }
 

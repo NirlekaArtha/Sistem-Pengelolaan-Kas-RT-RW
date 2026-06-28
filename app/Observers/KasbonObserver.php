@@ -3,6 +3,7 @@
 namespace App\Observers;
 
 use App\Models\Kasbon;
+use App\Models\Petugas;
 use App\Services\KasBulananRwService;
 
 class KasbonObserver
@@ -22,6 +23,7 @@ class KasbonObserver
         $petugasId = $kasbon->id_petugas;
 
         KasBulananRwService::recalculateSlipGaji($petugasId, $tanggal);
+        $this->recalculateKasBulananRw($kasbon, $tanggal);
     }
 
     /**
@@ -42,12 +44,14 @@ class KasbonObserver
                 $oldPetugasId,
                 $oldTanggal,
             );
+            $this->recalculateKasBulananRw($kasbon, $oldTanggal, $oldPetugasId);
         }
 
         $tanggal = $kasbon->tanggal;
         $petugasId = $kasbon->id_petugas;
 
         KasBulananRwService::recalculateSlipGaji($petugasId, $tanggal);
+        $this->recalculateKasBulananRw($kasbon, $tanggal);
     }
 
     /**
@@ -60,5 +64,25 @@ class KasbonObserver
         $petugasId = $kasbon->id_petugas;
 
         KasBulananRwService::recalculateSlipGaji($petugasId, $tanggal);
+        $this->recalculateKasBulananRw($kasbon, $tanggal);
+    }
+
+    private function recalculateKasBulananRw(
+        Kasbon $kasbon,
+        mixed $tanggal,
+        ?int $petugasId = null,
+    ): void {
+        $rwId = $petugasId
+            ? Petugas::find($petugasId)?->id_rw
+            : $kasbon->petugas?->id_rw;
+
+        if (! $rwId || ! $tanggal) {
+            return;
+        }
+
+        KasBulananRwService::recalculateChain(
+            $rwId,
+            KasBulananRwService::getPayrollPeriodForDate($tanggal),
+        );
     }
 }

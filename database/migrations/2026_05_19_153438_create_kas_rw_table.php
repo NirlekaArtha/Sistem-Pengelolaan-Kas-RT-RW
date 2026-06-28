@@ -11,9 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('kas_r_t_s', function (Blueprint $table) {
+        Schema::create('kas_rw', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('id_rt')->constrained('r_t_s')->cascadeOnDelete();
+            $table->foreignId('id_rw')->constrained('rw')->cascadeOnDelete();
             $table->enum('tipe', ['masuk', 'keluar']);
             $table->enum('jenis', [
                 'donasi', 'sponsorship', 'hibah', 'hasil usaha',
@@ -33,6 +33,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('kas_r_t_s');
+        Schema::dropIfExists('kas_rw');
     }
 };

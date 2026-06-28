@@ -10,10 +10,148 @@ use App\Models\KasRW;
 use App\Models\Petugas;
 use App\Models\SetoranRW;
 use App\Models\SlipGaji;
+use Carbon\CarbonInterface;
 use Illuminate\Support\Carbon;
 
 class KasBulananRwService
 {
+    /**
+     * @return array{
+     *     saldo_awal: float,
+     *     total_pendapatan_kas_harian: float,
+     *     total_pemasukan_setoran_rt: float,
+     *     total_pengeluaran_kas_harian: float,
+     *     total_pengeluaran_gaji_petugas: float,
+     *     total_kasbon_petugas: float,
+     *     total_pendapatan: float,
+     *     total_pengeluaran: float,
+     *     total_pendapatan_bersih: float,
+     *     saldo_akhir: float,
+     *     gaji_start_date: string,
+     *     gaji_end_date: string
+     * }
+     */
+    public static function calculateTotals(
+        int $rwId,
+        string $periode,
+        float|int|string|null $saldoAwal = 0,
+    ): array {
+        $saldoAwal = (float) ($saldoAwal ?? 0);
+
+        $totalPendapatanKasHarian = (float) KasRW::where('id_rw', $rwId)
+            ->where('tipe', KasTipe::MASUK->value)
+            ->where('tanggal', 'like', "{$periode}-%")
+            ->sum('jumlah');
+
+        $totalPemasukanSetoranRT = (float) SetoranRW::where('id_rw', $rwId)
+            ->where('periode', $periode)
+            ->where('status_validasi', SetoranStatusValidasi::VALID->value)
+            ->sum('jumlah_setor');
+
+        [$gajiStartDate, $gajiEndDate] = static::getPayrollDateRangeForPeriod(
+            $periode,
+        );
+
+        $totalPengeluaranKasHarian = (float) KasRW::where('id_rw', $rwId)
+            ->where('tipe', KasTipe::KELUAR->value)
+            ->where('tanggal', 'like', "{$periode}-%")
+            ->sum('jumlah');
+
+        $totalPengeluaranGajiPetugas = (float) SlipGaji::join(
+            'petugas',
+            'slip_gajis.id_petugas',
+            '=',
+            'petugas.id',
+        )
+            ->where('petugas.id_rw', $rwId)
+            ->whereDate('slip_gajis.tanggal', '>=', $gajiStartDate)
+            ->whereDate('slip_gajis.tanggal', '<=', $gajiEndDate)
+            ->sum('slip_gajis.total');
+
+        $totalKasbonPetugas = (float) Kasbon::join(
+            'petugas',
+            'kasbons.id_petugas',
+            '=',
+            'petugas.id',
+        )
+            ->where('petugas.id_rw', $rwId)
+            ->whereDate('kasbons.tanggal', '>=', $gajiStartDate)
+            ->whereDate('kasbons.tanggal', '<=', $gajiEndDate)
+            ->sum('kasbons.jumlah');
+
+        $totalPendapatan =
+            $totalPendapatanKasHarian + $totalPemasukanSetoranRT;
+        $totalPengeluaran =
+            $totalPengeluaranKasHarian +
+            $totalPengeluaranGajiPetugas +
+            $totalKasbonPetugas;
+        $totalPendapatanBersih = $totalPendapatan - $totalPengeluaran;
+        $saldoAkhir = $saldoAwal + $totalPendapatanBersih;
+
+        return [
+            'saldo_awal' => $saldoAwal,
+            'total_pendapatan_kas_harian' => $totalPendapatanKasHarian,
+            'total_pemasukan_setoran_rt' => $totalPemasukanSetoranRT,
+            'total_pengeluaran_kas_harian' => $totalPengeluaranKasHarian,
+            'total_pengeluaran_gaji_petugas' => $totalPengeluaranGajiPetugas,
+            'total_kasbon_petugas' => $totalKasbonPetugas,
+            'total_pendapatan' => $totalPendapatan,
+            'total_pengeluaran' => $totalPengeluaran,
+            'total_pendapatan_bersih' => $totalPendapatanBersih,
+            'saldo_akhir' => $saldoAkhir,
+            'gaji_start_date' => $gajiStartDate,
+            'gaji_end_date' => $gajiEndDate,
+        ];
+    }
+
+    /**
+     * @return array{0: string, 1: string}
+     */
+    public static function getPayrollDateRangeForPeriod(string $periode): array
+    {
+        $periodeCarbon = Carbon::createFromFormat('Y-m', $periode);
+
+        return [
+            $periodeCarbon->copy()->subMonth()->day(26)->toDateString(),
+            $periodeCarbon->copy()->day(25)->toDateString(),
+        ];
+    }
+
+    /**
+     * @return array{0: string, 1: string}
+     */
+    public static function getPayrollDateRangeForDate(
+        CarbonInterface|string $tanggal,
+    ): array {
+        $tanggalCarbon = $tanggal instanceof CarbonInterface
+            ? Carbon::instance($tanggal)
+            : Carbon::parse($tanggal);
+
+        $startDate =
+            $tanggalCarbon->day <= 25
+                ? $tanggalCarbon->copy()->subMonth()->day(26)->toDateString()
+                : $tanggalCarbon->copy()->day(26)->toDateString();
+
+        $endDate =
+            $tanggalCarbon->day <= 25
+                ? $tanggalCarbon->copy()->day(25)->toDateString()
+                : $tanggalCarbon->copy()->addMonth()->day(25)->toDateString();
+
+        return [$startDate, $endDate];
+    }
+
+    public static function getPayrollPeriodForDate(
+        CarbonInterface|string $tanggal,
+    ): string {
+        $tanggalCarbon = $tanggal instanceof CarbonInterface
+            ? Carbon::instance($tanggal)
+            : Carbon::parse($tanggal);
+
+        return $tanggalCarbon->day <= 25
+            ? $tanggalCarbon->format('Y-m')
+            : $tanggalCarbon->copy()->addMonth()->format('Y-m');
+    }
+
     /**
      * Recalculate KasBulananRW totals for a specific RW and period.
      *
@@ -34,14 +172,7 @@ class KasBulananRwService
      */
     public static function recalculate(int $rwId, string $periode): void
     {
-        $record = KasBulananRW::where('id_rw', $rwId)
-            ->where('periode', $periode)
-            ->first();
-
-        if (! $record) {
-            // No kas bulanan record exists for this period — nothing to update.
-            return;
-        }
+        $record = static::ensureRecord($rwId, $periode);
 
         // ── Inherit saldo_awal from previous month's saldo_akhir ─────────────
         $prevPeriode = Carbon::createFromFormat('Y-m', $periode)
@@ -56,65 +187,18 @@ class KasBulananRwService
             $record->saldo_awal = $prevRecord->saldo_akhir;
         }
 
-        // ── Pendapatan ───────────────────────────────────────────────────────
-        $totalPendapatanKasHarian = KasRW::where('id_rw', $rwId)
-            ->where('tipe', KasTipe::MASUK->value)
-            ->where('tanggal', 'like', "{$periode}-%")
-            ->sum('jumlah');
-
-        $totalPemasukanSetoranRT = SetoranRW::where('id_rw', $rwId)
-            ->where('periode', $periode)
-            ->where('status_validasi', SetoranStatusValidasi::VALID->value)
-            ->sum('jumlah_setor');
-
-        // ── Rentang tanggal penggajian: tgl 26 bulan lalu s/d tgl 25 bulan ini ─
-        $periodeCarbon = Carbon::createFromFormat('Y-m', $periode);
-        $gajiStartDate = $periodeCarbon
-            ->copy()
-            ->subMonth()
-            ->day(26)
-            ->toDateString(); // tgl 26 bulan lalu
-        $gajiEndDate = $periodeCarbon->copy()->day(25)->toDateString(); // tgl 25 bulan ini
-
-        // ── Pengeluaran ──────────────────────────────────────────────────────
-        $totalPengeluaranKasHarian = KasRW::where('id_rw', $rwId)
-            ->where('tipe', KasTipe::KELUAR->value)
-            ->where('tanggal', 'like', "{$periode}-%")
-            ->sum('jumlah');
-
-        // Gaji petugas: ambil dari slip_gajis yang tanggalnya dalam rentang penggajian
-        $totalPengeluaranGajiPetugas = SlipGaji::join(
-            'petugas',
-            'slip_gajis.id_petugas',
-            '=',
-            'petugas.id',
-        )
-            ->where('petugas.id_rw', $rwId)
-            ->whereBetween('slip_gajis.tanggal', [$gajiStartDate, $gajiEndDate])
-            ->sum('slip_gajis.total');
-
-        // Kasbon petugas: dalam rentang penggajian yang sama
-        $totalKasbonPetugas = Kasbon::join(
-            'petugas',
-            'kasbons.id_petugas',
-            '=',
-            'petugas.id',
-        )
-            ->where('petugas.id_rw', $rwId)
-            ->whereBetween('kasbons.tanggal', [$gajiStartDate, $gajiEndDate])
-            ->sum('kasbons.jumlah');
-
         // ── Write back ───────────────────────────────────────────────────────
-        $record->total_pendapatan =
-            $totalPendapatanKasHarian + $totalPemasukanSetoranRT;
-        $record->total_pengeluaran =
-            $totalPengeluaranKasHarian +
-            $totalPengeluaranGajiPetugas +
-            $totalKasbonPetugas;
+        $totals = static::calculateTotals(
+            $rwId,
+            $periode,
+            $record->saldo_awal,
+        );
+
+        $record->total_pendapatan = $totals['total_pendapatan'];
+        $record->total_pengeluaran = $totals['total_pengeluaran'];
         $record->total_pendapatan_bersih =
-            $record->total_pendapatan - $record->total_pengeluaran;
-        $record->saldo_akhir =
-            $record->saldo_awal + $record->total_pendapatan_bersih;
+            $totals['total_pendapatan_bersih'];
+        $record->saldo_akhir = $totals['saldo_akhir'];
 
         // saveQuietly() prevents re-firing the KasBulananRW saved/updated events.
         $record->saveQuietly();
@@ -135,6 +219,8 @@ class KasBulananRwService
         int $rwId,
         string $fromPeriode,
     ): void {
+        static::ensureRecord($rwId, $fromPeriode);
+
         $records = KasBulananRW::where('id_rw', $rwId)
             ->where('periode', '>=', $fromPeriode)
             ->orderBy('periode', 'asc')
@@ -175,19 +261,11 @@ class KasBulananRwService
             return;
         }
 
-        $tanggalCarbon = Carbon::parse($tanggal);
-        $startDate =
-            $tanggalCarbon->day <= 25
-                ? $tanggalCarbon->copy()->subMonth()->day(26)->toDateString()
-                : $tanggalCarbon->copy()->day(26)->toDateString();
-
-        $endDate =
-            $tanggalCarbon->day <= 25
-                ? $tanggalCarbon->copy()->day(25)->toDateString()
-                : $tanggalCarbon->copy()->addMonth()->day(25)->toDateString();
+        [$startDate, $endDate] = static::getPayrollDateRangeForDate($tanggal);
 
         $totalKasbon = Kasbon::where('id_petugas', $petugasId)
-            ->whereBetween('tanggal', [$startDate, $endDate])
+            ->whereDate('tanggal', '>=', $startDate)
+            ->whereDate('tanggal', '<=', $endDate)
             ->sum('jumlah');
 
         // Gaji cannot go negative.
@@ -199,5 +277,22 @@ class KasBulananRwService
         // saveQuietly() prevents the SlipGajiObserver from firing and triggering
         // another round of KasBulananRW recalculation.
         $slipGaji->saveQuietly();
+    }
+
+    public static function ensureRecord(int $rwId, string $periode): KasBulananRW
+    {
+        return KasBulananRW::firstOrCreate(
+            [
+                'id_rw' => $rwId,
+                'periode' => $periode,
+            ],
+            [
+                'total_pendapatan' => 0,
+                'total_pengeluaran' => 0,
+                'total_pendapatan_bersih' => 0,
+                'saldo_awal' => 0,
+                'saldo_akhir' => 0,
+            ],
+        );
     }
 }

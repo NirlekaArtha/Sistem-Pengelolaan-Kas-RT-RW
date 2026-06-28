@@ -13,10 +13,12 @@ return new class extends Migration
     {
         Schema::create('jenis_iuran_wargas', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('id_rt')->constrained('r_t_s')->cascadeOnDelete();
+            $table->foreignId('id_rt')->constrained('rt')->cascadeOnDelete();
             $table->string('jenis_iuran');
             $table->decimal('jumlah', 15, 2);
             $table->timestamps();
+
+            $table->unique(['id_rt', 'jenis_iuran']);
         });
     }
 

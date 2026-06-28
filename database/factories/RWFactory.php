@@ -17,7 +17,6 @@ class RWFactory extends Factory
         return [
             'id_user' => fn () => User::factory()->create([
                 'role' => UserRole::RW,
-                'email' => 'adminrw@gmail.com',
             ])->id,
             'nomor_rw' => fake()->unique()->numerify('###'),
             'nama' => 'RW '.fake()->numerify('###'),

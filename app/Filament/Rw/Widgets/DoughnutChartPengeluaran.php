@@ -2,11 +2,7 @@
 
 namespace App\Filament\Rw\Widgets;
 
-use App\Enums\KasTipe;
-use App\Models\Kasbon;
-use App\Models\KasRW;
-use App\Models\Petugas;
-use App\Models\SlipGaji;
+use App\Services\KasBulananRwService;
 use Filament\Support\RawJs;
 use Filament\Widgets\ChartWidget;
 use Illuminate\Support\Carbon;
@@ -48,34 +44,14 @@ class DoughnutChartPengeluaran extends ChartWidget
         }
 
         $periode = $this->filter ?? Carbon::now()->format('Y-m');
-        $year = Carbon::parse($periode.'-01')->year;
-        $month = Carbon::parse($periode.'-01')->month;
+        $totals = KasBulananRwService::calculateTotals(
+            $rw->id,
+            $periode,
+        );
 
-        // Get all petugas IDs for this RW
-        $petugasIds = Petugas::where('id_rw', $rw->id)->pluck('id');
-
-        // 1. Total Gaji (SlipGaji) in the selected month
-        $totalGaji = SlipGaji::whereIn('id_petugas', $petugasIds)
-            ->whereYear('tanggal', $year)
-            ->whereMonth('tanggal', $month)
-            ->sum('total');
-
-        // 2. Total Kasbon in the selected month
-        $totalKasbon = Kasbon::whereIn('id_petugas', $petugasIds)
-            ->whereYear('tanggal', $year)
-            ->whereMonth('tanggal', $month)
-            ->sum('jumlah');
-
-        // 3. Total Pengeluaran Harian (KasRW tipe = keluar) in the selected month
-        $totalPengeluaranHarian = KasRW::where('id_rw', $rw->id)
-            ->where('tipe', KasTipe::KELUAR->value)
-            ->whereYear('tanggal', $year)
-            ->whereMonth('tanggal', $month)
-            ->sum('jumlah');
-
-        $totalGaji = (float) $totalGaji;
-        $totalKasbon = (float) $totalKasbon;
-        $totalPengeluaranHarian = (float) $totalPengeluaranHarian;
+        $totalGaji = (float) $totals['total_pengeluaran_gaji_petugas'];
+        $totalKasbon = (float) $totals['total_kasbon_petugas'];
+        $totalPengeluaranHarian = (float) $totals['total_pengeluaran_kas_harian'];
 
         $grandTotal = $totalGaji + $totalKasbon + $totalPengeluaranHarian;
 

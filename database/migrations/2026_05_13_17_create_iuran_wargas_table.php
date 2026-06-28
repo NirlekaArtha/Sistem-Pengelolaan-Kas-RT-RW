@@ -15,11 +15,13 @@ return new class extends Migration
             $table->id();
             $table->foreignId('id_warga')->constrained('wargas')->cascadeOnDelete();
             $table->foreignId('id_jenis_iuran')->constrained('jenis_iuran_wargas')->cascadeOnDelete();
-            $table->foreignId('id_rt')->constrained('r_t_s')->cascadeOnDelete();
+            $table->foreignId('id_rt')->constrained('rt')->cascadeOnDelete();
             $table->string('periode'); // format: YYYY-MM
             $table->date('tanggal_bayar')->nullable();
             $table->enum('status', ['belum bayar', 'dibayar', 'telat'])->default('belum bayar');
             $table->timestamps();
+
+            $table->unique(['id_warga', 'id_jenis_iuran', 'periode']);
         });
     }
 

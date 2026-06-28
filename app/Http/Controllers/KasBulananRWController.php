@@ -2,12 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\KasTipe;
-use App\Enums\SetoranStatusValidasi;
 use App\Models\KasBulananRW;
-use App\Models\KasRW;
-use App\Models\SetoranRW;
-use App\Models\SlipGaji;
+use App\Services\KasBulananRwService;
 use Dompdf\Dompdf;
 use Dompdf\Options;
 
@@ -25,45 +21,22 @@ class KasBulananRWController extends Controller
 
         $rwId = $rw->id;
 
-        // 1. Saldo awal
-        $saldoAwal = $record->saldo_awal;
+        $totals = KasBulananRwService::calculateTotals(
+            $rwId,
+            $record->periode,
+            $record->saldo_awal,
+        );
 
-        // 2. Total pendapatan dari kas harian
-        $totalPendapatanKasHarian = KasRW::where('id_rw', $rwId)
-            ->where('tipe', KasTipe::MASUK->value)
-            ->where('tanggal', 'like', "{$record->periode}-%")
-            ->sum('jumlah');
-
-        // 3. Total pengeluaran kas harian
-        $totalPengeluaranKasHarian = KasRW::where('id_rw', $rwId)
-            ->where('tipe', KasTipe::KELUAR->value)
-            ->where('tanggal', 'like', "{$record->periode}-%")
-            ->sum('jumlah');
-
-        // 4. Total pengeluaran gaji petugas
-        $totalPengeluaranGajiPetugas = SlipGaji::whereHas('petugas', function ($q) use ($rwId) {
-            $q->where('id_rw', $rwId);
-        })
-            ->where('tanggal', 'like', "{$record->periode}-%")
-            ->sum('total');
-
-        // 5. Total pemasukan setoran dari RT
-        $totalPemasukanSetoranRT = SetoranRW::where('id_rw', $rwId)
-            ->where('periode', $record->periode)
-            ->where('status_validasi', SetoranStatusValidasi::VALID->value)
-            ->sum('jumlah_setor');
-
-        // 6. Total semua pemasukan
-        $totalSemuaPemasukan = $totalPendapatanKasHarian + $totalPemasukanSetoranRT;
-
-        // 7. Total semua pengeluaran
-        $totalSemuaPengeluaran = $totalPengeluaranKasHarian + $totalPengeluaranGajiPetugas;
-
-        // 8. Total bersih pendapatan
-        $totalBersihPendapatan = $totalSemuaPemasukan - $totalSemuaPengeluaran;
-
-        // 9. Saldo akhir periode
-        $saldoAkhirPeriode = $saldoAwal + $totalBersihPendapatan;
+        $saldoAwal = $totals['saldo_awal'];
+        $totalPendapatanKasHarian = $totals['total_pendapatan_kas_harian'];
+        $totalPengeluaranKasHarian = $totals['total_pengeluaran_kas_harian'];
+        $totalPengeluaranGajiPetugas = $totals['total_pengeluaran_gaji_petugas'];
+        $totalKasbonPetugas = $totals['total_kasbon_petugas'];
+        $totalPemasukanSetoranRT = $totals['total_pemasukan_setoran_rt'];
+        $totalSemuaPemasukan = $totals['total_pendapatan'];
+        $totalSemuaPengeluaran = $totals['total_pengeluaran'];
+        $totalBersihPendapatan = $totals['total_pendapatan_bersih'];
+        $saldoAkhirPeriode = $totals['saldo_akhir'];
 
         return compact(
             'record',
@@ -72,6 +45,7 @@ class KasBulananRWController extends Controller
             'totalPendapatanKasHarian',
             'totalPengeluaranKasHarian',
             'totalPengeluaranGajiPetugas',
+            'totalKasbonPetugas',
             'totalPemasukanSetoranRT',
             'totalSemuaPemasukan',
             'totalSemuaPengeluaran',

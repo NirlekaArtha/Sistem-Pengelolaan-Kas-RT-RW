@@ -4,7 +4,7 @@ namespace App\Filament\Rt\Widgets;
 
 use App\Enums\KasTipe;
 use App\Enums\SetoranStatusValidasi;
-use App\Models\KasRW;
+use App\Models\KasRT;
 use App\Models\SetoranRW;
 use Filament\Support\RawJs;
 use Filament\Widgets\ChartWidget;
@@ -55,7 +55,8 @@ class DoughnutChartPengeluaranRT extends ChartWidget
             ->sum('jumlah_setor');
 
         // Total Pengeluaran RT in the selected month
-        $pengeluaranHarian = KasRW::where('tipe', KasTipe::KELUAR->value)
+        $pengeluaranHarian = KasRT::where('id_rt', $rt->id)
+            ->where('tipe', KasTipe::KELUAR->value)
             ->whereLike('tanggal', "{$periode}-%")
             ->sum('jumlah');
 
@@ -77,7 +78,7 @@ class DoughnutChartPengeluaranRT extends ChartWidget
                 [
                     'data' => [
                         round($totalSetoranRW, 2),
-                        round($pengeluaranHarian, 2), // MODIFIKASI: Masuk ke elemen data kedua
+                        round($pengeluaranHarian, 2),
                     ],
                     'backgroundColor' => [
                         'rgba(239, 68, 68, 0.85)', // Merah - Setoran RW
@@ -93,7 +94,7 @@ class DoughnutChartPengeluaranRT extends ChartWidget
             ],
             'labels' => [
                 "Setoran RW ({$pctSetoran}%)",
-                "Pengeluaran Harian ({$pctPengeluaran}%)", // MODIFIKASI: Tambah label pengeluaran
+                "Pengeluaran Harian ({$pctPengeluaran}%)",
             ],
         ];
     }

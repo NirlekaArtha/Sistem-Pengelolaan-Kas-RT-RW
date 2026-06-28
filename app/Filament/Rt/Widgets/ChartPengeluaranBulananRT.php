@@ -5,9 +5,9 @@ namespace App\Filament\Rt\Widgets;
 use App\Enums\KasTipe;
 use App\Enums\SetoranStatusValidasi;
 use App\Models\KasBulananRT;
-use App\Models\KasRW;
+use App\Models\KasRT;
 use App\Models\SetoranRW;
-use Filament\Support\RawJs; // TAMBAHKAN: Import model KasRW untuk pengeluaran harian
+use Filament\Support\RawJs;
 use Filament\Widgets\ChartWidget;
 use Illuminate\Support\Carbon;
 
@@ -73,13 +73,11 @@ class ChartPengeluaranBulananRT extends ChartWidget
                 ->where('status_validasi', SetoranStatusValidasi::VALID->value)
                 ->sum('jumlah_setor');
 
-            // 2. MODIFIKASI: Ambil total pengeluaran harian (KasRW) di bulan ini
-            // Menggunakan match string 'YYYY-MM-%' dari format periode yang ada
-            $totalPengeluaranHarian = KasRW::where('tipe', KasTipe::KELUAR->value)
+            $totalPengeluaranHarian = KasRT::where('id_rt', $rt->id)
+                ->where('tipe', KasTipe::KELUAR->value)
                 ->whereLike('tanggal', "{$record->periode}-%")
                 ->sum('jumlah');
 
-            // 3. Gabungkan kedua pengeluaran ke dalam satu variabel rumus
             $totalPengeluaranGabungan =
                 $totalSetoranRW + $totalPengeluaranHarian;
 
@@ -87,7 +85,7 @@ class ChartPengeluaranBulananRT extends ChartWidget
                 'label' => Carbon::parse($record->periode)->translatedFormat(
                     'F',
                 ),
-                'pengeluaran' => (float) $totalPengeluaranGabungan / 1_000_000, // Dimasukkan ke satu baris data tunggal
+                'pengeluaran' => (float) $totalPengeluaranGabungan / 1_000_000,
             ];
         });
 
@@ -98,8 +96,8 @@ class ChartPengeluaranBulananRT extends ChartWidget
             'datasets' => [
                 [
                     'label' => 'Pengeluaran',
-                    'data' => $pengeluaranValues, // Nilai gabungan otomatis masuk ke sini
-                    'borderColor' => '#f43f5e', // Rose red
+                    'data' => $pengeluaranValues,
+                    'borderColor' => '#f43f5e',
                     'backgroundColor' => 'rgba(244, 63, 94, 0.1)',
                     'fill' => true,
                     'tension' => 0.4,

@@ -2,12 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\KasTipe;
-use App\Enums\SetoranStatusValidasi;
-use App\Models\IuranWarga;
 use App\Models\KasBulananRT;
-use App\Models\KasRT;
-use App\Models\SetoranRW;
+use App\Services\KasBulananRtService;
 use Dompdf\Dompdf;
 use Dompdf\Options;
 
@@ -25,49 +21,21 @@ class KasBulananRTController extends Controller
 
         $rtId = $rt->id;
 
-        // 1. Saldo awal
-        $saldoAwal = $record->saldo_awal;
+        $totals = KasBulananRtService::calculateTotals(
+            $rtId,
+            $record->periode,
+            $record->saldo_awal,
+        );
 
-        // 2. Total pendapatan kas harian RT (tipe masuk)
-        $totalPendapatanKasHarian = KasRT::where('id_rt', $rtId)
-            ->where('tipe', KasTipe::MASUK->value)
-            ->where('tanggal', 'like', "{$record->periode}-%")
-            ->sum('jumlah');
-
-        // 3. Total pengeluaran kas harian RT (tipe keluar)
-        $totalPengeluaranKasHarian = KasRT::where('id_rt', $rtId)
-            ->where('tipe', KasTipe::KELUAR->value)
-            ->where('tanggal', 'like', "{$record->periode}-%")
-            ->sum('jumlah');
-
-        // 4. Total pendapatan iuran warga
-        $totalPendapatanIuranWarga = IuranWarga::join(
-            'jenis_iuran_wargas',
-            'iuran_wargas.id_jenis_iuran',
-            '=',
-            'jenis_iuran_wargas.id',
-        )
-            ->where('jenis_iuran_wargas.id_rt', $rtId)
-            ->where('iuran_wargas.tanggal_bayar', 'like', "{$record->periode}-%")
-            ->sum('jenis_iuran_wargas.jumlah');
-
-        // 5. Total pengeluaran setoran ke RW (validated)
-        $totalPengeluaranSetoranRW = SetoranRW::where('id_rt', $rtId)
-            ->where('periode', $record->periode)
-            ->where('status_validasi', SetoranStatusValidasi::VALID->value)
-            ->sum('jumlah_setor');
-
-        // 6. Total semua pemasukan
-        $totalSemuaPemasukan = $totalPendapatanKasHarian + $totalPendapatanIuranWarga;
-
-        // 7. Total semua pengeluaran
-        $totalSemuaPengeluaran = $totalPengeluaranKasHarian + $totalPengeluaranSetoranRW;
-
-        // 8. Total bersih pendapatan
-        $totalBersihPendapatan = $totalSemuaPemasukan - $totalSemuaPengeluaran;
-
-        // 9. Saldo akhir periode
-        $saldoAkhirPeriode = $saldoAwal + $totalBersihPendapatan;
+        $saldoAwal = $totals['saldo_awal'];
+        $totalPendapatanKasHarian = $totals['total_pendapatan_kas_harian'];
+        $totalPengeluaranKasHarian = $totals['total_pengeluaran_kas_harian'];
+        $totalPendapatanIuranWarga = $totals['total_pendapatan_iuran_warga'];
+        $totalPengeluaranSetoranRW = $totals['total_pengeluaran_setoran_rw'];
+        $totalSemuaPemasukan = $totals['total_pendapatan'];
+        $totalSemuaPengeluaran = $totals['total_pengeluaran'];
+        $totalBersihPendapatan = $totals['total_pendapatan_bersih'];
+        $saldoAkhirPeriode = $totals['saldo_akhir'];
 
         return compact(
             'record',

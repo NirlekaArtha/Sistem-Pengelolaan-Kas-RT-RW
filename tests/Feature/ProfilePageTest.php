@@ -62,19 +62,22 @@ class ProfilePageTest extends TestCase
         $this->actingAs($rwUser)
             ->get('/rw/profile-page')
             ->assertOk()
-            ->assertSee('My Profile')
-            ->assertSee('RW Information');
+            ->assertSee('Profil Saya')
+            ->assertSee('Informasi Akun')
+            ->assertSee('RW User');
 
         $this->actingAs($rtUser)
             ->get('/rt/profile-page')
             ->assertOk()
-            ->assertSee('My Profile')
-            ->assertSee('RT Information');
+            ->assertSee('Profil Saya')
+            ->assertSee('Informasi Akun')
+            ->assertSee('RT User');
 
         $this->actingAs($wargaUser)
             ->get('/warga/profile-page')
             ->assertOk()
-            ->assertSee('My Profile')
-            ->assertSee('Resident Information');
+            ->assertSee('Profil Saya')
+            ->assertSee('Informasi Akun')
+            ->assertSee('Warga User');
     }
 }

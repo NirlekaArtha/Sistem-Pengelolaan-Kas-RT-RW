@@ -12,7 +12,7 @@ class KasBulananRT extends Model
     /** @use HasFactory<KasBulananRTFactory> */
     use HasFactory;
 
-    protected $table = 'kas_bulanan_r_t_s';
+    protected $table = 'kas_bulanan_rt';
 
     protected $fillable = [
         'id_rt',

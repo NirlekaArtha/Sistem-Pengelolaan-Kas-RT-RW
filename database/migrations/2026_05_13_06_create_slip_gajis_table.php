@@ -18,6 +18,8 @@ return new class extends Migration
             $table->date('tanggal');
             $table->string('file_path')->nullable();
             $table->timestamps();
+
+            $table->unique(['id_petugas', 'tanggal']);
         });
     }
 

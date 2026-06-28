@@ -26,7 +26,7 @@ class RTForm
                         ->required()
                         ->maxLength(10)
                         ->unique(
-                            table: 'r_t_s',
+                            table: 'rt',
                             column: 'nomor_rt',
                             ignoreRecord: true,
                             modifyRuleUsing: function ($rule) {

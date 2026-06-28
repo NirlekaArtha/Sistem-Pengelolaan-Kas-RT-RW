@@ -11,9 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('kas_bulanan_r_t_s', function (Blueprint $table) {
+        Schema::create('kas_bulanan_rt', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('id_rt')->constrained('r_t_s')->cascadeOnDelete();
+            $table->foreignId('id_rt')->constrained('rt')->cascadeOnDelete();
             $table->string('periode'); // format: YYYY-MM
             $table->decimal('total_pendapatan', 15, 2);
             $table->decimal('total_pengeluaran', 15, 2);
@@ -22,6 +22,8 @@ return new class extends Migration
             $table->decimal('total_pendapatan_bersih', 15, 2);
             $table->string('file_path')->nullable();
             $table->timestamps();
+
+            $table->unique(['id_rt', 'periode']);
         });
     }
 
@@ -30,6 +32,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('kas_bulanan_r_t_s');
+        Schema::dropIfExists('kas_bulanan_rt');
     }
 };
