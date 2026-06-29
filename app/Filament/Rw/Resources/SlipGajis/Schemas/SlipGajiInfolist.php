@@ -24,6 +24,8 @@ class SlipGajiInfolist
                     TextEntry::make('total')->label('Total Gaji')->money('IDR'),
 
                     TextEntry::make('tanggal')->label('Periode')->date('d F Y'),
+
+                    TextEntry::make('status')->label('Status')->badge(),
                 ]),
         ]);
     }

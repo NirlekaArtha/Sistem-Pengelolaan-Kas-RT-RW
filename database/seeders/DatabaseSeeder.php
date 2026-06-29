@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Enums\IuranWargaStatus;
 use App\Enums\KasTipe;
 use App\Enums\SetoranStatusValidasi;
+use App\Enums\SlipGajiStatus;
 use App\Enums\UserRole;
 use App\Models\JenisIuranWarga;
 use App\Models\Kasbon;
@@ -420,6 +421,9 @@ class DatabaseSeeder extends Seeder
                 'id_petugas' => $p->id,
                 'total' => $p->gaji_pokok - $kasbonTotal,
                 'tanggal' => "$periode-25",
+                'status' => $periode === now()->format('Y-m')
+                    ? SlipGajiStatus::BELUM_DIBAYAR->value
+                    : SlipGajiStatus::TELAH_DIBAYAR->value,
                 'created_at' => $now,
                 'updated_at' => $now,
             ];
@@ -464,6 +468,10 @@ class DatabaseSeeder extends Seeder
             ->join('petugas', 'slip_gajis.id_petugas', '=', 'petugas.id')
             ->where('petugas.id_rw', $rw->id)
             ->whereBetween('slip_gajis.tanggal', [$gajiStart, $gajiEnd])
+            ->where(
+                'slip_gajis.status',
+                SlipGajiStatus::TELAH_DIBAYAR->value,
+            )
             ->sum('slip_gajis.total');
 
         $totalKasbon = DB::table('kasbons')

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\SlipGajiStatus;
 use Database\Factories\SlipGajiFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -16,12 +17,14 @@ class SlipGaji extends Model
         'id_petugas',
         'total',
         'tanggal',
+        'status',
         'file_path',
     ];
 
     protected $casts = [
         'total' => 'decimal:2',
         'tanggal' => 'date',
+        'status' => SlipGajiStatus::class,
     ];
 
     // ─── Belongs To ──────────────────────────────────────────────────────────

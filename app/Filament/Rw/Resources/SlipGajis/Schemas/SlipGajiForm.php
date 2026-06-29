@@ -2,12 +2,15 @@
 
 namespace App\Filament\Rw\Resources\SlipGajis\Schemas;
 
+use App\Enums\SlipGajiStatus;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
+use Illuminate\Validation\Rule;
 
 class SlipGajiForm
 {
@@ -17,6 +20,10 @@ class SlipGajiForm
             ->components([
                 Hidden::make('file_path')
                     ->default(null),
+
+                Hidden::make('status')
+                    ->default(SlipGajiStatus::BELUM_DIBAYAR->value)
+                    ->visibleOn('create'),
 
                 Section::make('Data Slip Gaji')
                     ->description('Pengajuan dan periode slip gaji petugas')
@@ -38,13 +45,35 @@ class SlipGajiForm
                             ->label('Total Gaji')
                             ->prefix('Rp')
                             ->numeric()
-                            ->required(),
+                            ->required()
+                            ->hiddenOn('create'),
+
+                        TextInput::make('periode')
+                            ->label('Periode')
+                            ->type('month')
+                            ->rule('date_format:Y-m')
+                            ->rule(fn (Get $get) => Rule::unique('slip_gajis', 'tanggal')
+                                ->where('id_petugas', $get('id_petugas'))
+                                ->where('tanggal', filled($get('periode')) ? "{$get('periode')}-25" : null))
+                            ->validationMessages([
+                                'unique' => 'Slip gaji petugas ini sudah ada untuk periode yang dipilih.',
+                            ])
+                            ->required()
+                            ->dehydrated(false)
+                            ->visibleOn('create'),
 
                         DatePicker::make('tanggal')
                             ->label('Periode')
                             ->native(false)
                             ->displayFormat('F Y')
-                            ->required(),
+                            ->required()
+                            ->hiddenOn('create'),
+
+                        Select::make('status')
+                            ->label('Status')
+                            ->options(SlipGajiStatus::class)
+                            ->required()
+                            ->hiddenOn('create'),
                     ]),
             ]);
     }

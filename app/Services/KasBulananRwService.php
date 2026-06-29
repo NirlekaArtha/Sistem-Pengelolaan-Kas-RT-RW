@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Enums\KasTipe;
 use App\Enums\SetoranStatusValidasi;
+use App\Enums\SlipGajiStatus;
 use App\Models\Kasbon;
 use App\Models\KasBulananRW;
 use App\Models\KasRW;
@@ -66,6 +67,10 @@ class KasBulananRwService
             ->where('petugas.id_rw', $rwId)
             ->whereDate('slip_gajis.tanggal', '>=', $gajiStartDate)
             ->whereDate('slip_gajis.tanggal', '<=', $gajiEndDate)
+            ->where(
+                'slip_gajis.status',
+                SlipGajiStatus::TELAH_DIBAYAR->value,
+            )
             ->sum('slip_gajis.total');
 
         $totalKasbonPetugas = (float) Kasbon::join(
@@ -161,7 +166,7 @@ class KasBulananRwService
      * Formula:
      *   Pendapatan  = kas harian masuk + setoran RT (valid)
      *   Pengeluaran = kas harian keluar
-     *                 + slip gaji petugas (tgl 26 bulan lalu s/d tgl 25 bulan ini)
+     *                 + slip gaji petugas dibayar (tgl 26 bulan lalu s/d tgl 25 bulan ini)
      *                 + kasbon petugas   (rentang yang sama)
      *
      * saldo_awal is automatically inherited from the previous month's saldo_akhir

@@ -5,7 +5,6 @@ namespace App\Observers;
 use App\Models\Petugas;
 use App\Models\SlipGaji;
 use App\Services\KasBulananRwService;
-use Carbon\Carbon;
 
 class SlipGajiObserver
 {
@@ -21,8 +20,10 @@ class SlipGajiObserver
             return;
         }
 
-        $periode = $slipGaji->tanggal->format('Y-m');
-        KasBulananRwService::recalculate($rwId, $periode);
+        $periode = KasBulananRwService::getPayrollPeriodForDate(
+            $slipGaji->tanggal,
+        );
+        KasBulananRwService::recalculateChain($rwId, $periode);
     }
 
     /**
@@ -40,13 +41,13 @@ class SlipGajiObserver
         ) {
             $oldPetugasId =
                 $slipGaji->getOriginal('id_petugas') ?? $slipGaji->id_petugas;
-            $oldPeriode = Carbon::parse(
+            $oldPeriode = KasBulananRwService::getPayrollPeriodForDate(
                 $slipGaji->getOriginal('tanggal'),
-            )->format('Y-m');
+            );
             $oldRwId = Petugas::find($oldPetugasId)?->id_rw;
 
             if ($oldRwId) {
-                KasBulananRwService::recalculate($oldRwId, $oldPeriode);
+                KasBulananRwService::recalculateChain($oldRwId, $oldPeriode);
             }
         }
 
@@ -56,8 +57,10 @@ class SlipGajiObserver
             return;
         }
 
-        $periode = $slipGaji->tanggal->format('Y-m');
-        KasBulananRwService::recalculate($rwId, $periode);
+        $periode = KasBulananRwService::getPayrollPeriodForDate(
+            $slipGaji->tanggal,
+        );
+        KasBulananRwService::recalculateChain($rwId, $periode);
     }
 
     /**
@@ -72,7 +75,9 @@ class SlipGajiObserver
             return;
         }
 
-        $periode = $slipGaji->tanggal->format('Y-m');
-        KasBulananRwService::recalculate($rwId, $periode);
+        $periode = KasBulananRwService::getPayrollPeriodForDate(
+            $slipGaji->tanggal,
+        );
+        KasBulananRwService::recalculateChain($rwId, $periode);
     }
 }

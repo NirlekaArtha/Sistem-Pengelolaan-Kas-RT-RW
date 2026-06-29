@@ -6,6 +6,7 @@ use App\Enums\IuranWargaStatus;
 use App\Enums\KasJenis;
 use App\Enums\KasTipe;
 use App\Enums\SetoranStatusValidasi;
+use App\Enums\SlipGajiStatus;
 use App\Enums\UserRole;
 use App\Models\IuranWarga;
 use App\Models\JenisIuranWarga;
@@ -153,6 +154,7 @@ class KasBulananRecalculationServiceTest extends TestCase
             'id_petugas' => $petugas->id,
             'total' => 1000000,
             'tanggal' => '2026-06-25',
+            'status' => SlipGajiStatus::TELAH_DIBAYAR,
         ]);
 
         Kasbon::create([
@@ -187,6 +189,60 @@ class KasBulananRecalculationServiceTest extends TestCase
                 ->where('periode', '2026-06')
                 ->count(),
         );
+    }
+
+    public function test_rw_recap_only_reduces_cash_for_paid_salary_slips(): void
+    {
+        [$rw, $rt] = $this->makeRwAndRt();
+        $petugas = Petugas::create([
+            'id_rw' => $rw->id,
+            'tugas' => 'satpam',
+            'nama' => 'Petugas Satu',
+            'alamat' => 'Jl. Petugas',
+            'gaji_pokok' => 1000000,
+        ]);
+
+        KasRW::create([
+            'id_rw' => $rw->id,
+            'tipe' => KasTipe::MASUK,
+            'jenis' => KasJenis::DONASI,
+            'jumlah' => 1000000,
+            'sumber_tujuan' => 'Donatur RW',
+            'tanggal' => '2026-06-03',
+        ]);
+
+        SetoranRW::create([
+            'id_rt' => $rt->id,
+            'id_rw' => $rw->id,
+            'periode' => '2026-06',
+            'tanggal_setor' => '2026-06-10',
+            'jumlah_setor' => 300000,
+            'status_validasi' => SetoranStatusValidasi::VALID,
+        ]);
+
+        $slipGaji = SlipGaji::create([
+            'id_petugas' => $petugas->id,
+            'total' => 1000000,
+            'tanggal' => '2026-06-25',
+            'status' => SlipGajiStatus::BELUM_DIBAYAR,
+        ]);
+
+        $record = KasBulananRW::where('id_rw', $rw->id)
+            ->where('periode', '2026-06')
+            ->firstOrFail();
+
+        $this->assertSame('1300000.00', $record->total_pendapatan);
+        $this->assertSame('0.00', $record->total_pengeluaran);
+        $this->assertSame('1300000.00', $record->saldo_akhir);
+
+        $slipGaji->update([
+            'status' => SlipGajiStatus::TELAH_DIBAYAR,
+        ]);
+
+        $record->refresh();
+
+        $this->assertSame('1000000.00', $record->total_pengeluaran);
+        $this->assertSame('300000.00', $record->saldo_akhir);
     }
 
     /**

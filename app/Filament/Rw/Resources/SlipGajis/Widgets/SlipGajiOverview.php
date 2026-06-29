@@ -2,6 +2,7 @@
 
 namespace App\Filament\Rw\Resources\SlipGajis\Widgets;
 
+use App\Enums\SlipGajiStatus;
 use App\Models\Petugas;
 use App\Models\SlipGaji;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
@@ -23,6 +24,7 @@ class SlipGajiOverview extends BaseWidget
         })
             ->whereYear('tanggal', now()->year)
             ->whereMonth('tanggal', now()->month)
+            ->where('status', SlipGajiStatus::TELAH_DIBAYAR->value)
             ->sum('total');
         // 2. Jumlah petugas yang sudah digaji (e.g. 3 dari 9 Petugas)
         $totalPetugas = Petugas::where('id_rw', $rw->id)->count();
@@ -33,6 +35,7 @@ class SlipGajiOverview extends BaseWidget
         })
             ->whereYear('tanggal', now()->year)
             ->whereMonth('tanggal', now()->month)
+            ->where('status', SlipGajiStatus::TELAH_DIBAYAR->value)
             ->distinct('id_petugas')
             ->count('id_petugas');
 
@@ -41,14 +44,14 @@ class SlipGajiOverview extends BaseWidget
                 'Jumlah Gaji Bulan Ini',
                 'Rp '.number_format($totalGajiBulanIni, 0, ',', '.'),
             )
-                ->description('Total pengeluaran gaji petugas bulan ini')
+                ->description('Total gaji petugas telah dibayar bulan ini')
                 ->descriptionIcon('heroicon-m-banknotes')
                 ->color('success'),
             Stat::make(
                 'Petugas Sudah Gaji',
                 "{$petugasSudahDigaji} dari {$totalPetugas} Petugas",
             )
-                ->description('Telah digaji (berstatus valid/tercatat)')
+                ->description('Petugas dengan slip gaji telah dibayar')
                 ->descriptionIcon('heroicon-m-user-group')
                 ->color('info'),
         ];
