@@ -2,6 +2,7 @@
 
 namespace App\Filament\Rw\Resources\SlipGajis\Schemas;
 
+use App\Support\Periode;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
@@ -23,7 +24,9 @@ class SlipGajiInfolist
 
                     TextEntry::make('total')->label('Total Gaji')->money('IDR'),
 
-                    TextEntry::make('tanggal')->label('Periode')->date('d F Y'),
+                    TextEntry::make('periode')
+                        ->label('Periode')
+                        ->formatStateUsing(fn ($state) => Periode::label($state)),
 
                     TextEntry::make('status')->label('Status')->badge(),
                 ]),

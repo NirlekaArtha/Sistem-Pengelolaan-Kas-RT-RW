@@ -38,7 +38,7 @@ Artisan::command(
         );
 
         $this->info(
-            "Periode {$result['period']}: {$result['created_unpaid']} slip gaji belum dibayar dibuat untuk tanggal {$result['slip_date']}.",
+            "Periode {$result['period']}: {$result['created_unpaid']} slip gaji belum dibayar dibuat.",
         );
 
         return 0;

@@ -2,7 +2,6 @@
 
 namespace App\Filament\Rw\Resources\KasBulananRWS\Schemas;
 
-use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
@@ -23,10 +22,10 @@ class KasBulananRWForm
                     ->icon('heroicon-o-calendar-days')
                     ->columns(2)
                     ->schema([
-                        DatePicker::make('periode')
-                            ->native(false)
-                            ->displayFormat('Y-m')
-                            ->format('Y-m')
+                        TextInput::make('periode')
+                            ->label('Periode')
+                            ->type('month')
+                            ->rule('date_format:Y-m')
                             ->required(),
 
                         TextInput::make('saldo_awal')

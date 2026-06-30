@@ -2,7 +2,7 @@
 
 namespace App\Filament\Rw\Resources\KasBulananRWS\Schemas;
 
-use Carbon\Carbon;
+use App\Support\Periode;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
@@ -20,14 +20,7 @@ class KasBulananRWInfolist
                 ->schema([
                     TextEntry::make('periode')
                         ->label('Periode')
-                        ->formatStateUsing(
-                            fn ($state) => $state
-                                ? Carbon::createFromFormat(
-                                    'Y-m',
-                                    $state,
-                                )->translatedFormat('F Y')
-                                : '-',
-                        ),
+                        ->formatStateUsing(fn ($state) => Periode::label($state)),
                 ]),
 
             Section::make('Ringkasan Arus Kas')

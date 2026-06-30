@@ -4,11 +4,11 @@ namespace App\Filament\Warga\Widgets;
 
 use App\Enums\IuranWargaStatus;
 use App\Models\IuranWarga;
+use App\Support\Periode;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Carbon;
 
 class TabelIuranBelumBayar extends BaseWidget
 {
@@ -45,8 +45,7 @@ class TabelIuranBelumBayar extends BaseWidget
 
                 TextColumn::make('periode')
                     ->label('Periode')
-                    ->formatStateUsing(fn ($state) => Carbon::parse($state.'-01')
-                        ->translatedFormat('F Y'))
+                    ->formatStateUsing(fn ($state) => Periode::label($state))
                     ->searchable()
                     ->sortable(),
 

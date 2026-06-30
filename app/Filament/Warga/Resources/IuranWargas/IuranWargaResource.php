@@ -27,7 +27,7 @@ class IuranWargaResource extends Resource
 
     protected static ?string $navigationLabel = 'Iuran Saya';
 
-    protected static ?string $recordTitleAttribute = 'periode';
+    protected static ?string $recordTitleAttribute = 'periode_label';
 
     protected static string|UnitEnum|null $navigationGroup = 'Iuran';
 

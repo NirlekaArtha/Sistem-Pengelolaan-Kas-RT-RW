@@ -37,11 +37,10 @@ class SetoranRWForm
                             ->preload()
                             ->required(),
 
-                        DatePicker::make('periode')
+                        TextInput::make('periode')
                             ->label('Periode')
-                            ->native(false)
-                            ->displayFormat('Y-m')
-                            ->format('Y-m')
+                            ->type('month')
+                            ->rule('date_format:Y-m')
                             ->required(),
 
                         DatePicker::make('tanggal_setor')

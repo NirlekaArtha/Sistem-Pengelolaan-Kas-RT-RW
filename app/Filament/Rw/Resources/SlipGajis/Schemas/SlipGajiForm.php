@@ -3,7 +3,6 @@
 namespace App\Filament\Rw\Resources\SlipGajis\Schemas;
 
 use App\Enums\SlipGajiStatus;
-use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -52,22 +51,15 @@ class SlipGajiForm
                             ->label('Periode')
                             ->type('month')
                             ->rule('date_format:Y-m')
-                            ->rule(fn (Get $get) => Rule::unique('slip_gajis', 'tanggal')
+                            ->rule(fn (Get $get, $record) => Rule::unique('slip_gajis', 'periode')
+                                ->ignore($record?->id)
                                 ->where('id_petugas', $get('id_petugas'))
-                                ->where('tanggal', filled($get('periode')) ? "{$get('periode')}-25" : null))
+                                ->where('periode', $get('periode')))
                             ->validationMessages([
                                 'unique' => 'Slip gaji petugas ini sudah ada untuk periode yang dipilih.',
                             ])
                             ->required()
-                            ->dehydrated(false)
-                            ->visibleOn('create'),
-
-                        DatePicker::make('tanggal')
-                            ->label('Periode')
-                            ->native(false)
-                            ->displayFormat('F Y')
-                            ->required()
-                            ->hiddenOn('create'),
+                            ->dehydrated(),
 
                         Select::make('status')
                             ->label('Status')

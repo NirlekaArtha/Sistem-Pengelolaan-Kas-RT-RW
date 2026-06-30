@@ -30,6 +30,8 @@ class IuranWargaForm
                             ->required()
                             ->numeric(),
                         TextInput::make('periode')
+                            ->type('month')
+                            ->rule('date_format:Y-m')
                             ->required(),
                         DatePicker::make('tanggal_bayar'),
                         Select::make('status')

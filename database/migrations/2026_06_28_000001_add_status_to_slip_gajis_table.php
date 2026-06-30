@@ -13,7 +13,7 @@ return new class extends Migration
             $table
                 ->string('status')
                 ->default(SlipGajiStatus::BELUM_DIBAYAR->value)
-                ->after('tanggal');
+                ->after('periode');
         });
     }
 

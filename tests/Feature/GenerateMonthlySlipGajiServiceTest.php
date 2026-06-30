@@ -31,17 +31,16 @@ class GenerateMonthlySlipGajiServiceTest extends TestCase
 
         $this->assertSame(2, $result['created_unpaid']);
         $this->assertSame('2026-07', $result['period']);
-        $this->assertSame('2026-07-25', $result['slip_date']);
         $this->assertDatabaseHas('slip_gajis', [
             'id_petugas' => $petugasSatu->id,
             'total' => 1500000,
-            'tanggal' => '2026-07-25',
+            'periode' => '2026-07',
             'status' => SlipGajiStatus::BELUM_DIBAYAR->value,
         ]);
         $this->assertDatabaseHas('slip_gajis', [
             'id_petugas' => $petugasDua->id,
             'total' => 2000000,
-            'tanggal' => '2026-07-25',
+            'periode' => '2026-07',
             'status' => SlipGajiStatus::BELUM_DIBAYAR->value,
         ]);
     }
@@ -57,7 +56,7 @@ class GenerateMonthlySlipGajiServiceTest extends TestCase
         SlipGaji::create([
             'id_petugas' => $petugas->id,
             'total' => 1500000,
-            'tanggal' => '2026-07-25',
+            'periode' => '2026-07',
             'status' => SlipGajiStatus::BELUM_DIBAYAR,
         ]);
 
@@ -74,12 +73,12 @@ class GenerateMonthlySlipGajiServiceTest extends TestCase
 
         $this->artisan('slip-gaji:generate-monthly', ['--date' => '2026-06-25'])
             ->expectsOutput(
-                'Periode 2026-07: 1 slip gaji belum dibayar dibuat untuk tanggal 2026-07-25.',
+                'Periode 2026-07: 1 slip gaji belum dibayar dibuat.',
             )
             ->assertSuccessful();
 
         $this->assertDatabaseHas('slip_gajis', [
-            'tanggal' => '2026-07-25',
+            'periode' => '2026-07',
             'status' => SlipGajiStatus::BELUM_DIBAYAR->value,
         ]);
     }

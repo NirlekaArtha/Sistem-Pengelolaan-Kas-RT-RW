@@ -5,6 +5,7 @@ namespace App\Filament\Rt\Resources\IuranWargas\Tables;
 use App\Enums\IuranWargaStatus;
 use App\Filament\Rt\Resources\IuranWargas\Pages\ViewIuranWarga;
 use App\Models\IuranWarga;
+use App\Support\Periode;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
@@ -34,7 +35,10 @@ class IuranWargasTable
                 TextColumn::make('status')
                     ->searchable()
                     ->badge(),
-                TextColumn::make('periode')->searchable()->sortable(),
+                TextColumn::make('periode')
+                    ->formatStateUsing(fn ($state) => Periode::label($state))
+                    ->searchable()
+                    ->sortable(),
                 TextColumn::make('tanggal_bayar')->date()->sortable(),
                 TextColumn::make('created_at')
                     ->dateTime()
@@ -48,12 +52,14 @@ class IuranWargasTable
             ->filters([
                 SelectFilter::make('periode')
                     ->label('Periode')
-                    ->options(fn (): array => IuranWarga::query()
-                        ->select('periode')
-                        ->distinct()
-                        ->orderBy('periode', 'desc')
-                        ->pluck('periode', 'periode')
-                        ->all())
+                    ->options(fn (): array => Periode::selectOptions(
+                        IuranWarga::query()
+                            ->select('periode')
+                            ->distinct()
+                            ->orderBy('periode', 'desc')
+                            ->pluck('periode')
+                            ->all(),
+                    ))
                     ->searchable(),
                 SelectFilter::make('status')
                     ->label('Status')

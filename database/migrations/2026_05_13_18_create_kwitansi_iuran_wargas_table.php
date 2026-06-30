@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('kwitansi_iuran_wargas', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('iuran_id')->constrained('iuran_wargas')->cascadeOnDelete();
+            $table->foreignId('iuran_id')->unique()->constrained('iuran_wargas')->cascadeOnDelete();
             $table->string('nomor_kwitansi')->unique();
             $table->string('file_path')->nullable();
             $table->date('tanggal_cetak');

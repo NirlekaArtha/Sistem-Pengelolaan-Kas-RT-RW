@@ -20,7 +20,6 @@ class SetoranRWForm
                     TextInput::make('periode')
                         ->label('Periode')
                         ->type('month')
-                        ->placeholder('YYYY-MM')
                         ->rule('date_format:Y-m')
                         ->required(),
                     DatePicker::make('tanggal_setor')->required(),

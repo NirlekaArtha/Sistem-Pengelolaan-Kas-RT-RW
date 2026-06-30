@@ -3,7 +3,9 @@
 namespace App\Models;
 
 use App\Enums\IuranWargaStatus;
+use App\Support\Periode;
 use Database\Factories\IuranWargaFactory;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -43,6 +45,21 @@ class IuranWarga extends Model
     public function rt(): BelongsTo
     {
         return $this->belongsTo(RT::class, 'id_rt');
+    }
+
+    protected function periode(): Attribute
+    {
+        return Attribute::make(
+            get: fn (?string $value): ?string => Periode::normalize($value),
+            set: fn (?string $value): ?string => Periode::normalize($value),
+        );
+    }
+
+    protected function periodeLabel(): Attribute
+    {
+        return Attribute::make(
+            get: fn (): string => Periode::label($this->periode),
+        );
     }
 
     // ─── Has One ─────────────────────────────────────────────────────────────

@@ -5,6 +5,7 @@ namespace App\Filament\Rw\Resources\SetoranRWS\Tables;
 use App\Enums\SetoranStatusValidasi;
 use App\Filament\Rw\Resources\SetoranRWS\Pages\ViewSetoranRW;
 use App\Models\SetoranRW;
+use App\Support\Periode;
 use Filament\Actions\Action;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\DatePicker;
@@ -26,6 +27,7 @@ class SetoranRWSTable
                     ->sortable(),
                 TextColumn::make("periode")
                     ->label("Periode")
+                    ->formatStateUsing(fn ($state) => Periode::label($state))
                     ->searchable()
                     ->sortable(),
                 TextColumn::make("tanggal_setor")
@@ -57,14 +59,14 @@ class SetoranRWSTable
             ->filters([
                 SelectFilter::make("periode")
                     ->label("Periode")
-                    ->options(
-                        fn(): array => SetoranRW::query()
-                            ->select("periode")
+                    ->options(fn (): array => Periode::selectOptions(
+                        SetoranRW::query()
+                            ->select('periode')
                             ->distinct()
-                            ->orderBy("periode", "desc")
-                            ->pluck("periode", "periode")
+                            ->orderBy('periode', 'desc')
+                            ->pluck('periode')
                             ->all(),
-                    )
+                    ))
                     ->searchable(),
                 SelectFilter::make("rt")
                     ->label("RT")

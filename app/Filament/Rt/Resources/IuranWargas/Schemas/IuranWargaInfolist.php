@@ -2,6 +2,7 @@
 
 namespace App\Filament\Rt\Resources\IuranWargas\Schemas;
 
+use App\Support\Periode;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
@@ -16,7 +17,9 @@ class IuranWargaInfolist
                 ->icon('heroicon-o-banknotes')
                 ->columns(2)
                 ->schema([
-                    TextEntry::make('periode')->label('Periode'),
+                    TextEntry::make('periode')
+                        ->label('Periode')
+                        ->formatStateUsing(fn ($state) => Periode::label($state)),
 
                     TextEntry::make('status')->label('Status')->badge(),
 

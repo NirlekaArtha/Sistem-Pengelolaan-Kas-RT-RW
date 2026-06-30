@@ -25,7 +25,7 @@ class SetoranRWResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
-    protected static ?string $recordTitleAttribute = 'periode';
+    protected static ?string $recordTitleAttribute = 'periode_label';
 
     protected static string|UnitEnum|null $navigationGroup = 'Transaksi';
 

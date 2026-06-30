@@ -27,7 +27,7 @@ class SetoranRWResource extends Resource
 
     protected static ?int $navigationSort = 2;
 
-    protected static ?string $recordTitleAttribute = 'periode';
+    protected static ?string $recordTitleAttribute = 'periode_label';
 
     protected static ?string $navigationLabel = 'Setoran RW';
 

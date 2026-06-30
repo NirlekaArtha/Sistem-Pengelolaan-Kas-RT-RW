@@ -24,7 +24,7 @@ class IuranWargaResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBanknotes;
 
-    protected static ?string $recordTitleAttribute = 'id_warga';
+    protected static ?string $recordTitleAttribute = 'periode_label';
 
     protected static string|UnitEnum|null $navigationGroup = 'Transaksi';
 

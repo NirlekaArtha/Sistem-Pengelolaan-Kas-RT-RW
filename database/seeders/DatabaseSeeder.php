@@ -420,7 +420,7 @@ class DatabaseSeeder extends Seeder
             $slipRows[] = [
                 'id_petugas' => $p->id,
                 'total' => $p->gaji_pokok - $kasbonTotal,
-                'tanggal' => "$periode-25",
+                'periode' => $periode,
                 'status' => $periode === now()->format('Y-m')
                     ? SlipGajiStatus::BELUM_DIBAYAR->value
                     : SlipGajiStatus::TELAH_DIBAYAR->value,
@@ -467,7 +467,7 @@ class DatabaseSeeder extends Seeder
         $totalSlipGaji = DB::table('slip_gajis')
             ->join('petugas', 'slip_gajis.id_petugas', '=', 'petugas.id')
             ->where('petugas.id_rw', $rw->id)
-            ->whereBetween('slip_gajis.tanggal', [$gajiStart, $gajiEnd])
+            ->where('slip_gajis.periode', $periode)
             ->where(
                 'slip_gajis.status',
                 SlipGajiStatus::TELAH_DIBAYAR->value,

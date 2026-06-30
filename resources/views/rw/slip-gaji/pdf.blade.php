@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Slip Gaji - {{ $petugas->nama }} - Periode {{ \Carbon\Carbon::parse($record->tanggal)->isoFormat('MMMM Y') }}</title>
+    <title>Slip Gaji - {{ $petugas->nama }} - Periode {{ \Carbon\Carbon::createFromFormat('Y-m', $record->periode)->isoFormat('MMMM Y') }}</title>
 
     <style>
         @page {
@@ -223,9 +223,8 @@
         $petugas = $petugas ?? $record->petugas;
         $potonganKasbons = $kasbons ?? ($record->kasbons ?? collect());
 
-        $tanggalBayar = \Carbon\Carbon::parse($record->tanggal);
-        $periodeAwal = $tanggalBayar->copy()->subMonthNoOverflow()->day(26);
-        $periodeAkhir = $tanggalBayar->copy()->day(25);
+        $periodeAkhir = \Carbon\Carbon::createFromFormat('Y-m', $record->periode)->day(25);
+        $periodeAwal = $periodeAkhir->copy()->subMonthNoOverflow()->day(26);
 
         $ketuaRw04 = config('rw.ketua_rw_04', 'Iin Hartanto');
         $ketuaRw05 = config('rw.ketua_rw_05', 'M. Rochmat Hidayat');

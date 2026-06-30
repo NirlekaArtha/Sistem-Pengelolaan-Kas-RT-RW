@@ -65,8 +65,7 @@ class KasBulananRwService
             'petugas.id',
         )
             ->where('petugas.id_rw', $rwId)
-            ->whereDate('slip_gajis.tanggal', '>=', $gajiStartDate)
-            ->whereDate('slip_gajis.tanggal', '<=', $gajiEndDate)
+            ->where('slip_gajis.periode', $periode)
             ->where(
                 'slip_gajis.status',
                 SlipGajiStatus::TELAH_DIBAYAR->value,
@@ -244,15 +243,16 @@ class KasBulananRwService
      * a cascade loop with recalculate().
      *
      * @param  int  $petugasId  The Petugas primary key
-     * @param  string  $periode  Period in YYYY-MM format
+     * @param  string  $tanggal  Tanggal kasbon acuan untuk mencari slip periode terkait
      */
     public static function recalculateSlipGaji(
         int $petugasId,
         string $tanggal,
     ): void {
+        $periode = static::getPayrollPeriodForDate($tanggal);
+
         $slipGaji = SlipGaji::where('id_petugas', $petugasId)
-            ->where('tanggal', '>=', "{$tanggal}")
-            ->orderBy('tanggal', 'asc')
+            ->where('periode', $periode)
             ->first();
 
         if (! $slipGaji) {

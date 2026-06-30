@@ -20,15 +20,12 @@ class SlipGajiObserver
             return;
         }
 
-        $periode = KasBulananRwService::getPayrollPeriodForDate(
-            $slipGaji->tanggal,
-        );
-        KasBulananRwService::recalculateChain($rwId, $periode);
+        KasBulananRwService::recalculateChain($rwId, $slipGaji->periode);
     }
 
     /**
      * Handle the SlipGaji "updated" event.
-     * If tanggal or id_petugas changed, also recalculate the OLD period/RW.
+     * If periode or id_petugas changed, also recalculate the OLD period/RW.
      *
      * Note: This observer is NOT triggered when saveQuietly() is used inside
      * KasBulananRwService::recalculateSlipGaji(), preventing cascade loops.
@@ -36,17 +33,15 @@ class SlipGajiObserver
     public function updated(SlipGaji $slipGaji): void
     {
         if (
-            $slipGaji->wasChanged('tanggal') ||
+            $slipGaji->wasChanged('periode') ||
             $slipGaji->wasChanged('id_petugas')
         ) {
             $oldPetugasId =
                 $slipGaji->getOriginal('id_petugas') ?? $slipGaji->id_petugas;
-            $oldPeriode = KasBulananRwService::getPayrollPeriodForDate(
-                $slipGaji->getOriginal('tanggal'),
-            );
+            $oldPeriode = $slipGaji->getOriginal('periode');
             $oldRwId = Petugas::find($oldPetugasId)?->id_rw;
 
-            if ($oldRwId) {
+            if ($oldRwId && $oldPeriode) {
                 KasBulananRwService::recalculateChain($oldRwId, $oldPeriode);
             }
         }
@@ -57,10 +52,7 @@ class SlipGajiObserver
             return;
         }
 
-        $periode = KasBulananRwService::getPayrollPeriodForDate(
-            $slipGaji->tanggal,
-        );
-        KasBulananRwService::recalculateChain($rwId, $periode);
+        KasBulananRwService::recalculateChain($rwId, $slipGaji->periode);
     }
 
     /**
@@ -75,9 +67,6 @@ class SlipGajiObserver
             return;
         }
 
-        $periode = KasBulananRwService::getPayrollPeriodForDate(
-            $slipGaji->tanggal,
-        );
-        KasBulananRwService::recalculateChain($rwId, $periode);
+        KasBulananRwService::recalculateChain($rwId, $slipGaji->periode);
     }
 }

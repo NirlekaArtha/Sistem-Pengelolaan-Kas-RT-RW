@@ -6,6 +6,7 @@ use App\Models\SlipGaji;
 use App\Services\KasBulananRwService;
 use Dompdf\Dompdf;
 use Dompdf\Options;
+use Illuminate\Support\Carbon;
 
 class SlipGajiController extends Controller
 {
@@ -20,8 +21,8 @@ class SlipGajiController extends Controller
         }
 
         $petugas = $record->petugas;
-        [$startDate, $endDate] = KasBulananRwService::getPayrollDateRangeForDate(
-            $record->tanggal,
+        [$startDate, $endDate] = KasBulananRwService::getPayrollDateRangeForPeriod(
+            $record->periode,
         );
 
         $kasbons = $petugas->kasbons()
@@ -53,7 +54,7 @@ class SlipGajiController extends Controller
         $dompdf->setPaper('A4', 'portrait');
         $dompdf->render();
 
-        $filename = "slip_gaji_{$data['petugas']->nama}_{$data['record']->tanggal->format('Y_m')}.pdf";
+        $filename = "slip_gaji_{$data['petugas']->nama}_{$data['record']->periode}.pdf";
 
         return response($dompdf->output(), 200, [
             'Content-Type' => 'application/pdf',
@@ -73,13 +74,12 @@ class SlipGajiController extends Controller
         $records = SlipGaji::whereHas('petugas', function ($q) use ($rw) {
             $q->where('id_rw', $rw->id);
         })
-            ->whereYear('tanggal', now()->year)
-            ->whereMonth('tanggal', now()->month)
+            ->where('periode', Carbon::now()->format('Y-m'))
             ->get();
 
         foreach ($records as $record) {
-            [$startDate, $endDate] = KasBulananRwService::getPayrollDateRangeForDate(
-                $record->tanggal,
+            [$startDate, $endDate] = KasBulananRwService::getPayrollDateRangeForPeriod(
+                $record->periode,
             );
 
             $record->kasbons = $record->petugas->kasbons()

@@ -79,7 +79,6 @@ class IuranWargaForm
                     TextInput::make('periode')
                         ->label('Periode')
                         ->type('month')
-                        ->placeholder('YYYY-MM')
                         ->rule('date_format:Y-m')
                         ->live(onBlur: true)
                         ->afterStateUpdated(

@@ -4,6 +4,7 @@ namespace App\Filament\Rt\Resources\KasBulananRTS\Tables;
 
 use App\Filament\Rt\Resources\KasBulananRTS\Pages\ViewKasBulananRT;
 use App\Models\KasBulananRT;
+use App\Support\Periode;
 use App\Services\KasBulananRtService;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
@@ -20,7 +21,10 @@ class KasBulananRTSTable
     {
         return $table
             ->columns([
-                TextColumn::make("periode")->searchable()->sortable(),
+                TextColumn::make("periode")
+                    ->formatStateUsing(fn ($state) => Periode::label($state))
+                    ->searchable()
+                    ->sortable(),
                 TextColumn::make("total_pendapatan")
                     ->prefix("Rp ")
                     ->numeric(
@@ -73,14 +77,14 @@ class KasBulananRTSTable
             ->filters([
                 SelectFilter::make("periode")
                     ->label("Periode")
-                    ->options(
-                        fn(): array => KasBulananRT::query()
-                            ->select("periode")
+                    ->options(fn (): array => Periode::selectOptions(
+                        KasBulananRT::query()
+                            ->select('periode')
                             ->distinct()
-                            ->orderBy("periode", "desc")
-                            ->pluck("periode", "periode")
+                            ->orderBy('periode', 'desc')
+                            ->pluck('periode')
                             ->all(),
-                    )
+                    ))
                     ->searchable(),
             ])
             ->actions([
@@ -100,7 +104,7 @@ class KasBulananRTSTable
                         Notification::make()
                             ->title("Kalkulasi Ulang Berhasil")
                             ->body(
-                                "Data kas bulanan periode {$record->periode} dan bulan-bulan setelahnya telah diperbarui.",
+                                'Data kas bulanan periode '.Periode::label($record->periode).' dan bulan-bulan setelahnya telah diperbarui.',
                             )
                             ->success()
                             ->send();

@@ -16,7 +16,11 @@ class KasBulananRTForm
                 ->icon('heroicon-o-chart-pie')
                 ->columns(2)
                 ->schema([
-                    TextInput::make('periode')->required(),
+                    TextInput::make('periode')
+                        ->label('Periode')
+                        ->type('month')
+                        ->rule('date_format:Y-m')
+                        ->required(),
                     TextInput::make('total_pendapatan')
                         ->prefix('Rp')
                         ->required()

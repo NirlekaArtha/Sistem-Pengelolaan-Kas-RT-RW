@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Preview Slip Gaji - {{ $petugas->nama }} - Periode {{ \Carbon\Carbon::parse($record->tanggal)->isoFormat('MMMM Y') }}</title>
+    <title>Preview Slip Gaji - {{ $petugas->nama }} - Periode {{ \Carbon\Carbon::createFromFormat('Y-m', $record->periode)->isoFormat('MMMM Y') }}</title>
 
     <style>
         :root {
@@ -321,9 +321,8 @@
         $petugas = $petugas ?? $record->petugas;
         $potonganKasbons = $kasbons ?? ($record->kasbons ?? collect());
 
-        $tanggalBayar = \Carbon\Carbon::parse($record->tanggal);
-        $periodeAwal = $tanggalBayar->copy()->subMonthNoOverflow()->day(26);
-        $periodeAkhir = $tanggalBayar->copy()->day(25);
+        $periodeAkhir = \Carbon\Carbon::createFromFormat('Y-m', $record->periode)->day(25);
+        $periodeAwal = $periodeAkhir->copy()->subMonthNoOverflow()->day(26);
 
         $ketuaRw04 = config('rw.ketua_rw_04', 'Iin Hartanto');
         $ketuaRw05 = config('rw.ketua_rw_05', 'M. Rochmat Hidayat');

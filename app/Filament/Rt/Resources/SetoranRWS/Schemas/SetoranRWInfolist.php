@@ -2,6 +2,7 @@
 
 namespace App\Filament\Rt\Resources\SetoranRWS\Schemas;
 
+use App\Support\Periode;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
@@ -16,7 +17,9 @@ class SetoranRWInfolist
                 ->icon('heroicon-o-paper-airplane')
                 ->columns(2)
                 ->schema([
-                    TextEntry::make('periode')->label('Periode'),
+                    TextEntry::make('periode')
+                        ->label('Periode')
+                        ->formatStateUsing(fn ($state) => Periode::label($state)),
 
                     TextEntry::make('tanggal_setor')
                         ->label('Tanggal Setor')

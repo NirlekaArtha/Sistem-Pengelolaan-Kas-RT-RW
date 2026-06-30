@@ -4,6 +4,7 @@ namespace App\Filament\Warga\Resources\IuranWargas\Tables;
 
 use App\Enums\IuranWargaStatus;
 use App\Models\IuranWarga;
+use App\Support\Periode;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\DatePicker;
 use Filament\Tables\Columns\TextColumn;
@@ -25,6 +26,7 @@ class IuranWargasTable
 
                 TextColumn::make('periode')
                     ->label('Periode')
+                    ->formatStateUsing(fn ($state) => Periode::label($state))
                     ->searchable()
                     ->sortable(),
 
@@ -41,12 +43,14 @@ class IuranWargasTable
             ->filters([
                 SelectFilter::make('periode')
                     ->label('Periode')
-                    ->options(fn (): array => IuranWarga::query()
-                        ->select('periode')
-                        ->distinct()
-                        ->orderBy('periode', 'desc')
-                        ->pluck('periode', 'periode')
-                        ->all())
+                    ->options(fn (): array => Periode::selectOptions(
+                        IuranWarga::query()
+                            ->select('periode')
+                            ->distinct()
+                            ->orderBy('periode', 'desc')
+                            ->pluck('periode')
+                            ->all(),
+                    ))
                     ->searchable(),
                 SelectFilter::make('status')
                     ->label('Status')

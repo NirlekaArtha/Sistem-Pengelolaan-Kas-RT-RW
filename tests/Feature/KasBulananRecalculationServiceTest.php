@@ -153,7 +153,7 @@ class KasBulananRecalculationServiceTest extends TestCase
         $slipGaji = SlipGaji::create([
             'id_petugas' => $petugas->id,
             'total' => 1000000,
-            'tanggal' => '2026-06-25',
+            'periode' => '2026-06',
             'status' => SlipGajiStatus::TELAH_DIBAYAR,
         ]);
 
@@ -223,7 +223,7 @@ class KasBulananRecalculationServiceTest extends TestCase
         $slipGaji = SlipGaji::create([
             'id_petugas' => $petugas->id,
             'total' => 1000000,
-            'tanggal' => '2026-06-25',
+            'periode' => '2026-06',
             'status' => SlipGajiStatus::BELUM_DIBAYAR,
         ]);
 

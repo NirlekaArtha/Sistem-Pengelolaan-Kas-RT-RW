@@ -5,6 +5,7 @@ namespace App\Filament\Rt\Resources\SetoranRWS\Tables;
 use App\Enums\SetoranStatusValidasi;
 use App\Filament\Rt\Resources\SetoranRWS\Pages\ViewSetoranRW;
 use App\Models\SetoranRW;
+use App\Support\Periode;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\DatePicker;
@@ -20,7 +21,9 @@ class SetoranRWSTable
     {
         return $table
             ->columns([
-                TextColumn::make('periode')->searchable(),
+                TextColumn::make('periode')
+                    ->formatStateUsing(fn ($state) => Periode::label($state))
+                    ->searchable(),
                 TextColumn::make('tanggal_setor')->date()->sortable(),
                 TextColumn::make('jumlah_setor')
                     ->prefix('Rp ')
@@ -45,12 +48,14 @@ class SetoranRWSTable
             ->filters([
                 SelectFilter::make('periode')
                     ->label('Periode')
-                    ->options(fn (): array => SetoranRW::query()
-                        ->select('periode')
-                        ->distinct()
-                        ->orderBy('periode', 'desc')
-                        ->pluck('periode', 'periode')
-                        ->all())
+                    ->options(fn (): array => Periode::selectOptions(
+                        SetoranRW::query()
+                            ->select('periode')
+                            ->distinct()
+                            ->orderBy('periode', 'desc')
+                            ->pluck('periode')
+                            ->all(),
+                    ))
                     ->searchable(),
                 SelectFilter::make('status_validasi')
                     ->label('Status Validasi')

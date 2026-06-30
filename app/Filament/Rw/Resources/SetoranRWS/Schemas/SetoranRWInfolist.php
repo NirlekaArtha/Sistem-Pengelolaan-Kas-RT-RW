@@ -2,7 +2,7 @@
 
 namespace App\Filament\Rw\Resources\SetoranRWS\Schemas;
 
-use Carbon\Carbon;
+use App\Support\Periode;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
@@ -26,14 +26,7 @@ class SetoranRWInfolist
 
                     TextEntry::make('periode')
                         ->label('Periode')
-                        ->formatStateUsing(
-                            fn ($state) => $state
-                                ? Carbon::createFromFormat(
-                                    'Y-m',
-                                    $state,
-                                )->translatedFormat('F Y')
-                                : '-',
-                        ),
+                        ->formatStateUsing(fn ($state) => Periode::label($state)),
 
                     TextEntry::make('tanggal_setor')
                         ->label('Tanggal Setor')

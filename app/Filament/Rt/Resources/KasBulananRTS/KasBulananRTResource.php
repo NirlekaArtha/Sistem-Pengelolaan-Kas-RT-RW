@@ -24,7 +24,7 @@ class KasBulananRTResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedChartBar;
 
-    protected static ?string $recordTitleAttribute = 'periode';
+    protected static ?string $recordTitleAttribute = 'periode_label';
 
     protected static string|UnitEnum|null $navigationGroup = 'Laporan & Rekap';
 

@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\DB;
 class GenerateMonthlySlipGajiService
 {
     /**
-     * @return array{created_unpaid: int, period: string, slip_date: string}
+     * @return array{created_unpaid: int, period: string}
      */
     public static function run(?CarbonInterface $runDate = null): array
     {
@@ -21,21 +21,19 @@ class GenerateMonthlySlipGajiService
 
         $periodDate = $runDate->copy()->addMonth();
         $period = $periodDate->format('Y-m');
-        $slipDate = $periodDate->copy()->day(25)->toDateString();
-
-        return DB::transaction(function () use ($period, $slipDate): array {
+        return DB::transaction(function () use ($period): array {
             $timestamp = now();
 
             $rowsToInsert = Petugas::query()
                 ->whereDoesntHave(
                     'slipGajis',
-                    fn ($query) => $query->whereDate('tanggal', $slipDate),
+                    fn ($query) => $query->where('periode', $period),
                 )
                 ->get(['id', 'gaji_pokok'])
                 ->map(fn (Petugas $petugas): array => [
                     'id_petugas' => $petugas->id,
                     'total' => $petugas->gaji_pokok,
-                    'tanggal' => $slipDate,
+                    'periode' => $period,
                     'status' => SlipGajiStatus::BELUM_DIBAYAR->value,
                     'file_path' => null,
                     'created_at' => $timestamp,
@@ -53,7 +51,6 @@ class GenerateMonthlySlipGajiService
             return [
                 'created_unpaid' => $createdUnpaid,
                 'period' => $period,
-                'slip_date' => $slipDate,
             ];
         });
     }

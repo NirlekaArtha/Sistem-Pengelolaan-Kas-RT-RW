@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\SetoranStatusValidasi;
+use App\Support\Periode;
 use Database\Factories\SetoranRWFactory;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -47,8 +48,15 @@ class SetoranRW extends Model
     protected function periode(): Attribute
     {
         return Attribute::make(
-            get: fn (?string $value): ?string => self::normalizePeriode($value),
-            set: fn (?string $value): ?string => self::normalizePeriode($value),
+            get: fn (?string $value): ?string => Periode::normalize($value),
+            set: fn (?string $value): ?string => Periode::normalize($value),
+        );
+    }
+
+    protected function periodeLabel(): Attribute
+    {
+        return Attribute::make(
+            get: fn (): string => Periode::label($this->periode),
         );
     }
 
@@ -59,20 +67,4 @@ class SetoranRW extends Model
         return $this->hasOne(KwitansiSetoranRW::class, 'id_setoran');
     }
 
-    private static function normalizePeriode(?string $value): ?string
-    {
-        if (blank($value)) {
-            return $value;
-        }
-
-        if (preg_match('/^\d{4}-\d{2}$/', $value) === 1) {
-            return $value;
-        }
-
-        if (preg_match('/^\d{4}-\d{2}-\d{2}/', $value) === 1) {
-            return substr($value, 0, 7);
-        }
-
-        return $value;
-    }
 }

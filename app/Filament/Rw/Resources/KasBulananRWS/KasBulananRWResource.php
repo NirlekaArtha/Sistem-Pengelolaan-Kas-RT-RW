@@ -34,7 +34,7 @@ class KasBulananRWResource extends Resource
 
     protected static ?string $pluralModelLabel = 'Kas Bulanan';
 
-    protected static ?string $recordTitleAttribute = 'periode';
+    protected static ?string $recordTitleAttribute = 'periode_label';
 
     public static function form(Schema $schema): Schema
     {

@@ -16,4 +16,5 @@ class EditSlipGaji extends EditRecord
             DeleteAction::make(),
         ];
     }
+
 }

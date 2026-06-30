@@ -5,6 +5,7 @@ namespace App\Filament\Rw\Resources\SlipGajis\Tables;
 use App\Enums\SlipGajiStatus;
 use App\Filament\Rw\Resources\SlipGajis\Pages\ViewSlipGaji;
 use App\Models\SlipGaji;
+use App\Support\Periode;
 use Filament\Actions\Action;
 use Filament\Actions\BulkAction;
 use Filament\Actions\BulkActionGroup;
@@ -41,9 +42,9 @@ class SlipGajisTable
                         decimalSeparator: ",",
                     )
                     ->sortable(),
-                TextColumn::make("tanggal")
+                TextColumn::make("periode")
                     ->label("Periode")
-                    ->date("F Y")
+                    ->formatStateUsing(fn ($state) => Periode::label($state))
                     ->sortable(),
                 TextColumn::make("status")
                     ->label("Status")
@@ -66,10 +67,10 @@ class SlipGajisTable
                 SelectFilter::make("status")
                     ->label("Status")
                     ->options(SlipGajiStatus::class),
-                Filter::make("tanggal")
+                Filter::make("periode")
                     ->form([
-                        DatePicker::make("from")->label("Dari Tanggal"),
-                        DatePicker::make("until")->label("Sampai Tanggal"),
+                        DatePicker::make("from")->label("Dari Periode"),
+                        DatePicker::make("until")->label("Sampai Periode"),
                     ])
                     ->query(function (Builder $query, array $data): Builder {
                         return $query
@@ -78,10 +79,10 @@ class SlipGajisTable
                                 fn(
                                     Builder $query,
                                     $date,
-                                ): Builder => $query->whereDate(
-                                    "tanggal",
+                                ): Builder => $query->where(
+                                    "periode",
                                     ">=",
-                                    $date,
+                                    $date instanceof \DateTimeInterface ? $date->format('Y-m') : substr((string) $date, 0, 7),
                                 ),
                             )
                             ->when(
@@ -89,10 +90,10 @@ class SlipGajisTable
                                 fn(
                                     Builder $query,
                                     $date,
-                                ): Builder => $query->whereDate(
-                                    "tanggal",
+                                ): Builder => $query->where(
+                                    "periode",
                                     "<=",
-                                    $date,
+                                    $date instanceof \DateTimeInterface ? $date->format('Y-m') : substr((string) $date, 0, 7),
                                 ),
                             );
                     }),

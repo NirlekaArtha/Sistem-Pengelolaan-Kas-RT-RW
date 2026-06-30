@@ -15,11 +15,11 @@ return new class extends Migration
             $table->id();
             $table->foreignId('id_petugas')->constrained('petugas')->cascadeOnDelete();
             $table->decimal('total', 15, 2);
-            $table->date('tanggal');
+            $table->string('periode'); // format: YYYY-MM
             $table->string('file_path')->nullable();
             $table->timestamps();
 
-            $table->unique(['id_petugas', 'tanggal']);
+            $table->unique(['id_petugas', 'periode']);
         });
     }
 
